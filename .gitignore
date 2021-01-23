@@ -25,3 +25,7 @@ sase_mango-*.tar
 
 # Temporary files for e.g. tests
 /tmp
+
+# Exports
+issuers.csv
+issuers.json
