@@ -21,12 +21,12 @@ defmodule SaseMango.SaseMangoClient do
     })
   end
 
-  def get_financial_statement(symbol, year) do
+  def get_financial_statement(symbol, year, semi_annual) do
     Logger.info("Fetching #{year} financial statement for issuer #{symbol}")
 
     send_request(%{
       "Months" => year,
-      "id" => 1,
+      "id" => if(semi_annual, do: 1, else: 0),
       "lng" => 1,
       "start" => 1,
       "symbol" => symbol,
