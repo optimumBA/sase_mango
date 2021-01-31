@@ -10,6 +10,7 @@ defmodule SaseMango.Application do
     children = [
       # Starts a worker by calling: SaseMango.Worker.start_link(arg)
       # {SaseMango.Worker, arg}
+      SaseMango.Repo,
       SaseMango.SaseMangoClient.child_spec()
     ]
 

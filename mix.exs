@@ -23,9 +23,11 @@ defmodule SaseMango.MixProject do
   defp deps do
     [
       {:csv, "~> 2.4"},
+      {:ecto_sql, "~> 3.5"},
       {:elixir_xml_to_map, "~> 2.0"},
       {:finch, "~> 0.6"},
-      {:jason, "~> 1.2"}
+      {:jason, "~> 1.2"},
+      {:postgrex, ">= 0.0.0"}
     ]
   end
 end
