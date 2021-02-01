@@ -12,6 +12,12 @@ defmodule SaseMango.Issuers do
     |> Repo.insert()
   end
 
+  def update_issuer(issuer, attrs) do
+    issuer
+    |> Issuer.changeset(attrs)
+    |> Repo.update()
+  end
+
   def get_financial_statement(%Issuer{} = issuer, semi_annual, year) do
     FinancialStatement |> Repo.get_by(issuer_id: issuer.id, semi_annual: semi_annual, year: year)
   end

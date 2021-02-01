@@ -15,7 +15,7 @@ defmodule Mix.Tasks.Issuers.Fetch do
     Enum.each(issuers, fn issuer ->
       with {symbol, info} <- Map.pop(issuer, "Symbol"),
            attrs <- %{info: info, symbol: symbol},
-           {:ok, issuer} <- get_or_create_issuer(symbol, attrs) do
+           {:ok, issuer} <- create_or_update_issuer(symbol, attrs) do
         for semi_annual <- [true, false], year <- 2015..2020 do
           maybe_create_financial_statement(issuer, semi_annual, year)
         end
@@ -28,9 +28,10 @@ defmodule Mix.Tasks.Issuers.Fetch do
     end)
   end
 
-  defp get_or_create_issuer(symbol, attrs) do
+  defp create_or_update_issuer(symbol, attrs) do
     case Issuers.get_issuer(symbol) do
       %Issuer{} = issuer ->
+        Issuers.update_issuer(issuer, attrs)
         {:ok, issuer}
 
       nil ->
