@@ -7,3 +7,5 @@ config :sase_mango, SaseMango.Repo,
   hostname: "localhost"
 
 config :sase_mango, ecto_repos: [SaseMango.Repo]
+
+config :logger, level: :info
