@@ -5,6 +5,7 @@ defmodule SaseMango do
 
   @relevant_segments MapSet.new([
                        "The Official market - The Official market of companies",
+                       "The Official market - The Official market of funds",
                        "Free market - Subsegment 1",
                        "Free market - Subsegment 2",
                        "Free market - Subsegment 3"
