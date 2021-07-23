@@ -53,7 +53,7 @@ FROM (
       (
         SELECT DISTINCT ON (issuer_id, year, semi_annual) issuer_id, statement
         FROM financial_statements
-        WHERE year = 2019 AND semi_annual = FALSE
+        WHERE year = 2020 AND semi_annual = FALSE
       ) financial_statements,
       JSONB_ARRAY_ELEMENTS(financial_statements.statement->'EQUITYCHANGES') equity_changes
     WHERE equity_changes->>'Description' = '21. Objavljene dividende i drugi oblici raspodjele dobiti i pokriće gubitka'
@@ -64,7 +64,7 @@ FROM (
       (
         SELECT DISTINCT ON (issuer_id, year, semi_annual) issuer_id, statement
         FROM financial_statements
-        WHERE year = 2018 AND semi_annual = FALSE
+        WHERE year = 2019 AND semi_annual = FALSE
       ) financial_statements,
       JSONB_ARRAY_ELEMENTS(financial_statements.statement->'EQUITYCHANGES') equity_changes
     WHERE equity_changes->>'Description' = '21. Objavljene dividende i drugi oblici raspodjele dobiti i pokriće gubitka'
@@ -75,7 +75,7 @@ FROM (
       (
         SELECT DISTINCT ON (issuer_id, year, semi_annual) issuer_id, statement
         FROM financial_statements
-        WHERE year = 2019 AND semi_annual = FALSE
+        WHERE year = 2020 AND semi_annual = FALSE
       ) financial_statements,
       JSONB_ARRAY_ELEMENTS(financial_statements.statement->'BALANCESHEET') equity_changes
     WHERE equity_changes->>'Description' = 'A) STALNA SREDSTVA I DUGOROČNI PLASMANI (002+008+014+015+020+021+030+033)'
@@ -86,7 +86,7 @@ FROM (
       (
         SELECT DISTINCT ON (issuer_id, year, semi_annual) issuer_id, statement
         FROM financial_statements
-        WHERE year = 2019 AND semi_annual = FALSE
+        WHERE year = 2020 AND semi_annual = FALSE
       ) financial_statements,
       JSONB_ARRAY_ELEMENTS(financial_statements.statement->'PROFITANDLOSSACCOUNT') profits_and_losses
     WHERE profits_and_losses->>'Description' = 'Poslovni prihodi (202+206+210+211)'
@@ -97,7 +97,7 @@ FROM (
       (
         SELECT DISTINCT ON (issuer_id, year, semi_annual) issuer_id, statement
         FROM financial_statements
-        WHERE year = 2019 AND semi_annual = FALSE
+        WHERE year = 2020 AND semi_annual = FALSE
       ) financial_statements,
       JSONB_ARRAY_ELEMENTS(financial_statements.statement->'PROFITANDLOSSACCOUNT') profits_and_losses
     WHERE profits_and_losses->>'Description' = 'Ukupna neto sveobuhv. dobit/gubitak prema vlasništvu (332 ili 333)'
