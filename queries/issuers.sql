@@ -107,8 +107,11 @@ FROM (
   ) profits ON profits.issuer_id = issuers.id
 ) issuers
 WHERE price > 0
-	AND profit > 0
-	AND previous_profit > 0
-	AND pb < 20
-	AND pe < 20
-ORDER BY pe ASC
+  AND profit > 0
+  AND previous_profit > 0
+  AND price < bvs * 2 / 3
+  AND pb < 20
+  AND pe < 20
+  AND eps_roi > 5
+  AND ask_price > 0
+ORDER BY ask_price_eps_roi DESC NULLS LAST
