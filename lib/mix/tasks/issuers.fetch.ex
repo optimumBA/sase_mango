@@ -16,7 +16,9 @@ defmodule Mix.Tasks.Issuers.Fetch do
       with {symbol, info} <- Map.pop(issuer, "Symbol"),
            attrs <- %{info: info, symbol: symbol},
            {:ok, issuer} <- create_or_update_issuer(symbol, attrs) do
-        for semi_annual <- [true, false], year <- 2015..2020 do
+        current_year = NaiveDateTime.utc_now() |> Map.fetch!(:year)
+
+        for semi_annual <- [true, false], year <- (current_year - 9)..current_year do
           maybe_create_financial_statement(issuer, semi_annual, year)
         end
       else
