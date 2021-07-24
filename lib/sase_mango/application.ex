@@ -5,12 +5,18 @@ defmodule SaseMango.Application do
 
   use Application
 
-  @impl true
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: SaseMango.Worker.start_link(arg)
-      # {SaseMango.Worker, arg}
+      # Start the Ecto repository
       SaseMango.Repo,
+      # Start the Telemetry supervisor
+      SaseMangoWeb.Telemetry,
+      # Start the PubSub system
+      {Phoenix.PubSub, name: SaseMango.PubSub},
+      # Start the Endpoint (http/https)
+      SaseMangoWeb.Endpoint,
+      # Start a worker by calling: SaseMango.Worker.start_link(arg)
+      # {SaseMango.Worker, arg}
       SaseMango.SaseMangoClient.child_spec()
     ]
 
@@ -18,5 +24,12 @@ defmodule SaseMango.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: SaseMango.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  # Tell Phoenix to update the endpoint configuration
+  # whenever the application is updated.
+  def config_change(changed, _new, removed) do
+    SaseMangoWeb.Endpoint.config_change(changed, removed)
+    :ok
   end
 end

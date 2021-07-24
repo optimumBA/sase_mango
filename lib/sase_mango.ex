@@ -1,4 +1,12 @@
 defmodule SaseMango do
+  @moduledoc """
+  SaseMango keeps the contexts that define your domain
+  and business logic.
+
+  Contexts are also responsible for managing your data, regardless
+  if it comes from the database, an external API or others.
+  """
+
   alias SaseMango.SaseMangoClient
 
   @description_dividends "21. Objavljene dividende i drugi oblici raspodjele dobiti i pokriće gubitka"
@@ -158,5 +166,9 @@ defmodule SaseMango do
       _response ->
         issuer
     end
+  end
+
+  def hello do
+    :world
   end
 end
