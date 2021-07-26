@@ -1,5 +1,7 @@
-defmodule SaseMango.Issuers do
-  alias SaseMango.Issuers.{Issuer, FinancialStatement}
+defmodule SaseMango.Securities do
+  import Ecto.Query
+
+  alias SaseMango.Securities.{Issuer, FinancialStatement}
   alias SaseMango.Repo
 
   def get_issuer(symbol) do
@@ -30,5 +32,9 @@ defmodule SaseMango.Issuers do
   rescue
     error ->
       {:error, error}
+  end
+
+  def list_securities() do
+    Issuer |> Repo.all()
   end
 end

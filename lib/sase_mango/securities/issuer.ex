@@ -1,11 +1,11 @@
-defmodule SaseMango.Issuers.Issuer do
+defmodule SaseMango.Securities.Issuer do
   use Ecto.Schema
 
   import Ecto.Changeset
 
   schema "issuers" do
     field :info, :map
-    has_many :financial_statements, SaseMango.Issuers.FinancialStatement
+    has_many :financial_statements, SaseMango.Securities.FinancialStatement
     field :symbol
     timestamps()
   end

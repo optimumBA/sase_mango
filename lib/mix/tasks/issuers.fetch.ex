@@ -1,10 +1,10 @@
-defmodule Mix.Tasks.Issuers.Fetch do
+defmodule Mix.Tasks.Securities.Fetch do
   use Mix.Task
 
   require Logger
 
-  alias SaseMango.{Issuers, SaseScraper}
-  alias SaseMango.Issuers.{FinancialStatement, Issuer}
+  alias SaseMango.{SaseScraper, Securities}
+  alias SaseMango.Securities.{FinancialStatement, Issuer}
 
   @requirements ["app.start"]
 
@@ -31,25 +31,25 @@ defmodule Mix.Tasks.Issuers.Fetch do
   end
 
   defp create_or_update_issuer(symbol, attrs) do
-    case Issuers.get_issuer(symbol) do
+    case Securities.get_issuer(symbol) do
       %Issuer{} = issuer ->
-        Issuers.update_issuer(issuer, attrs)
+        Securities.update_issuer(issuer, attrs)
         {:ok, issuer}
 
       nil ->
-        Issuers.create_issuer(attrs)
+        Securities.create_issuer(attrs)
     end
   end
 
   defp maybe_create_financial_statement(%Issuer{} = issuer, semi_annual, year) do
-    case Issuers.get_financial_statement(issuer, semi_annual, year) do
+    case Securities.get_financial_statement(issuer, semi_annual, year) do
       %FinancialStatement{} ->
         nil
 
       nil ->
         with {:ok, statement} <-
                SaseScraper.get_financial_statement(issuer.symbol, year, semi_annual) do
-          Issuers.create_financial_statement(issuer, %{
+          Securities.create_financial_statement(issuer, %{
             statement: statement,
             semi_annual: semi_annual,
             year: year

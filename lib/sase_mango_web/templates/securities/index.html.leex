@@ -1,0 +1,19 @@
+<div class="w-[80%] p-10">
+  <table class="">
+    <thead>
+      <td>Symbol</td>
+      <td>Name</td>
+      <td>Price</td>
+    </thead>
+
+    <tbody>
+      <%= for issuer <- @securities do %>
+        <tr>
+          <td><%= issuer.symbol %></td>
+          <td><%= issuer.info["SymbolDescription"] %></td>
+          <td><%= round_price(issuer.info["AvgPrice"]) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
