@@ -1,17 +1,9 @@
 defmodule SaseMangoWeb.SecuritiesView do
   use SaseMangoWeb, :view
 
-  def round_price(price, places \\ 2)
-
-  def round_price(price, places) when is_integer(price) do
-    price
-    |> Decimal.new()
-    |> Decimal.round(places)
-  end
-
-  def round_price(price, places) when is_float(price) do
-    price
-    |> Decimal.from_float()
-    |> Decimal.round(places)
-  end
+  def segment("Free market - Subsegment 1"), do: "ST1"
+  def segment("Free market - Subsegment 2"), do: "ST2"
+  def segment("Free market - Subsegment 3"), do: "ST3"
+  def segment("The Official market - The Official market of companies"), do: "Companies"
+  def segment("The Official market - The Official market of funds"), do: "Funds"
 end

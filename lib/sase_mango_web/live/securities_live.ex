@@ -14,5 +14,6 @@ defmodule SaseMangoWeb.SecuritiesLive do
     {:ok, socket}
   end
 
+  @impl true
   def render(assigns), do: SecuritiesView.render("index.html", assigns)
 end

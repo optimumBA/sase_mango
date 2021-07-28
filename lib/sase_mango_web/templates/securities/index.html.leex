@@ -1,19 +1,57 @@
-<div class="w-[80%] p-10">
-  <table class="">
-    <thead>
-      <td>Symbol</td>
-      <td>Name</td>
-      <td>Price</td>
-    </thead>
+<table class="overflow-scroll h-auto w-full">
+  <thead>
+    <th class="text-center px-4" colspan="2">Symbol</th>
+    <th class="text-center px-4" colspan="2">Name</th>
+    <th class="text-center px-4">Price</th>
+    <th class="text-center px-4">Ask Price</th>
+    <th class="text-center px-4">Dividend</th>
+    <th class="text-center px-4">Dividend ROI (%)</th>
+    <th class="text-center px-4">Previous dividend ROI (%)</th>
+    <th class="text-center px-4">EPS</th>
+    <th class="text-center px-4">Previous EPS</th>
+    <th class="text-center px-4">EPS ROI (%)</th>
+    <th class="text-center px-4">Previous EPS ROI (%)</th>
+    <th class="text-center px-4">Ask price EPS ROI (%)</th>
+    <th class="text-center px-4">PE</th>
+    <th class="text-center px-4">PB</th>
+    <th class="text-center px-4" colspan="2">Market Value</th>
+    <th class="text-center px-4" colspan="2">Book Value</th>
+    <th class="text-center px-4" colspan="2">Previous Book Value</th>
+    <th class="text-center px-4">BVS</th>
+    <th class="text-center px-4">Previous BVS</th>
+    <th class="text-center px-4">Nominal price</th>
+    <th class="text-center px-4">Profit margin</th>
+    <th class="text-center px-4">Previous profit margin</th>
+    <th class="text-center px-4" colspan="2">Segment</th>
+  </thead>
 
-    <tbody>
-      <%= for issuer <- @securities do %>
-        <tr>
-          <td><%= issuer.symbol %></td>
-          <td><%= issuer.info["SymbolDescription"] %></td>
-          <td><%= round_price(issuer.info["AvgPrice"]) %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+  <tbody>
+    <%= for security <- @securities do %>
+      <tr class="h-16">
+        <td class="text-center px-4" colspan="2"><%= security.symbol %></td>
+        <td class="text-center px-4" colspan="2"><%= security.name %></td>
+        <td class="text-right px-4"><%= Decimal.round(security.price, 2) %></td>
+        <td class="text-right px-4"><%= Decimal.round(security.ask_price, 2) %></td>
+        <td class="text-right px-4"><%= Decimal.round(security.dividend, 2) %></td>
+        <td class="text-right px-4"><%= Decimal.round(Decimal.mult(security.dividend_roi, 100), 2) %>%</td>
+        <td class="text-right px-4"><%= Decimal.round(Decimal.mult(security.previous_dividend_roi, 100), 2) %>%</td>
+        <td class="text-right px-4"><%= Decimal.round(security.eps, 2) %></td>
+        <td class="text-right px-4"><%= Decimal.round(security.previous_eps, 2) %></td>
+        <td class="text-right px-4"><%= Decimal.round(Decimal.mult(security.eps_roi, 100), 2) %>%</td>
+        <td class="text-right px-4"><%= Decimal.round(Decimal.mult(security.previous_eps_roi, 100), 2) %>%</td>
+        <td class="text-right px-4"><%= Decimal.round(Decimal.mult(security.ask_price_eps_roi, 100), 2) %>%</td>
+        <td class="text-right px-4"><%= Decimal.round(security.pe, 2) %></td>
+        <td class="text-right px-4"><%= Decimal.round(security.pb, 2) %></td>
+        <td class="text-right px-4" colspan="2"><%= Decimal.round(security.market_value, 0) %></td>
+        <td class="text-right px-4" colspan="2"><%= Decimal.round(security.book_value, 0) %></td>
+        <td class="text-right px-4" colspan="2"><%= Decimal.round(security.previous_book_value, 0) %></td>
+        <td class="text-right px-4"><%= Decimal.round(security.bvs, 2) %></td>
+        <td class="text-right px-4"><%= Decimal.round(security.previous_bvs, 2) %></td>
+        <td class="text-right px-4"><%= Decimal.round(security.nominal_price, 2) %></td>
+        <td class="text-right px-4"><%= Decimal.round(Decimal.mult(security.profit_margin, 100), 2) %>%</td>
+        <td class="text-right px-4"><%= Decimal.round(Decimal.mult(security.previous_profit_margin, 100), 2) %>%</td>
+        <td class="text-center px-4" colspan="2"><%= segment(security.segment) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
