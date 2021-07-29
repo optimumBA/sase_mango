@@ -49,7 +49,8 @@ defmodule SaseMango.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:csv, "~> 2.4"},
       {:elixir_xml_to_map, "~> 2.0"},
-      {:finch, "~> 0.6"}
+      {:finch, "~> 0.6"},
+      {:tzdata, "~> 1.1"}
     ]
   end
 

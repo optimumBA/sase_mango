@@ -17,7 +17,8 @@ defmodule SaseMango.Application do
       SaseMangoWeb.Endpoint,
       # Start a worker by calling: SaseMango.Worker.start_link(arg)
       # {SaseMango.Worker, arg}
-      SaseMango.SaseMangoClient.child_spec()
+      SaseMango.SaseMangoClient.child_spec(),
+      SaseMango.SecuritiesUpdater
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
