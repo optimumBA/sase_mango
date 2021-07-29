@@ -184,14 +184,12 @@ defmodule SaseMango.Securities do
       }
     end)
     |> Stream.filter(fn security ->
-      Decimal.gt?(security.price, Decimal.new(0)) &&
-        Decimal.gt?(security.profit, Decimal.new(0)) &&
+      Decimal.gt?(security.profit, Decimal.new(0)) &&
         Decimal.gt?(security.previous_profit, Decimal.new(0)) &&
         Decimal.lt?(security.price, Decimal.mult(security.bvs, Decimal.div(2, 3))) &&
         Decimal.lt?(security.pb, Decimal.new(20)) &&
         Decimal.lt?(security.pe, Decimal.new(20)) &&
-        Decimal.gt?(security.eps_roi, Decimal.from_float(0.05)) &&
-        Decimal.gt?(security.ask_price, Decimal.new(0))
+        Decimal.gt?(security.eps_roi, Decimal.from_float(0.05))
     end)
     |> Enum.sort_by(& &1.ask_price_eps_roi, {:desc, Decimal})
   end
