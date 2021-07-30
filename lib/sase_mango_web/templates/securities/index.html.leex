@@ -12,8 +12,8 @@
     <th class="text-center px-4">EPS ROI (%)</th>
     <th class="text-center px-4">Previous EPS ROI (%)</th>
     <th class="text-center px-4">Ask price EPS ROI (%)</th>
-    <th class="text-center px-4">PE</th>
-    <th class="text-center px-4">PB</th>
+    <th class="text-center px-4">P/E</th>
+    <th class="text-center px-4">P/B</th>
     <th class="text-center px-4" colspan="2">Market Value</th>
     <th class="text-center px-4" colspan="2">Book Value</th>
     <th class="text-center px-4" colspan="2">Previous Book Value</th>
@@ -28,7 +28,7 @@
   <tbody>
     <%= for security <- @securities do %>
       <tr class="h-16">
-        <td class="text-center px-4" colspan="2"><%= security.symbol %></td>
+        <td class="text-center text-blue-400 px-4" colspan="2"><a href="http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/<%= security.symbol %>" target="_blank"><%= security.symbol %></a></td>
         <td class="text-center px-4" colspan="2"><%= security.name %></td>
         <td class="text-right px-4"><%= Decimal.round(security.price, 2) %></td>
         <td class="text-right px-4"><%= Decimal.round(security.ask_price, 2) %></td>
