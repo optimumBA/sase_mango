@@ -28,6 +28,16 @@ config :phoenix, :json_library, Jason
 
 config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 
+config :sase_mango, SaseMango.Scheduler,
+  jobs: [
+    # Every weekday at 3 PM
+    {"0 15 * * 1-5", {SaseMango.SecuritiesUpdater, :update, []}},
+    # Every 5 minutes while markets are open (Mon-Fri 10:00-13:30)
+    {"*/5 10-12 * * 1-5", {SaseMango.TickerUpdater, :update, []}},
+    {"0-30/5 13 * * 1-5", {SaseMango.TickerUpdater, :update, []}}
+  ],
+  timezone: "Europe/Sarajevo"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
