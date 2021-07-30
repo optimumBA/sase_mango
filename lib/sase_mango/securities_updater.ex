@@ -1,6 +1,5 @@
 defmodule SaseMango.SecuritiesUpdater do
-  alias SaseMango.{SaseScraper, Securities}
-  alias SaseMangoWeb.Endpoint
+  alias SaseMango.{SaseScraper, Securities, SecuritiesCache}
 
   require Logger
 
@@ -27,7 +26,7 @@ defmodule SaseMango.SecuritiesUpdater do
           end
         end)
 
-        Endpoint.broadcast("securities", "securities_update", %{})
+        SecuritiesCache.update()
 
       _ ->
         nil

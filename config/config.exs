@@ -34,7 +34,9 @@ config :sase_mango, SaseMango.Scheduler,
     {"0 15 * * 1-5", {SaseMango.SecuritiesUpdater, :update, []}},
     # Every 5 minutes while markets are open (Mon-Fri 10:00-13:30)
     {"*/5 10-12 * * 1-5", {SaseMango.TickerUpdater, :update, []}},
-    {"0-30/5 13 * * 1-5", {SaseMango.TickerUpdater, :update, []}}
+    {"0-30/5 13 * * 1-5", {SaseMango.TickerUpdater, :update, []}},
+    # Warm the securities cache on boot
+    {"@reboot", {SaseMango.SecuritiesCache, :update, []}}
   ],
   timezone: "Europe/Sarajevo"
 

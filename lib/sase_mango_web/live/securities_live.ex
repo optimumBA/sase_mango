@@ -2,14 +2,14 @@ defmodule SaseMangoWeb.SecuritiesLive do
   use SaseMangoWeb, :live_view
 
   alias Phoenix.Socket.Broadcast
-  alias SaseMango.Securities
+  alias SaseMango.SecuritiesCache
   alias SaseMangoWeb.{Endpoint, SecuritiesView}
 
   @impl true
   def mount(_params, _session, socket) do
     socket =
       assign_new(socket, :securities, fn ->
-        Securities.list_securities()
+        SecuritiesCache.get()
       end)
 
     if connected?(socket) do
@@ -24,7 +24,7 @@ defmodule SaseMangoWeb.SecuritiesLive do
 
   @impl true
   def handle_info(%Broadcast{event: "securities_update"}, socket) do
-    securities = Securities.list_securities()
+    securities = SecuritiesCache.get()
     {:noreply, assign(socket, :securities, securities)}
   end
 end

@@ -1,6 +1,5 @@
 defmodule SaseMango.TickerUpdater do
-  alias SaseMango.{SaseScraper, Securities}
-  alias SaseMangoWeb.Endpoint
+  alias SaseMango.{SaseScraper, Securities, SecuritiesCache}
 
   def update() do
     issuers = Securities.list_issuers()
@@ -17,6 +16,6 @@ defmodule SaseMango.TickerUpdater do
       end
     end
 
-    Endpoint.broadcast("securities", "securities_update", %{})
+    SecuritiesCache.update()
   end
 end

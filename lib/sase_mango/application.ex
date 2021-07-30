@@ -18,6 +18,7 @@ defmodule SaseMango.Application do
       # Start a worker by calling: SaseMango.Worker.start_link(arg)
       # {SaseMango.Worker, arg}
       SaseMango.SaseMangoClient.child_spec(),
+      SaseMango.SecuritiesCache,
       SaseMango.Scheduler
     ]
 
