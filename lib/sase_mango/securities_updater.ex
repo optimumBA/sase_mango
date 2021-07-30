@@ -4,9 +4,10 @@ defmodule SaseMango.SecuritiesUpdater do
   alias SaseMango.{SaseScraper, Securities}
   alias SaseMangoWeb.Endpoint
 
-  @interval 60 * 1000
+  @interval 5 * 60 * 1000
   @opening_time ~T[10:00:00]
   @closing_time ~T[13:30:00]
+  @workdays 1..5
   @timezone "Europe/Sarajevo"
 
   # Client
@@ -69,16 +70,23 @@ defmodule SaseMango.SecuritiesUpdater do
 
   defp schedule_updating() do
     datetime = DateTime.now!(@timezone)
+    day_of_week = datetime |> DateTime.to_date() |> Date.day_of_week()
     time = datetime |> DateTime.to_time()
 
-    if Time.compare(time, @opening_time) == :gt && Time.compare(time, @closing_time) == :lt do
+    if Time.compare(time, @opening_time) != :lt && Time.compare(time, @closing_time) != :gt &&
+         Enum.member?(@workdays, day_of_week) do
       Process.send_after(self(), :update, @interval)
     else
       day =
-        if Time.compare(time, @opening_time) == :lt do
-          datetime
-        else
-          datetime |> DateTime.add(24 * 60 * 60, :second)
+        cond do
+          Enum.member?(@workdays, day_of_week) && Time.compare(time, @opening_time) == :lt ->
+            datetime
+
+          Enum.member?(5..6, day_of_week) ->
+            datetime |> DateTime.add((8 - day_of_week) * 24 * 60 * 60, :second)
+
+          true ->
+            datetime |> DateTime.add(24 * 60 * 60, :second)
         end
 
       opening_date = day |> DateTime.to_date() |> Date.to_iso8601()
