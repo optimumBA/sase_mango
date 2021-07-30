@@ -36,6 +36,17 @@ defmodule SaseMango.SaseMangoClient do
     })
   end
 
+  def get_ticker(symbol) do
+    Logger.info("Fetching ticker for issuer #{symbol}")
+
+    send_request(%{
+      "Months" => 1,
+      "lng" => 1,
+      "symbol" => symbol,
+      "type" => 4
+    })
+  end
+
   defp send_request(params) do
     headers = [{"content-type", "application/x-www-form-urlencoded"}]
 

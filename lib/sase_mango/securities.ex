@@ -4,9 +4,9 @@ defmodule SaseMango.Securities do
   alias SaseMango.Securities.{Issuer, FinancialStatement}
   alias SaseMango.Repo
 
-  def get_issuer(symbol) do
-    Issuer |> Repo.get_by(symbol: symbol)
-  end
+  def list_issuers(), do: Issuer |> Repo.all()
+
+  def get_issuer(symbol), do: Issuer |> Repo.get_by(symbol: symbol)
 
   def create_issuer(attrs) do
     %Issuer{}

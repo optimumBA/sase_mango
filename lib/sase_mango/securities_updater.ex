@@ -38,34 +38,21 @@ defmodule SaseMango.SecuritiesUpdater do
   end
 
   defp update() do
-    {year, month, day} = DateTime.now!(@timezone) |> DateTime.to_date() |> Date.to_erl()
-    date = "#{day}.#{month}.#{year}"
+    issuers = Securities.list_issuers()
 
-    case SaseScraper.get_list(date) do
-      {:ok, issuers} ->
-        Enum.each(issuers, fn issuer ->
-          with {symbol, info} <- Map.pop(issuer, "Symbol"),
-               attrs <- %{info: info, symbol: symbol} do
-            create_or_update_issuer(symbol, attrs)
-          end
-        end)
+    for %Securities.Issuer{} = issuer <- issuers do
+      case SaseScraper.get_ticker(issuer.symbol) do
+        {:ok, %{"pr_issuer_details" => %{"OfficialBestAskPrice" => ask_price}}} ->
+          ask_price = String.to_float(ask_price)
+          info = issuer.info |> Map.put("BestAskPrice", ask_price)
+          Securities.update_issuer(issuer, %{info: info})
 
-        Endpoint.broadcast("securities", "securities_update", %{})
-
-      _ ->
-        nil
+        _ ->
+          nil
+      end
     end
-  end
 
-  defp create_or_update_issuer(symbol, attrs) do
-    case Securities.get_issuer(symbol) do
-      %Securities.Issuer{} = issuer ->
-        Securities.update_issuer(issuer, attrs)
-        {:ok, issuer}
-
-      nil ->
-        Securities.create_issuer(attrs)
-    end
+    Endpoint.broadcast("securities", "securities_update", %{})
   end
 
   defp schedule_updating() do

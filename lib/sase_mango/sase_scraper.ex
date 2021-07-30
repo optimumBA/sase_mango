@@ -37,4 +37,17 @@ defmodule SaseMango.SaseScraper do
         {:error, error}
     end
   end
+
+  def get_ticker(symbol) do
+    with {:ok, %Finch.Response{body: body, status: 200}} <-
+           SaseMangoClient.get_ticker(symbol),
+         data when is_map(data) <- XmlToMap.naive_map(body),
+         [key] <- Map.keys(data),
+         %{^key => data} <- data do
+      {:ok, data}
+    else
+      error ->
+        {:error, error}
+    end
+  end
 end
