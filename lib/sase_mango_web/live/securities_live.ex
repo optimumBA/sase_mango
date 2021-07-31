@@ -27,4 +27,8 @@ defmodule SaseMangoWeb.SecuritiesLive do
     securities = SecuritiesCache.get()
     {:noreply, assign(socket, :securities, securities)}
   end
+
+  def handle_info(%Broadcast{event: "send_notification", payload: %{body: body}}, socket) do
+    {:noreply, push_event(socket, "send_notification", %{body: body})}
+  end
 end

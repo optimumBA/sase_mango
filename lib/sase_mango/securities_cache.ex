@@ -53,16 +53,31 @@ defmodule SaseMango.SecuritiesCache do
           state
       end
 
-    list =
+    {list, newest_securities} =
       Securities.list_securities()
-      |> Enum.map(fn %{} = security ->
+      |> Enum.map_reduce([], fn %{} = security, newest_securities ->
         new =
           state.yesterday &&
             !Enum.find(state.yesterday, fn %{} = old_security ->
               old_security.symbol == security.symbol
             end)
 
-        Map.put(security, :new, new)
+        security = Map.put(security, :new, new)
+
+        newest =
+          state.today &&
+            !Enum.find(state.today, fn %{} = old_security ->
+              old_security.symbol == security.symbol
+            end)
+
+        newest_securities =
+          if newest do
+            [security.symbol | newest_securities]
+          else
+            newest_securities
+          end
+
+        {security, newest_securities}
       end)
 
     state =
@@ -71,6 +86,11 @@ defmodule SaseMango.SecuritiesCache do
       |> Map.put(:today, list)
 
     Endpoint.broadcast("securities", "securities_update", %{})
+
+    unless Enum.empty?(newest_securities) do
+      body = "New securities: " <> Enum.join(newest_securities, ", ")
+      Endpoint.broadcast("securities", "send_notification", %{body: body})
+    end
 
     {:noreply, state}
   end
