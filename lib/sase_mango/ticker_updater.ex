@@ -6,9 +6,22 @@ defmodule SaseMango.TickerUpdater do
 
     for %Securities.Issuer{} = issuer <- issuers do
       case SaseScraper.get_ticker(issuer.symbol) do
-        {:ok, %{"pr_issuer_details" => %{"OfficialBestAskPrice" => ask_price}}} ->
-          ask_price = String.to_float(ask_price)
-          info = issuer.info |> Map.put("BestAskPrice", ask_price)
+        {:ok, %{"pr_issuer_details" => pr_issuer_details}} ->
+          info =
+            Enum.reduce(["AvgPrice", "BestAskPrice"], issuer.info, fn key, info ->
+              if Map.has_key?(pr_issuer_details, key) do
+                value =
+                  pr_issuer_details
+                  |> Map.get(key)
+                  |> Decimal.new()
+                  |> Decimal.to_float()
+
+                Map.put(info, key, value)
+              else
+                info
+              end
+            end)
+
           Securities.update_issuer(issuer, %{info: info})
 
         _ ->
