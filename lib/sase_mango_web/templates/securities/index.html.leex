@@ -3,7 +3,6 @@
     <th class="text-center px-4" colspan="2">Symbol</th>
     <th class="text-center px-4" colspan="2">Name</th>
     <th class="text-center px-4">Price</th>
-    <th class="text-center px-4">Ask Price</th>
     <th class="text-center px-4">Dividend</th>
     <th class="text-center px-4">Dividend ROI (%)</th>
     <th class="text-center px-4">Previous dividend ROI (%)</th>
@@ -11,7 +10,6 @@
     <th class="text-center px-4">Previous EPS</th>
     <th class="text-center px-4">EPS ROI (%)</th>
     <th class="text-center px-4">Previous EPS ROI (%)</th>
-    <th class="text-center px-4">Ask price EPS ROI (%)</th>
     <th class="text-center px-4">P/E</th>
     <th class="text-center px-4">P/B</th>
     <th class="text-center px-4" colspan="2">Market Value</th>
@@ -31,7 +29,6 @@
         <td class="text-center text-blue-400 px-4" colspan="2"><a href="http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/<%= security.symbol %>" target="_blank"><%= security.symbol %></a></td>
         <td class="text-center px-4" colspan="2"><%= security.name %></td>
         <td class="text-right px-4"><%= Decimal.round(security.price, 2) %></td>
-        <td class="text-right px-4"><%= Decimal.round(security.ask_price, 2) %></td>
         <td class="text-right px-4"><%= Decimal.round(security.dividend, 2) %></td>
         <td class="text-right px-4"><%= Decimal.round(Decimal.mult(security.dividend_roi, 100), 2) %>%</td>
         <td class="text-right px-4"><%= Decimal.round(Decimal.mult(security.previous_dividend_roi, 100), 2) %>%</td>
@@ -39,7 +36,6 @@
         <td class="text-right px-4"><%= Decimal.round(security.previous_eps, 2) %></td>
         <td class="text-right px-4"><%= Decimal.round(Decimal.mult(security.eps_roi, 100), 2) %>%</td>
         <td class="text-right px-4"><%= Decimal.round(Decimal.mult(security.previous_eps_roi, 100), 2) %>%</td>
-        <td class="text-right px-4"><%= Decimal.round(Decimal.mult(security.ask_price_eps_roi, 100), 2) %>%</td>
         <td class="text-right px-4"><%= Decimal.round(security.pe, 2) %></td>
         <td class="text-right px-4"><%= Decimal.round(security.pb, 2) %></td>
         <td class="text-right px-4" colspan="2"><%= Decimal.round(security.market_value, 0) %></td>

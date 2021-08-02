@@ -54,7 +54,6 @@ defmodule SaseMango.Securities do
       previous: previous
     })
     |> where(fragment("(info->'BestAskPrice')::NUMERIC > 0"))
-    |> where(fragment("(info->'AvgPrice')::NUMERIC > 0"))
     |> Repo.all()
     |> Stream.map(fn %{} = security ->
       symbol = security.issuer.symbol
@@ -101,8 +100,7 @@ defmodule SaseMango.Securities do
           else: Decimal.div(previous_total_dividends, previous_total_shares)
         )
 
-      ask_price = convert_price_to_decimal(security.issuer.info["BestAskPrice"])
-      price = convert_price_to_decimal(security.issuer.info["AvgPrice"])
+      price = convert_price_to_decimal(security.issuer.info["BestAskPrice"])
 
       eps =
         if(Decimal.equal?(total_shares, 0),
@@ -139,9 +137,6 @@ defmodule SaseMango.Securities do
         )
 
       %{
-        ask_price: ask_price,
-        ask_price_eps_roi:
-          if(Decimal.equal?(ask_price, 0), do: Decimal.new(0), else: Decimal.div(eps, ask_price)),
         book_value: book_value,
         bvs: bvs,
         dividend: dividend,
@@ -191,7 +186,7 @@ defmodule SaseMango.Securities do
         Decimal.lt?(security.pe, Decimal.new(20)) &&
         Decimal.gt?(security.eps_roi, Decimal.from_float(0.05))
     end)
-    |> Enum.sort_by(& &1.ask_price_eps_roi, {:desc, Decimal})
+    |> Enum.sort_by(& &1.eps_roi, {:desc, Decimal})
   end
 
   defp get_balance_sheet(financial_statement) do
