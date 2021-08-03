@@ -22,6 +22,18 @@ defmodule SaseMango.TickerUpdater do
               end
             end)
 
+          info =
+            if Map.has_key?(pr_issuer_details, "BestAskVolume") do
+              value =
+                pr_issuer_details
+                |> Map.get("BestAskVolume")
+                |> String.to_integer()
+
+              Map.put(info, "BestAskVolume", value)
+            else
+              info
+            end
+
           Securities.update_issuer(issuer, %{info: info})
 
         _ ->

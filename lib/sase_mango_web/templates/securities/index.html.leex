@@ -3,6 +3,7 @@
     <th class="text-center px-4" colspan="2">Symbol</th>
     <th class="text-center px-4" colspan="2">Name</th>
     <th class="text-center px-4">Price</th>
+    <th class="text-center px-4">Volume</th>
     <th class="text-center px-4">Dividend</th>
     <th class="text-center px-4">Dividend ROI (%)</th>
     <th class="text-center px-4">Previous dividend ROI (%)</th>
@@ -29,6 +30,7 @@
         <td class="text-center text-blue-400 px-4" colspan="2"><a href="http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/<%= security.symbol %>" target="_blank"><%= security.symbol %></a></td>
         <td class="text-center px-4" colspan="2"><%= security.name %></td>
         <td class="text-right px-4"><%= Decimal.round(security.price, 2) %></td>
+        <td class="text-right px-4"><%= security.volume %></td>
         <td class="text-right px-4"><%= Decimal.round(security.dividend, 2) %></td>
         <td class="text-right px-4"><%= Decimal.round(Decimal.mult(security.dividend_roi, 100), 2) %>%</td>
         <td class="text-right px-4"><%= Decimal.round(Decimal.mult(security.previous_dividend_roi, 100), 2) %>%</td>

@@ -54,6 +54,7 @@ defmodule SaseMango.Securities do
       previous: previous
     })
     |> where(fragment("(info->'BestAskPrice')::NUMERIC > 0"))
+    |> where(fragment("(info->'BestAskVolume')::NUMERIC > 0"))
     |> Repo.all()
     |> Stream.map(fn %{} = security ->
       symbol = security.issuer.symbol
@@ -175,7 +176,8 @@ defmodule SaseMango.Securities do
         profit: profit,
         profit_margin: profit_margin,
         segment: security.issuer.info["Segment"],
-        symbol: symbol
+        symbol: symbol,
+        volume: security.issuer.info["BestAskVolume"]
       }
     end)
     |> Stream.filter(fn security ->
