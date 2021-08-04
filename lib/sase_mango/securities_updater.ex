@@ -3,10 +3,15 @@ defmodule SaseMango.SecuritiesUpdater do
 
   require Logger
 
-  def update() do
+  def update(date \\ nil)
+
+  def update(nil) do
     {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()
     date = "#{day}.#{month}.#{year}"
+    update(date)
+  end
 
+  def update(date) when is_binary(date) do
     case SaseScraper.get_list(date) do
       {:ok, issuers} ->
         Enum.each(issuers, fn issuer ->
