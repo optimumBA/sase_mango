@@ -1,0 +1,1 @@
+alias SaseMango.{SecuritiesUpdater, TickerUpdater}
