@@ -20,6 +20,7 @@ defmodule SaseMangoWeb.Router do
     pipe_through :browser
 
     live "/", SecuritiesLive, :index
+    live "/calculator", CalculatorLive, :index
     live_dashboard "/dashboard", metrics: SaseMangoWeb.Telemetry
   end
 

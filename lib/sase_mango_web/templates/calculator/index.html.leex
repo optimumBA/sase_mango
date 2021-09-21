@@ -1,0 +1,55 @@
+<%= f = form_for @changeset, "#", class: "flex flex-col items-center m-4", phx_change: "calculate" %>
+  <div class="flex flex-row items-center">
+    <%= label f, :amount, "Amount (KM)", class: "flex w-28" %>
+    <%= text_input f, :amount, class: "flex w-24 px-4 border rounded-md", phx_debounce: :blur %>
+    <%= error_tag f, :amount, class: "invalid-feedback !mt-0 !mb-0 !ml-3" %>
+  </div>
+
+  <div class="flex flex-row items-center mt-3">
+    <%= label f, :fee, "Fee (%)", class: "flex w-28" %>
+    <%= text_input f, :fee, class: "flex w-24 px-4 border rounded-md", phx_debounce: :blur %>
+    <%= error_tag f, :fee, class: "invalid-feedback !mt-0 !mb-0 !ml-3" %>
+  </div>
+</form>
+
+<%= if @changeset.valid? do %>
+  <table class="overflow-scroll h-auto w-full mt-8">
+    <thead>
+      <th class="text-center px-4">Symbol</th>
+      <th class="text-center px-4">Name</th>
+      <th class="text-center px-4">Price</th>
+      <th class="text-center px-4">Volume</th>
+      <th class="text-center px-4">Amount</th>
+      <th class="text-center px-4">Fee</th>
+      <th class="text-center px-4">Total</th>
+    </thead>
+
+    <tbody>
+      <%= for row <- @result.securities do %>
+        <tr class="h-8">
+          <td class="text-center text-blue-400 px-4">
+            <a href="http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/<%= row.symbol %>" target="_blank">
+              <%= row.symbol %>
+            </a>
+          </td>
+          <td class="text-center px-4"><%= row.name %></td>
+          <td class="text-center px-4"><%= Decimal.round(row.price, 2) %> KM</td>
+          <td class="text-center px-4"><%= row.volume %></td>
+          <td class="text-center px-4"><%= Decimal.round(row.amount, 2) %> KM</td>
+          <td class="text-center px-4"><%= Decimal.round(row.fee, 2) %> KM</td>
+          <td class="text-center px-4"><%= Decimal.round(row.total, 2) %> KM</td>
+        </tr>
+      <% end %>
+
+      <tr class="h-12">
+        <td class="px-4"></td>
+        <td class="px-4"></td>
+        <td class="px-4"></td>
+        <td class="px-4"></td>
+        <td class="px-4"></td>
+        <td class="px-4"></td>
+        <td class="text-center px-4"><%= Decimal.round(@result.total, 2) %> KM</td>
+      </tr>
+    </tbody>
+  </table>
+<% end %>
