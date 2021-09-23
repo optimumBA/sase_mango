@@ -15,11 +15,11 @@ defmodule SaseMango.Calculator do
       |> Enum.map(fn %{} = security ->
         volume =
           amount_per_issuer
-          |> Decimal.div_int(security.price)
+          |> Decimal.div_int(security.ask_price)
           |> Decimal.to_integer()
-          |> correct_volume(security.price, input.fee, amount_per_issuer, security.volume)
+          |> correct_volume(security.ask_price, input.fee, amount_per_issuer, security.ask_volume)
 
-        amount = Decimal.mult(volume, security.price)
+        amount = Decimal.mult(volume, security.ask_price)
         fee = Decimal.mult(amount, input.fee) |> Decimal.div(100)
         total = Decimal.add(amount, fee)
 
@@ -28,7 +28,7 @@ defmodule SaseMango.Calculator do
           fee: fee,
           name: security.name,
           symbol: security.symbol,
-          price: security.price,
+          price: security.ask_price,
           total: total,
           volume: volume
         }

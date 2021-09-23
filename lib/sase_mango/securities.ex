@@ -101,7 +101,9 @@ defmodule SaseMango.Securities do
           else: Decimal.div(previous_total_dividends, previous_total_shares)
         )
 
-      price = convert_price_to_decimal(security.issuer.info["BestAskPrice"])
+      price = convert_price_to_decimal(security.issuer.info["AvgPrice"])
+      ask_price = convert_price_to_decimal(security.issuer.info["BestAskPrice"])
+      bid_price = convert_price_to_decimal(security.issuer.info["BestBidPrice"])
 
       eps =
         if(Decimal.equal?(total_shares, 0),
@@ -122,7 +124,7 @@ defmodule SaseMango.Securities do
       market_value =
         if(Decimal.equal?(total_shares, 0),
           do: Decimal.new(0),
-          else: Decimal.mult(price, total_shares)
+          else: Decimal.mult(ask_price, total_shares)
         )
 
       profit_margin =
@@ -138,13 +140,21 @@ defmodule SaseMango.Securities do
         )
 
       %{
+        ask_price: ask_price,
+        ask_volume: security.issuer.info["BestAskVolume"],
+        bid_price: bid_price,
+        bid_volume: security.issuer.info["BestBidVolume"],
         book_value: book_value,
         bvs: bvs,
         dividend: dividend,
         dividend_roi:
-          if(Decimal.equal?(price, 0), do: Decimal.new(0), else: Decimal.div(dividend, price)),
+          if(Decimal.equal?(ask_price, 0),
+            do: Decimal.new(0),
+            else: Decimal.div(dividend, ask_price)
+          ),
         eps: eps,
-        eps_roi: if(Decimal.equal?(price, 0), do: Decimal.new(0), else: Decimal.div(eps, price)),
+        eps_roi:
+          if(Decimal.equal?(ask_price, 0), do: Decimal.new(0), else: Decimal.div(eps, ask_price)),
         market_value: market_value,
         name: security.issuer.info["SymbolDescription"],
         nominal_price: nominal_price,
@@ -156,34 +166,36 @@ defmodule SaseMango.Securities do
         pe:
           if(Decimal.equal?(total_shares, 0) || Decimal.equal?(profit, 0),
             do: Decimal.new(0),
-            else: Decimal.div(price, Decimal.div(profit, total_shares))
+            else: Decimal.div(ask_price, Decimal.div(profit, total_shares))
           ),
         previous_book_value: previous_book_value,
         previous_bvs: previous_bvs,
         previous_dividend: previous_dividend,
         previous_dividend_roi:
           if(
-            Decimal.equal?(price, 0),
+            Decimal.equal?(ask_price, 0),
             do: Decimal.new(0),
-            else: Decimal.div(previous_dividend, price)
+            else: Decimal.div(previous_dividend, ask_price)
           ),
         previous_eps: previous_eps,
         previous_eps_roi:
-          if(Decimal.equal?(price, 0), do: Decimal.new(0), else: Decimal.div(previous_eps, price)),
+          if(Decimal.equal?(ask_price, 0),
+            do: Decimal.new(0),
+            else: Decimal.div(previous_eps, ask_price)
+          ),
         previous_profit: previous_profit,
         previous_profit_margin: previous_profit_margin,
         price: price,
         profit: profit,
         profit_margin: profit_margin,
         segment: security.issuer.info["Segment"],
-        symbol: symbol,
-        volume: security.issuer.info["BestAskVolume"]
+        symbol: symbol
       }
     end)
     |> Stream.filter(fn security ->
       Decimal.gt?(security.profit, Decimal.new(0)) &&
         Decimal.gt?(security.previous_profit, Decimal.new(0)) &&
-        Decimal.lt?(security.price, Decimal.mult(security.bvs, Decimal.div(2, 3))) &&
+        Decimal.lt?(security.ask_price, Decimal.mult(security.bvs, Decimal.div(2, 3))) &&
         Decimal.lt?(security.pb, Decimal.new(20)) &&
         Decimal.lt?(security.pe, Decimal.new(20)) &&
         Decimal.gt?(security.eps_roi, Decimal.from_float(0.05))
