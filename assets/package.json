@@ -4,8 +4,8 @@
   "license": "MIT",
   "scripts": {
     "build": "NODE_ENV=development TAILWIND_MODE=build webpack --mode development",
-    "deploy": "NODE_ENV=production webpack --mode production",
-    "watch": "NODE_ENV=development webpack --mode development --watch"
+    "deploy": "NODE_ENV=production TAILWIND_MODE=build webpack --mode production",
+    "watch": "NODE_ENV=development TAILWIND_MODE=watch webpack --mode development --watch"
   },
   "dependencies": {
     "phoenix": "file:../deps/phoenix",
@@ -27,7 +27,7 @@
     "mini-css-extract-plugin": "^2.1.0",
     "postcss-loader": "^6.1.1",
     "purgecss-webpack-plugin": "^4.0.3",
-    "tailwindcss": "^2.2.7",
+    "tailwindcss": "^2.2.15",
     "terser-webpack-plugin": "^5.1.4",
     "webpack": "^5.47.0",
     "webpack-cli": "^4.7.2"

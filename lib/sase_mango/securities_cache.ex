@@ -70,6 +70,8 @@ defmodule SaseMango.SecuritiesCache do
               old_security.symbol == security.symbol
             end)
 
+        security = Map.put(security, :newest, newest)
+
         newest_securities =
           if newest do
             [security.symbol | newest_securities]
