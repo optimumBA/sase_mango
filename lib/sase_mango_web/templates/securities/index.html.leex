@@ -25,27 +25,27 @@
           <span class="2xl:text-lg"><%= security.name %></span><br />
           <span class="2xl:text-lg"><%= segment(security.segment) %></span>
         </td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400" rowspan="2"><%= Decimal.round(security.price, 2) %></td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400" rowspan="2"><%= Decimal.round(security.nominal_price, 2) %></td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400"><%= Decimal.round(security.ask_price, 2) %></td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400"><%= Decimal.round(security.bid_price, 2) %></td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400"><%= Decimal.round(Decimal.mult(security.dividend_roi, 100), 2) %>%</td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400"><%= Decimal.round(Decimal.mult(security.eps_roi, 100), 2) %>%</td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400" rowspan="2"><%= Decimal.round(security.pe, 2) %></td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400" rowspan="2"><%= Decimal.round(security.pb, 2) %></td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400" colspan="2" rowspan="2"><%= Decimal.round(security.market_value, 0) %></td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400" colspan="2"><%= Decimal.round(security.book_value, 0) %></td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400"><%= Decimal.round(security.bvs, 2) %></td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400"><%= Decimal.round(Decimal.mult(security.profit_margin, 100), 2) %>%</td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400" rowspan="2"><%= format_number(security.price, 2) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400" rowspan="2"><%= format_number(security.nominal_price, 2) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400"><%= format_number(security.ask_price, 2) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400"><%= format_number(security.bid_price, 2) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400"><%= format_percentage(security.dividend_roi) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400"><%= format_percentage(security.eps_roi) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400" rowspan="2"><%= format_number(security.pe, 2) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400" rowspan="2"><%= format_number(security.pb, 2) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400" colspan="2" rowspan="2"><%= format_number(security.market_value, 0) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400" colspan="2"><%= format_number(security.book_value, 0) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400"><%= format_number(security.bvs, 2) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400"><%= format_percentage(security.profit_margin) %></td>
       </tr>
       <tr class="transition-colors <%= if(security.newest, do: " bg-red-300", else: if(security.new, do: " bg-yellow-300", else: "")) %>">
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= security.ask_volume %></td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= security.bid_volume %></td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= Decimal.round(Decimal.mult(security.previous_dividend_roi, 100), 2) %>%</td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= Decimal.round(Decimal.mult(security.previous_eps_roi, 100), 2) %>%</td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2" colspan="2"><%= Decimal.round(security.previous_book_value, 0) %></td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= Decimal.round(security.previous_bvs, 2) %></td>
-        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= Decimal.round(Decimal.mult(security.previous_profit_margin, 100), 2) %>%</td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= format_number(security.ask_volume) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= format_number(security.bid_volume) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= format_percentage(security.previous_dividend_roi) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= format_percentage(security.previous_eps_roi) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2" colspan="2"><%= format_number(security.previous_book_value, 0) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= format_number(security.previous_bvs, 2) %></td>
+        <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= format_percentage(security.previous_profit_margin) %></td>
       </tr>
     <% end %>
   </tbody>

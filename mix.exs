@@ -51,7 +51,8 @@ defmodule SaseMango.MixProject do
       {:elixir_xml_to_map, "~> 2.0"},
       {:finch, "~> 0.6"},
       {:tzdata, "~> 1.1"},
-      {:quantum, "~> 3.3"}
+      {:quantum, "~> 3.3"},
+      {:wallaby, "~> 0.29.0"}
     ]
   end
 

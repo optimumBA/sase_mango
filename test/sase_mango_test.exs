@@ -1,5 +1,5 @@
 defmodule SaseMangoTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest SaseMango
 
   test "greets the world" do
