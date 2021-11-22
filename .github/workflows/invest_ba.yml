@@ -49,4 +49,6 @@ jobs:
         run: mix deps.get
 
       - name: Create post
-        run: mix invest_ba.create_post
+        run: |
+          mix ecto.setup
+          mix invest_ba.create_post
