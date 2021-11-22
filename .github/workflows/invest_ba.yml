@@ -52,3 +52,9 @@ jobs:
         run: |
           mix ecto.setup
           mix invest_ba.create_post
+
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: screenshots
+          path: screenshots/
