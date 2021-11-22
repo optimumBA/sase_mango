@@ -1,6 +1,7 @@
 name: Invest.ba
 
 on:
+  push:
   schedule:
     # Every weekday at 3 PM UTC
     # - cron: "0 15 * * 1-5"
