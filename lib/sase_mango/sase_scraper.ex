@@ -30,7 +30,9 @@ defmodule SaseMango.SaseScraper do
            SaseMangoClient.get_financial_statement(symbol, year, semi_annual),
          data when is_map(data) <- XmlToMap.naive_map(body),
          [key] <- Map.keys(data),
-         %{^key => data} <- data do
+         %{^key => data} <- data,
+         # Discard statements containing only GENERALINFO
+         keys when length(keys) > 1 <- Map.keys(data) do
       {:ok, data}
     else
       error ->

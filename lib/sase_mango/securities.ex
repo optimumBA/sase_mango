@@ -36,25 +36,38 @@ defmodule SaseMango.Securities do
 
   def list_securities() do
     current_year = NaiveDateTime.utc_now() |> Map.fetch!(:year)
-    current = current_year - 1
-    previous = current_year - 2
 
-    from(issuer in Issuer, as: :issuer)
-    |> join(:left, [issuer], fs in assoc(issuer, :financial_statements),
-      on: fs.year == ^current,
-      on: fs.semi_annual == false
-    )
-    |> join(:left, [issuer], fs in assoc(issuer, :financial_statements),
-      on: fs.year == ^previous,
-      on: fs.semi_annual == false
-    )
-    |> select([issuer, current, previous], %{
-      issuer: issuer,
-      current: current,
-      previous: previous
+    financial_statements =
+      from fs in FinancialStatement,
+        select: %{id: fs.id, issuer_id: fs.issuer_id, rank: over(dense_rank(), :issuer)},
+        windows: [issuer: [partition_by: fs.issuer_id, order_by: [desc: :year]]],
+        where: fs.semi_annual == false,
+        where: fs.year >= ^current_year - 2
+
+    current_financial_statement =
+      from fs in FinancialStatement,
+        join: fs_ids in subquery(financial_statements),
+        on: fs_ids.id == fs.id,
+        where: fs_ids.issuer_id == parent_as(:issuer).id,
+        where: fs_ids.rank == 1
+
+    previous_financial_statement =
+      from fs in FinancialStatement,
+        join: fs_ids in subquery(financial_statements),
+        on: fs_ids.id == fs.id,
+        where: fs_ids.issuer_id == parent_as(:issuer).id,
+        where: fs_ids.rank == 2
+
+    from(i in Issuer, as: :issuer)
+    |> join(:inner_lateral, [], fs_1 in subquery(current_financial_statement), as: :current_fs)
+    |> join(:inner_lateral, [], fs_2 in subquery(previous_financial_statement), as: :previous_fs)
+    |> select([issuer: i, current_fs: current_fs, previous_fs: previous_fs], %{
+      issuer: i,
+      current: current_fs,
+      previous: previous_fs
     })
-    |> where(fragment("(info->'BestAskPrice')::NUMERIC > 0"))
-    |> where(fragment("(info->'BestAskVolume')::NUMERIC > 0"))
+    |> where([issuer: i], fragment("(?->'BestAskPrice')::NUMERIC > 0", i.info))
+    |> where([issuer: i], fragment("(?->'BestAskVolume')::NUMERIC > 0", i.info))
     |> Repo.all()
     |> Stream.map(fn %{} = security ->
       symbol = security.issuer.symbol
