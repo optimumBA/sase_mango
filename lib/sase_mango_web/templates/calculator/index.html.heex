@@ -1,4 +1,4 @@
-<%= f = form_for @changeset, "#", class: "flex flex-col items-center m-4", phx_change: "calculate" %>
+<.form let={f} for={@changeset} class="flex flex-col items-center m-4" phx-change="calculate">
   <div class="flex flex-row items-center">
     <%= label f, :amount, "Amount (KM)", class: "flex w-28" %>
     <%= text_input f, :amount, class: "flex w-24 px-4 border rounded-md", phx_debounce: :blur %>
@@ -10,7 +10,7 @@
     <%= text_input f, :fee, class: "flex w-24 px-4 border rounded-md", phx_debounce: :blur %>
     <%= error_tag f, :fee, class: "invalid-feedback !mt-0 !mb-0 !ml-3" %>
   </div>
-</form>
+</.form>
 
 <%= if @changeset.valid? do %>
   <table class="overflow-scroll h-auto w-full mt-8">
@@ -28,7 +28,7 @@
       <%= for row <- @result.securities do %>
         <tr class="h-8">
           <td class="text-center text-blue-400 px-4">
-            <a href="http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/<%= row.symbol %>" target="_blank">
+            <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{ row.symbol }"} target="_blank">
               <%= row.symbol %>
             </a>
           </td>

@@ -19,9 +19,9 @@
 
   <tbody>
     <%= for security <- @securities do %>
-      <tr class="transition-colors <%= if(security.newest, do: " bg-red-300", else: if(security.new, do: " bg-yellow-300", else: "")) %>">
+      <tr class={"transition-colors#{ if(security.newest, do: " bg-red-300", else: if(security.new, do: " bg-yellow-300", else: "")) }"}>
         <td class="text-center p-2 2xl:px-4 2xl:py-2 border-t border-gray-400" rowspan="2">
-          <a href="http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/<%= security.symbol %>" target="_blank" class="2xl:text-xl text-blue-400"><%= security.symbol %></a><br />
+          <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{ security.symbol }"} target="_blank" class="2xl:text-xl text-blue-400"><%= security.symbol %></a><br />
           <span class="2xl:text-lg"><%= security.name %></span><br />
           <span class="2xl:text-lg"><%= segment(security.segment) %></span>
         </td>
@@ -38,7 +38,7 @@
         <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400"><%= Decimal.round(security.bvs, 2) %></td>
         <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2 border-t border-gray-400"><%= Decimal.round(Decimal.mult(security.profit_margin, 100), 2) %>%</td>
       </tr>
-      <tr class="transition-colors <%= if(security.newest, do: " bg-red-300", else: if(security.new, do: " bg-yellow-300", else: "")) %>">
+      <tr class={"transition-colors#{ if(security.newest, do: " bg-red-300", else: if(security.new, do: " bg-yellow-300", else: "")) }"}>
         <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= security.ask_volume %></td>
         <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= security.bid_volume %></td>
         <td class="text-center 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= Decimal.round(Decimal.mult(security.previous_dividend_roi, 100), 2) %>%</td>

@@ -167,8 +167,4 @@ defmodule SaseMango do
         issuer
     end
   end
-
-  def hello do
-    :world
-  end
 end
