@@ -23,8 +23,8 @@ jobs:
         path: |
           _build
           deps
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-          restore-keys: ${{ runner.os }}-mix-
+        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-mix-
 
       - name: Install Elixir dependencies
         run: mix deps.get
@@ -34,8 +34,8 @@ jobs:
         path: |
           ~/.npm
           assets/node_modules
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-npm-
+        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: ${{ runner.os }}-npm-
 
       - name: Install Node dependencies
         run: npm ci --prefix ./assets --prefer-offline --no-audit
