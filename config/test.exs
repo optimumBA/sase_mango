@@ -8,8 +8,8 @@ import Config
 config :sase_mango, SaseMango.Repo,
   username: "postgres",
   password: "postgres",
-  database: "sase_mango_test#{System.get_env("MIX_TEST_PARTITION")}",
   hostname: "localhost",
+  database: "sase_mango_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 
