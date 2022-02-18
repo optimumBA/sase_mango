@@ -20,7 +20,7 @@ config :sase_mango, SaseMangoWeb.Endpoint,
 
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.13.5",
+  version: "0.14.0",
   default: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
@@ -49,6 +49,17 @@ config :sase_mango, SaseMango.Scheduler,
     {"@reboot", {SaseMango.SecuritiesCache, :update, []}}
   ],
   timezone: "Europe/Sarajevo"
+
+config :tailwind,
+  version: "3.0.23",
+  default: [
+    args: ~w(
+      --config=tailwind.config.js
+      --input=css/app.css
+      --output=../priv/static/assets/app.css
+    ),
+    cd: Path.expand("../assets", __DIR__)
+  ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
