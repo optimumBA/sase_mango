@@ -42,7 +42,7 @@ defmodule SaseMango.Securities do
         select: %{id: fs.id, issuer_id: fs.issuer_id, rank: over(dense_rank(), :issuer)},
         windows: [issuer: [partition_by: fs.issuer_id, order_by: [desc: :year]]],
         where: fs.semi_annual == false,
-        where: fs.year >= ^current_year - 2
+        where: fs.year >= ^current_year - 3
 
     current_financial_statement =
       from fs in FinancialStatement,

@@ -20,7 +20,7 @@ defmodule SaseMango.SecuritiesUpdater do
                {:ok, issuer} <- create_or_update_issuer(symbol, attrs) do
             current_year = NaiveDateTime.utc_now() |> Map.fetch!(:year)
 
-            for semi_annual <- [true, false], year <- (current_year - 2)..current_year do
+            for semi_annual <- [true, false], year <- (current_year - 3)..current_year do
               maybe_create_financial_statement(issuer, semi_annual, year)
             end
           else
