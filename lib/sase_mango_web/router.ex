@@ -1,6 +1,8 @@
 defmodule SaseMangoWeb.Router do
   use SaseMangoWeb, :router
 
+  @dialyzer {:nowarn_function, admin_auth: 2}
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -14,8 +16,12 @@ defmodule SaseMangoWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :admin do
+    plug :admin_auth, env: Application.compile_env(:sase_mango, :env)
+  end
+
   scope "/", SaseMangoWeb do
-    pipe_through :browser
+    pipe_through [:browser, :admin]
 
     live_session :default do
       live "/", SecuritiesLive, :index
@@ -39,9 +45,26 @@ defmodule SaseMangoWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/" do
-      pipe_through :browser
+      pipe_through [:browser, :admin]
 
       live_dashboard "/dashboard", metrics: SaseMangoWeb.Telemetry
+    end
+  end
+
+  defp admin_auth(conn, env: env) when env != :prod, do: conn
+
+  defp admin_auth(conn, _opts) do
+    options = Application.get_env(:sase_mango, :admin_auth)
+    username = Keyword.fetch!(options, :username)
+    password = Keyword.fetch!(options, :password)
+
+    with {request_username, request_password} <- Plug.BasicAuth.parse_basic_auth(conn),
+         valid_username? = Plug.Crypto.secure_compare(username, request_username),
+         valid_password? = Plug.Crypto.secure_compare(password, request_password),
+         true <- valid_username? and valid_password? do
+      conn
+    else
+      _ -> conn |> Plug.BasicAuth.request_basic_auth() |> halt()
     end
   end
 end
