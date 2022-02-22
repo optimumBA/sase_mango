@@ -20,7 +20,7 @@ defmodule SaseMango.MixProject do
   def application do
     [
       mod: {SaseMango.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
 
@@ -33,7 +33,7 @@ defmodule SaseMango.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6.4"},
+      {:phoenix, "~> 1.6.6"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},
@@ -52,7 +52,9 @@ defmodule SaseMango.MixProject do
       {:elixir_xml_to_map, "~> 2.0"},
       {:finch, "~> 0.9"},
       {:tzdata, "~> 1.1"},
-      {:quantum, "~> 3.4"}
+      {:quantum, "~> 3.4"},
+      {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
+      {:ecto_psql_extras, "~> 0.6"}
     ]
   end
 
@@ -64,12 +66,12 @@ defmodule SaseMango.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup", "cmd cd --assets npm install"],
+      setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.deploy": [
-        "cmd --cd assets npm run deploy",
+        "tailwind default --minify",
         "esbuild default --minify",
         "phx.digest"
       ]

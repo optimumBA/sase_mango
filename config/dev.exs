@@ -4,8 +4,8 @@ import Config
 config :sase_mango, SaseMango.Repo,
   username: "postgres",
   password: "postgres",
-  database: "sase_mango_dev",
   hostname: "localhost",
+  database: "sase_mango_dev",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
@@ -26,7 +26,7 @@ config :sase_mango, SaseMangoWeb.Endpoint,
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
-    npm: ["run", "watch", cd: Path.expand("../assets", __DIR__)]
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 
 # ## SSL Support
