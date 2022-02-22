@@ -5,8 +5,8 @@ defmodule SaseMango.SecuritiesCache do
   alias SaseMangoWeb.Endpoint
 
   defstruct executed_at: nil,
-            today: nil,
-            yesterday: nil
+            today: [],
+            yesterday: []
 
   # Client
 
@@ -37,7 +37,7 @@ defmodule SaseMango.SecuritiesCache do
 
   @impl true
   def handle_call(:get, _from, %__MODULE__{today: list} = state) do
-    {:reply, list, state}
+    {:reply, list, state, :hibernate}
   end
 
   @impl true
@@ -57,18 +57,16 @@ defmodule SaseMango.SecuritiesCache do
       Securities.list_securities()
       |> Enum.map_reduce([], fn %{} = security, newest_securities ->
         new =
-          state.yesterday &&
-            !Enum.find(state.yesterday, fn %{} = old_security ->
-              old_security.symbol == security.symbol
-            end)
+          !Enum.find(state.yesterday, fn %{} = old_security ->
+            old_security.symbol == security.symbol
+          end)
 
         security = Map.put(security, :new, new)
 
         newest =
-          state.today &&
-            !Enum.find(state.today, fn %{} = old_security ->
-              old_security.symbol == security.symbol
-            end)
+          !Enum.find(state.today, fn %{} = old_security ->
+            old_security.symbol == security.symbol
+          end)
 
         security = Map.put(security, :newest, newest)
 
@@ -94,6 +92,6 @@ defmodule SaseMango.SecuritiesCache do
       Endpoint.broadcast("securities", "send_notification", %{body: body})
     end
 
-    {:noreply, state}
+    {:noreply, state, :hibernate}
   end
 end

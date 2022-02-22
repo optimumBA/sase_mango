@@ -20,6 +20,8 @@ defmodule SaseMangoWeb.Router do
     plug :admin_auth, env: Application.compile_env(:sase_mango, :env)
   end
 
+  import Phoenix.LiveDashboard.Router
+
   scope "/", SaseMangoWeb do
     pipe_through [:browser, :admin]
 
@@ -27,6 +29,8 @@ defmodule SaseMangoWeb.Router do
       live "/", SecuritiesLive, :index
       live "/calculator", CalculatorLive, :index
     end
+
+    live_dashboard "/dashboard", metrics: SaseMangoWeb.Telemetry
   end
 
   # Other scopes may use custom stacks.
@@ -41,15 +45,6 @@ defmodule SaseMangoWeb.Router do
   # If your application does not have an admins-only section yet,
   # you can use Plug.BasicAuth to set up some basic authentication
   # as long as you are also using SSL (which you should anyway).
-  if Mix.env() in [:dev, :test] do
-    import Phoenix.LiveDashboard.Router
-
-    scope "/" do
-      pipe_through [:browser, :admin]
-
-      live_dashboard "/dashboard", metrics: SaseMangoWeb.Telemetry
-    end
-  end
 
   defp admin_auth(conn, env: env) when env != :prod, do: conn
 

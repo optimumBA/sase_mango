@@ -6,41 +6,15 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to Raspberry PI
-    # if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
-    runs-on: self-hosted
+    name: Deploy to Fly.io
+    needs: test
+    # if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request' && needs.test.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Install runtime dependencies
-        run: |
-          asdf install
-          mix local.hex --force && mix local.rebar --force
-
-      - uses: actions/cache@v2
+      - uses: superfly/flyctl-actions@1.1
         with:
-          path: |
-            _build
-            deps
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-          restore-keys: ${{ runner.os }}-mix-
-
-      - name: Install Elixir dependencies
-        run: mix deps.get
-
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.npm
-            assets/node_modules
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-npm-
-
-      - name: Install Node dependencies
-        run: npm ci --prefix ./assets --prefer-offline --no-audit
-
-      - name: Deploy release
-        run: |
-          export VERSION=${{ github.sha }}
-          ~/deploy.sh sase_mango
+          args: "deploy"

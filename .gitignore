@@ -1,6 +1,9 @@
 # The directory Mix will write compiled artifacts to.
 /_build/
 
+# ElixirLS
+/.elixir_ls/
+
 # If you run "mix test --cover", coverage assets end up here.
 /cover/
 
@@ -32,3 +35,5 @@ sase_mango-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Screenshots from the tests
+/screenshots/
