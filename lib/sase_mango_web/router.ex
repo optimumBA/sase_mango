@@ -30,7 +30,7 @@ defmodule SaseMangoWeb.Router do
       live "/calculator", CalculatorLive, :index
     end
 
-    live_dashboard "/dashboard", metrics: SaseMangoWeb.Telemetry
+    live_dashboard "/dashboard", ecto_repos: [SaseMango.Repo], metrics: SaseMangoWeb.Telemetry
   end
 
   # Other scopes may use custom stacks.
