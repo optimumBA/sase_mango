@@ -42,6 +42,8 @@ config :sase_mango, SaseMango.Scheduler,
   jobs: [
     # Every weekday at 3 PM
     {"0 15 * * 1-5", {SaseMango.SecuritiesUpdater, :update, []}},
+    # Every 10 minutes before markets are open (Mon-Fri 9:00-10:00)
+    {"*/10 9 * * 1-5", {SaseMango.TickerUpdater, :update, []}},
     # Every 5 minutes while markets are open (Mon-Fri 10:00-13:30)
     {"*/5 10-12 * * 1-5", {SaseMango.TickerUpdater, :update, []}},
     {"0-30/5 13 * * 1-5", {SaseMango.TickerUpdater, :update, []}},
