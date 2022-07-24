@@ -1,11 +1,23 @@
 defmodule SaseMango.SecuritiesUpdater do
-  alias SaseMango.{SaseScraper, Securities, SecuritiesCache}
+  @moduledoc """
+    Module responsible for updating issuer and financial statement tables.
+
+  """
+
+  alias SaseMango.SaseScraper
+  alias SaseMango.Securities
+  alias SaseMangoWeb.Endpoint
 
   require Logger
 
-  def update(date \\ nil)
+  @doc """
+    Updates existing or create new issuer.
 
-  def update(nil) do
+    Creates financial statement for each issuer is necessary.
+
+    Function takes a date string as argument or creates a current one in the format dd.mm.yyyy".
+  """
+  def update() do
     {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()
     date = "#{day}.#{month}.#{year}"
     update(date)
@@ -31,7 +43,7 @@ defmodule SaseMango.SecuritiesUpdater do
           end
         end)
 
-        SecuritiesCache.update()
+        Endpoint.broadcast("securities", "securities_update", %{})
 
       _ ->
         nil

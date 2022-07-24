@@ -1,29 +1,83 @@
 defmodule SaseMango.Securities do
+  @moduledoc """
+    Securities context module.
+
+    Implements functions related to work with issuers, financial statements
+    and lists fo securities.
+
+  """
+
   import Ecto.Query
 
-  alias SaseMango.Securities.{Issuer, FinancialStatement}
+  alias SaseMango.Securities.FinancialStatement
+  alias SaseMango.Securities.Issuer
   alias SaseMango.Repo
 
-  def list_issuers(), do: Issuer |> Repo.all()
+  @doc """
+    Returns the list of issuers.
 
-  def get_issuer(symbol), do: Issuer |> Repo.get_by(symbol: symbol)
+    ## Examples
 
+        iex> list_issuers()
+        [%Issuer{}, ...]
+
+  """
+  def list_issuers(), do: Repo.all(Issuer)
+
+  @doc """
+    Gets single issuer from db
+
+    Returns the issuer if exists, nil otherwise
+
+  """
+  def get_issuer(symbol), do: Repo.get_by(Issuer, symbol: symbol)
+
+  @doc """
+    Creates the issuer.
+
+    ## Examples
+
+        iex> create_issuer(%{field: value})
+        {:ok, %Issuer{}}
+
+        iex> create_issuer(%{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+  """
   def create_issuer(attrs) do
     %Issuer{}
     |> Issuer.changeset(attrs)
     |> Repo.insert()
   end
 
+  @doc """
+    Updates the issuer.
+
+    ## Examples
+
+        iex> update_issuer(issuer, %{field: new_value})
+        {:ok, %Issuer{}}
+
+        iex> update_issuer(issuer, %{field: bad_value})
+        {:error, %Ecto.Changeset{}}
+
+  """
   def update_issuer(issuer, attrs) do
     issuer
     |> Issuer.changeset(attrs)
     |> Repo.update()
   end
 
+  @doc """
+    Gets the financial statement for issuer by semiannual status and year
+  """
   def get_financial_statement(%Issuer{} = issuer, semi_annual, year) do
-    FinancialStatement |> Repo.get_by(issuer_id: issuer.id, semi_annual: semi_annual, year: year)
+    Repo.get_by(FinancialStatement, issuer_id: issuer.id, semi_annual: semi_annual, year: year)
   end
 
+  @doc """
+    Creates the financial statement for current issuer
+  """
   def create_financial_statement(issuer, attrs) do
     %FinancialStatement{}
     |> FinancialStatement.changeset(attrs)
@@ -34,29 +88,49 @@ defmodule SaseMango.Securities do
       {:error, error}
   end
 
+  @doc """
+    Helper function that returns market segment for specific security.
+  """
+  def segment("Free market - Subsegment 1"), do: "ST1"
+  def segment("Free market - Subsegment 2"), do: "ST2"
+  def segment("Free market - Subsegment 3"), do: "ST3"
+  def segment("The Official market - The Official market of companies"), do: "Companies"
+  def segment("The Official market - The Official market of funds"), do: "Funds"
+
+  defp financial_statements do
+    current_year = NaiveDateTime.utc_now().year
+
+    from fs in FinancialStatement,
+      select: %{id: fs.id, issuer_id: fs.issuer_id, rank: over(dense_rank(), :issuer)},
+      windows: [issuer: [partition_by: fs.issuer_id, order_by: [desc: :year]]],
+      where: fs.semi_annual == false,
+      where: fs.year >= ^current_year - 3
+  end
+
+  defp current_financial_statement do
+    from fs in FinancialStatement,
+      join: fs_ids in subquery(financial_statements()),
+      on: fs_ids.id == fs.id,
+      where: fs_ids.issuer_id == parent_as(:issuer).id,
+      where: fs_ids.rank == 1
+  end
+
+  defp previous_financial_statement do
+    from fs in FinancialStatement,
+      join: fs_ids in subquery(financial_statements()),
+      on: fs_ids.id == fs.id,
+      where: fs_ids.issuer_id == parent_as(:issuer).id,
+      where: fs_ids.rank == 2
+  end
+
+  @doc """
+    Returns the list of securities.
+
+    Generates the list of securities calculated by ask price.
+  """
   def list_securities() do
-    current_year = NaiveDateTime.utc_now() |> Map.fetch!(:year)
-
-    financial_statements =
-      from fs in FinancialStatement,
-        select: %{id: fs.id, issuer_id: fs.issuer_id, rank: over(dense_rank(), :issuer)},
-        windows: [issuer: [partition_by: fs.issuer_id, order_by: [desc: :year]]],
-        where: fs.semi_annual == false,
-        where: fs.year >= ^current_year - 3
-
-    current_financial_statement =
-      from fs in FinancialStatement,
-        join: fs_ids in subquery(financial_statements),
-        on: fs_ids.id == fs.id,
-        where: fs_ids.issuer_id == parent_as(:issuer).id,
-        where: fs_ids.rank == 1
-
-    previous_financial_statement =
-      from fs in FinancialStatement,
-        join: fs_ids in subquery(financial_statements),
-        on: fs_ids.id == fs.id,
-        where: fs_ids.issuer_id == parent_as(:issuer).id,
-        where: fs_ids.rank == 2
+    current_financial_statement = current_financial_statement()
+    previous_financial_statement = previous_financial_statement()
 
     from(i in Issuer, as: :issuer)
     |> join(:inner_lateral, [], fs_1 in subquery(current_financial_statement), as: :current_fs)
@@ -118,6 +192,8 @@ defmodule SaseMango.Securities do
       ask_price = convert_price_to_decimal(security.issuer.info["BestAskPrice"])
       bid_price = convert_price_to_decimal(security.issuer.info["BestBidPrice"])
 
+      last_trade_date = convert_date_format(security.issuer.info["LastTradeDate"])
+
       eps =
         if(Decimal.equal?(total_shares, 0),
           do: Decimal.new(0),
@@ -168,6 +244,7 @@ defmodule SaseMango.Securities do
         eps: eps,
         eps_roi:
           if(Decimal.equal?(ask_price, 0), do: Decimal.new(0), else: Decimal.div(eps, ask_price)),
+        last_trade_date: last_trade_date,
         market_value: market_value,
         name: security.issuer.info["SymbolDescription"],
         nominal_price: nominal_price,
@@ -348,4 +425,15 @@ defmodule SaseMango.Securities do
 
   defp convert_price_to_decimal(price) when is_float(price), do: Decimal.from_float(price)
   defp convert_price_to_decimal(price), do: Decimal.new(price)
+
+  defp convert_date_format(value) do
+    {:ok, datetime} =
+      Regex.run(~r/[0-9]{1,}/, value)
+      |> List.first()
+      |> String.slice(0..-4)
+      |> String.to_integer()
+      |> DateTime.from_unix()
+
+    datetime
+  end
 end

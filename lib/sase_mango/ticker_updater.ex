@@ -1,6 +1,16 @@
 defmodule SaseMango.TickerUpdater do
-  alias SaseMango.{SaseScraper, Securities, SecuritiesCache}
+  @moduledoc """
+    Module responsible for updating each issuer table.
+  """
 
+  alias SaseMango.SaseScraper
+  alias SaseMango.Securities
+  alias SaseMangoWeb.Endpoint
+
+  @doc """
+    Updates each issuer in db.
+
+  """
   def update() do
     issuers = Securities.list_issuers()
 
@@ -16,9 +26,14 @@ defmodule SaseMango.TickerUpdater do
                   |> Decimal.new()
                   |> Decimal.to_float()
 
-                Map.put(info, key, value)
+                info
+                |> Map.put(key, value)
+                |> Map.put("LastTradeDate", pr_issuer_details["LastTradeDate"])
+                |> Map.put("TradingDay", pr_issuer_details["TradingDay"])
               else
                 info
+                |> Map.put("LastTradeDate", pr_issuer_details["LastTradeDate"])
+                |> Map.put("TradingDay", pr_issuer_details["TradingDay"])
               end
             end)
 
@@ -41,6 +56,6 @@ defmodule SaseMango.TickerUpdater do
       end
     end
 
-    SecuritiesCache.update()
+    Endpoint.broadcast("securities", "securities_update", %{})
   end
 end
