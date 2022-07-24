@@ -25,12 +25,14 @@ defmodule SaseMangoWeb.Router do
   scope "/", SaseMangoWeb do
     pipe_through [:browser, :admin]
 
-    live_session :default do
-      live "/", SecuritiesLive, :index
-      live "/calculator", CalculatorLive, :index
-    end
-
     live_dashboard "/dashboard", ecto_repos: [SaseMango.Repo], metrics: SaseMangoWeb.Telemetry
+
+    live_session :default do
+      live "/securities-list", SecuritiesLive.Index, :securities
+      live "/bargains-list", SecuritiesLive.Index, :bargains
+      live "/calculator", CalculatorLive, :index
+      forward "/", Plugs.WelcomePageRedirector, to: "/securities-list"
+    end
   end
 
   # Other scopes may use custom stacks.
