@@ -1,9 +1,18 @@
-// See the Tailwind configuration guide for advanced usage
-// https://tailwindcss.com/docs/configuration
+const colors = require('tailwindcss/colors')
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 module.exports = {
   content: ['./js/**/*.js', '../lib/*_web.ex', '../lib/*_web/**/*.*ex'],
   theme: {
-    extend: {},
+    extend: {
+      animation: {
+        'show-tab-line': 'show-tab-line 0.4s ease-in-out forwards',
+        'show-table-rows': 'show-table-rows 0.6s ease-in-out',
+      },
+      fontFamily: {
+        inter: ['Inter', ...defaultTheme.fontFamily.sans],
+      },
+    },
   },
   plugins: [require('@tailwindcss/forms')],
 }
