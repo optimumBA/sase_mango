@@ -2,10 +2,6 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   use SaseMangoWeb, :live_view
 
   alias SaseMango.Securities
-  # alias SaseMango.HandleTable
-  # alias SaseMango.HandleTable.SearchFilter
-  # alias SaseMangoWeb.Components.FilterFormComponent
-  # alias SaseMangoWeb.Components.SortingComponent
   alias SaseMangoWeb.Endpoint
   alias Phoenix.Socket.Broadcast
 
@@ -31,7 +27,6 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   defp assign_params(socket, params) do
     socket
     |> assign(:active_tab, active_tab(socket.assigns.live_action))
-    # |> assign(:filter_options, %SearchFilter{name: params["name"] || nil})
     |> apply_action(socket.assigns.live_action, params)
   end
 
@@ -39,16 +34,12 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     socket
     |> assign(:page_title, "List of securities")
     |> assign(:securities, [])
-
-    # |> assign(:sort_options, %{sort_by: nil, sort_order: nil})
   end
 
   defp apply_action(socket, :bargains, _params) do
     socket
     |> assign(:page_title, "List of bargain securities")
     |> assign(:securities, list_securities())
-
-    # |> assign(:sort_options, %{sort_by: nil, sort_order: nil})
   end
 
   @impl true

@@ -33,7 +33,7 @@ defmodule SaseMango.Application do
 
   defp more_children(_env) do
     [
-      SaseMango.SecuritiesCache,
+      # SaseMango.SecuritiesCache,
       SaseMango.Scheduler
     ]
   end
