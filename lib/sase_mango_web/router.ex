@@ -28,10 +28,9 @@ defmodule SaseMangoWeb.Router do
     live_dashboard "/dashboard", ecto_repos: [SaseMango.Repo], metrics: SaseMangoWeb.Telemetry
 
     live_session :default do
-      live "/securities-list", SecuritiesLive.Index, :securities
-      live "/bargains-list", SecuritiesLive.Index, :bargains
+      live "/", SecuritiesLive.Index, :securities
+      live "/bargains", SecuritiesLive.Index, :bargains
       live "/calculator", CalculatorLive, :index
-      forward "/", Plugs.WelcomePageRedirector, to: "/securities-list"
     end
   end
 
