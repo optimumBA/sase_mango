@@ -1,1 +1,3 @@
-alias SaseMango.{SecuritiesCache, SecuritiesUpdater, TickerUpdater}
+alias SaseMango.Securities
+alias SaseMango.SecuritiesUpdater
+alias SaseMango.TickerUpdater

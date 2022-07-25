@@ -25,12 +25,13 @@ defmodule SaseMangoWeb.Router do
   scope "/", SaseMangoWeb do
     pipe_through [:browser, :admin]
 
+    live_dashboard "/dashboard", ecto_repos: [SaseMango.Repo], metrics: SaseMangoWeb.Telemetry
+
     live_session :default do
-      live "/", SecuritiesLive, :index
+      live "/", SecuritiesLive.Index, :securities
+      live "/bargains", SecuritiesLive.Index, :bargains
       live "/calculator", CalculatorLive, :index
     end
-
-    live_dashboard "/dashboard", ecto_repos: [SaseMango.Repo], metrics: SaseMangoWeb.Telemetry
   end
 
   # Other scopes may use custom stacks.
