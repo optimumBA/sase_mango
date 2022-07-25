@@ -46,77 +46,175 @@
 
 </div>
 
-<table class="securities-table">
+<table class="securities-table font-montserrat">
   <thead>
     <tr>
       <th class="">
         <div class="flex justify-center items-center gap-2">
-          Symbol
+          <.live_component
+            module={SortingComponent}
+            id={"sort-symbol"}
+            col_text={"Symbol"}
+            key={:symbol}
+            col_type={:text}
+            sort_options={@sort_options} 
+          />
         </div>
       </th>
       <th class="">
         <div class="flex justify-center items-center gap-2">
-          Issuer
+          <.live_component
+              module={SortingComponent}
+              id={"sort-issuer"}
+              col_text={"Issuer"}
+              key={:name}
+              col_type={:text}
+              sort_options={@sort_options} 
+            />
         </div>
       </th>
       <th class="" >
         <div class="flex justify-center items-center gap-2">
-            Price
+            <.live_component
+              module={SortingComponent}
+              id={"sort-price"}
+              col_text={"Price"}
+              key={:price}
+              col_type={:number}
+              sort_options={@sort_options} 
+            />
         </div>
       </th>
       <th class="" >
         <div class="flex justify-center items-center gap-2">
-            Nominal price
+            <.live_component
+              module={SortingComponent}
+              id={"sort-nominal-price"}
+              col_text={"Nominal price"}
+              key={:nominal_price}
+              col_type={:number}
+              sort_options={@sort_options} 
+            />
         </div>
       </th>
       <th class="" colspan="2">
         <div class="flex justify-center items-center gap-2">
-            Ask
+            <.live_component
+              module={SortingComponent}
+              id={"sort-ask"}
+              col_text={"Ask"}
+              key={:ask_price}
+              col_type={:number}
+              sort_options={@sort_options} 
+            />
         </div>
       </th>
       <th class="" colspan="2">
         <div class="flex justify-center items-center gap-2">
-            Bid
+            <.live_component
+              module={SortingComponent}
+              id={"sort-bid"}
+              col_text={"Bid"}
+              key={:bid_price}
+              col_type={:number}
+              sort_options={@sort_options} 
+            />
         </div>
       </th>
       <th class="" >
         <div class="flex justify-center items-center gap-2">
-            Dividend ROI (%)
+            <.live_component
+              module={SortingComponent}
+              id={"sort-dividend-roi"}
+              col_text={"Dividend ROI (%)"}
+              key={:dividend_roi}
+              col_type={:number}
+              sort_options={@sort_options} 
+            />
         </div> 
       </th>
       <th class="">
         <div class="flex justify-center items-center gap-2">
-            EPS ROI (%)
+            <.live_component
+              module={SortingComponent}
+              id={"sort-eps-roi"}
+              col_text={"EPS ROI (%)"}
+              key={:eps_roi}
+              col_type={:number}
+              sort_options={@sort_options} 
+            />
         </div>
       </th>
       <th class="">
         <div class="flex justify-center items-center gap-2">
-            P/E
+            <.live_component
+              module={SortingComponent}
+              id={"sort-pe"}
+              col_text={" P/E"}
+              key={:pe}
+              col_type={:number}
+              sort_options={@sort_options} 
+            />
         </div>
       </th>
       <th class="">
         <div class="flex justify-center items-center gap-2">
-            P/B
+            <.live_component
+              module={SortingComponent}
+              id={"sort-pb"}
+              col_text={"P/B"}
+              key={:pb}
+              col_type={:number}
+              sort_options={@sort_options} 
+            />
         </div>
       </th>
       <th class="" colspan="2">
         <div class="flex justify-center items-center gap-2">
-            Market Value
+            <.live_component
+              module={SortingComponent}
+              id={"sort-market-value"}
+              col_text={"Market Value"}
+              key={:market_value}
+              col_type={:number}
+              sort_options={@sort_options} 
+            />
         </div>
       </th>
       <th class="" colspan="2">
         <div class="flex justify-center items-center gap-2">
-            Book Value
+            <.live_component
+              module={SortingComponent}
+              id={"sort-book-value"}
+              col_text={"Book Value"}
+              key={:book_value}
+              col_type={:number}
+              sort_options={@sort_options} 
+            />
         </div>
       </th>
       <th class="">
         <div class="flex justify-center items-center gap-2">
-            BVS
+            <.live_component
+              module={SortingComponent}
+              id={"sort-bvs"}
+              col_text={"BVS"}
+              key={:bvs}
+              col_type={:number}
+              sort_options={@sort_options} 
+            />
         </div>
       </th>
       <th class="">
         <div class="flex justify-center items-center gap-2">
-            Profit margin
+            <.live_component
+              module={SortingComponent}
+              id={"sort-profit-margin"}
+              col_text={"Profit margin"}
+              key={:profit_margin}
+              col_type={:number}
+              sort_options={@sort_options} 
+            />
         </div>
       </th>
     </tr>
