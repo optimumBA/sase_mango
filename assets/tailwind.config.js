@@ -10,7 +10,7 @@ module.exports = {
         'show-table-rows': 'show-table-rows 0.6s ease-in-out',
       },
       fontFamily: {
-        inter: ['Inter', ...defaultTheme.fontFamily.sans],
+        montserrat: ['Montserrat', ...defaultTheme.fontFamily.sans],
       },
     },
   },

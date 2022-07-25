@@ -38,8 +38,8 @@ button[type='submit'],
 input[type='button'],
 input[type='reset'],
 input[type='submit'] {
-  background-color: #6775af;
-  border: 0.1rem solid #6775af;
+  background-color: #9db9d3;
+  border: 0.1rem solid #9db9d3;
   border-radius: 10px;
   color: #fff;
   cursor: pointer;
@@ -61,8 +61,8 @@ input[type='button']:hover,
 input[type='reset']:hover,
 input[type='submit']:hover {
   transition: all 0.2s ease-in-out;
-  background-color: #7a87bb;
-  border-color: #7a87bb;
+  background-color: #6775af;
+  border-color: #6775af;
   color: #fff;
   outline: 0;
 }
@@ -97,7 +97,7 @@ input[type='reset'].button-outline:hover,
 input[type='submit'].button-outline:focus,
 input[type='submit'].button-outline:hover {
   background-color: transparent;
-  border-color: #6775af;
+  border-color: #9db9d3;
   color: #1e1e1e;
 }
 .button.button-outline[disabled]:focus,
@@ -122,7 +122,7 @@ input[type='reset'].button-clear,
 input[type='submit'].button-clear {
   background-color: transparent;
   border-color: transparent;
-  color: #6775af;
+  color: #9db9d3;
   cursor: pointer;
   text-decoration: underline;
 }
@@ -136,7 +136,7 @@ input[type='reset'].button-clear:focus,
 input[type='reset'].button-clear:hover,
 input[type='submit'].button-clear:focus,
 input[type='submit'].button-clear:hover {
-  color: #6775af;
+  color: #9db9d3;
 }
 .button.button-clear[disabled]:focus,
 .button.button-clear[disabled],
@@ -276,7 +276,7 @@ input[type='radio']:hover {
 }
 
 a {
-  color: #6775af;
+  color: #9db9d3;
   text-decoration: none;
   cursor: pointer;
 }
@@ -311,11 +311,11 @@ th:last-child {
 }
 
 .securities-table > thead > tr > th {
-  @apply text-white bg-[#6775af] text-center font-[700] text-[0.95em] 2xl:text-[1.1em] px-6 py-6 2xl:py-8 2xl:px-4;
+  @apply text-white bg-[#9DB9D3] text-center font-[700] text-[0.95em] 2xl:text-[1.1em] px-6 py-6 2xl:py-8 2xl:px-4;
 }
 
-.securities-table > thead > tr > th:nth-child(2) {
-  @apply text-left;
+.securities-table > thead > tr > th:first-child {
+  @apply px-4 2xl:px-8;
 }
 
 .securities-table > thead > tr > th:last-child {
@@ -328,12 +328,11 @@ th:last-child {
 
 .securities-table tbody tr td,
 .securities-table tbody tr th {
-  @apply text-center text-[1em] 2xl:text-[1.1em] animate-[show-table-rows_0.6s_ease-in-out];
-  /* animation: show-table-rows 0.6s ease-in-out; */
+  @apply text-center text-[#1E1E1E] text-[1em] 2xl:text-[1.1em] animate-[show-table-rows_0.6s_ease-in-out];
 }
 
 .page-link {
-  @apply text-[#8C8C8C] font-[400] px-4 hover:text-[#3b3a3a] duration-300 ease-in-out;
+  @apply text-[#8C8C8C] text-[0.95em] font-[400] px-8 hover:text-[#3b3a3a] duration-300 ease-in-out;
 }
 
 .page-tab {
@@ -341,13 +340,13 @@ th:last-child {
 }
 
 .tab-line {
-  @apply w-0 bg-[#6775AF] h-[2px];
+  @apply w-0 bg-[#9DB9D3] h-[2px] rounded-xl;
 }
 
 .page-tab.securities .tab-line,
 .page-tab.bargains .tab-line,
 .page-tab.calculator .tab-line {
-  @apply absolute bottom-0 animate-[show-tab-line_0.4s_ease-in-out_forwards];
+  @apply absolute -bottom-[3px] animate-[show-tab-line_0.4s_ease-in-out_forwards];
 }
 
 @keyframes show-tab-line {

@@ -1,7 +1,9 @@
 
-<div class="w-[95%] m-auto mt-[6rem] text-[1.2em] px-4 py-4">
+<section class="p-6">
+
+<div class="mt-[6rem] mb-[2rem] text-[1.2em] py-4">
   <div class="flex items-center gap-4 px-2">
-    <span class="text-[#8C8C8C] font-[400]">Date of exchange rate list:</span>
+    <span class="text-[#8C8C8C] font-[400]">Date:</span>
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M11.6667 2.66663H2.33333C1.59695 2.66663 1 3.26358 1 3.99996V13.3333C1 14.0697 1.59695 14.6666 2.33333 14.6666H11.6667C12.403 14.6666 13 14.0697 13 13.3333V3.99996C13 3.26358 12.403 2.66663 11.6667 2.66663Z" 
           stroke="#5B92D7" 
@@ -26,13 +28,13 @@
         <div class="tab-line"></div>
       </div>
       <div class={"page-tab #{if @active_tab == :bargains, do: "bargains"}"}>
-        <%= live_patch "List of bargain securities", to: Routes.securities_index_path(@socket, :bargains), 
+        <%= live_patch "Bargain securities", to: Routes.securities_index_path(@socket, :bargains), 
           class: "page-link"
         %>
         <div class="tab-line"></div>
       </div>
-      <div class={"page-tab #{if @active_tab == :calculator, do: "calculator"}"}>
-        <%= live_patch "Calculator", to: Routes.calculator_path(@socket, :index), class: "page-link"
+      <div class="page-tab">
+        <%= live_redirect "Calculator", to: Routes.calculator_path(@socket, :index), class: "page-link"
         %>
         <div class="tab-line"></div>
       </div>
@@ -44,19 +46,17 @@
 
 </div>
 
-<section class="p-4">
-
 <table class="securities-table">
   <thead>
     <tr>
       <th class="">
         <div class="flex justify-center items-center gap-2">
-          Issuer
+          Symbol
         </div>
       </th>
       <th class="">
-        <div class="w-max flex justify-center items-center gap-2">
-          Last transaction date
+        <div class="flex justify-center items-center gap-2">
+          Issuer
         </div>
       </th>
       <th class="" >
@@ -130,11 +130,11 @@
           >
             <%= security.symbol %>
           </a>
-          <br />
+        </td>
+        <td class=" p-2 2xl:px-4 2xl:py-2">          
           <span class=""><%= security.name %></span><br />
           <span class=""><%= Securities.segment(security.segment) %></span>
         </td>
-        <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= convert_date(security.last_trade_date) %></td>
         <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= Decimal.round(security.price, 2) %></td>
         <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= Decimal.round(security.nominal_price, 2) %></td>
         <td class="p-2 2xl:px-4 2xl:py-2" colspan="2">
