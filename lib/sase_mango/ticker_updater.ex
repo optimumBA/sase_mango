@@ -26,14 +26,9 @@ defmodule SaseMango.TickerUpdater do
                   |> Decimal.new()
                   |> Decimal.to_float()
 
-                info
-                |> Map.put(key, value)
-                |> Map.put("LastTradeDate", pr_issuer_details["LastTradeDate"])
-                |> Map.put("TradingDay", pr_issuer_details["TradingDay"])
+                Map.put(info, key, value)
               else
                 info
-                |> Map.put("LastTradeDate", pr_issuer_details["LastTradeDate"])
-                |> Map.put("TradingDay", pr_issuer_details["TradingDay"])
               end
             end)
 

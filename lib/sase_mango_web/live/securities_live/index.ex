@@ -50,7 +50,6 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   defp list_securities(), do: Securities.list_securities()
 
   defp active_tab(action) when action in [:securities, :bargains], do: action
-  defp active_tab(_action), do: :calculator
 
   def todays_date do
     {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()
