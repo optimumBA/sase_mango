@@ -7,11 +7,6 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    socket =
-      assign_new(socket, :securities, fn ->
-        list_securities()
-      end)
-
     if connected?(socket) do
       Endpoint.subscribe("securities")
     end
@@ -21,24 +16,20 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    {:noreply, assign_params(socket, params)}
-  end
-
-  defp assign_params(socket, params) do
-    socket
-    |> assign(:active_tab, active_tab(socket.assigns.live_action))
-    |> apply_action(socket.assigns.live_action, params)
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
   defp apply_action(socket, :securities, _params) do
     socket
     |> assign(:page_title, "List of securities")
+    |> assign(:active_tab, :securities)
     |> assign(:securities, [])
   end
 
   defp apply_action(socket, :bargains, _params) do
     socket
-    |> assign(:page_title, "List of bargain securities")
+    |> assign(:page_title, "Bargain securities")
+    |> assign(:active_tab, :bargains)
     |> assign(:securities, list_securities())
   end
 
@@ -49,15 +40,8 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
 
   defp list_securities(), do: Securities.list_securities()
 
-  defp active_tab(action) when action in [:securities, :bargains], do: action
-
   def todays_date do
     {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()
-    "#{day}.#{month}.#{year}"
-  end
-
-  def convert_date(datetime) do
-    {year, month, day} = Date.to_erl(datetime)
     "#{day}.#{month}.#{year}"
   end
 end
