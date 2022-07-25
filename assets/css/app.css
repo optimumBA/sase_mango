@@ -311,7 +311,7 @@ th:last-child {
 }
 
 .securities-table > thead > tr > th {
-  @apply text-white bg-[#9DB9D3] text-center font-[700] text-[0.95em] 2xl:text-[1.1em] px-6 py-6 2xl:py-8 2xl:px-4;
+  @apply text-white bg-[#9DB9D3] text-center font-[700] text-[0.95em] 2xl:text-[1em] px-6 py-6 2xl:py-8 2xl:px-4;
 }
 
 .securities-table > thead > tr > th:first-child {
@@ -328,7 +328,25 @@ th:last-child {
 
 .securities-table tbody tr td,
 .securities-table tbody tr th {
-  @apply text-center text-[#1E1E1E] text-[1em] 2xl:text-[1.1em] animate-[show-table-rows_0.6s_ease-in-out];
+  @apply text-center text-[#1E1E1E] text-[1em] 2xl:text-[1.1em];
+}
+
+.sortable_column {
+  @apply flex justify-center items-center gap-4 cursor-pointer;
+}
+
+.sortable_column span {
+  @apply w-fit;
+}
+
+.rotate-up svg {
+  transform: rotateX(180deg);
+  @apply duration-500 ease-linear;
+}
+
+.rotate-down svg {
+  transform: rotateX(0deg);
+  @apply duration-500 ease-linear;
 }
 
 .page-link {
