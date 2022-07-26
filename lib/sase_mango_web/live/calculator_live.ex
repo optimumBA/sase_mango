@@ -2,7 +2,8 @@ defmodule SaseMangoWeb.CalculatorLive do
   use SaseMangoWeb, :live_view
 
   alias Phoenix.Socket.Broadcast
-  alias SaseMango.{Calculator}
+  alias SaseMango.Calculator
+  alias SaseMango.Securities
   alias SaseMangoWeb.{CalculatorView, Endpoint}
 
   @impl true
@@ -11,7 +12,7 @@ defmodule SaseMangoWeb.CalculatorLive do
       socket
       |> assign_new(:changeset, fn -> Calculator.change_input(%Calculator.Input{}) end)
       |> assign_new(:result, fn -> %{} end)
-      |> assign_new(:securities, fn -> SaseMango.Securities.list_securities() end)
+      |> assign_new(:securities, fn -> Securities.list_securities(:bargains) end)
 
     if connected?(socket) do
       Endpoint.subscribe("securities")
@@ -38,7 +39,7 @@ defmodule SaseMangoWeb.CalculatorLive do
 
   @impl true
   def handle_info(%Broadcast{event: "securities_update"}, socket) do
-    securities = SaseMango.Securities.list_securities()
+    securities = Securities.list_securities(:bargains)
 
     {:noreply,
      socket
