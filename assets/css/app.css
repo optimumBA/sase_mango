@@ -292,7 +292,6 @@ table {
 
 td,
 th {
-  /* border-bottom: 0.1rem solid #e1e1e1; */
   padding: 1.2rem 1.5rem;
 }
 td:first-child,
@@ -331,11 +330,11 @@ th:last-child {
   @apply text-center text-[#1E1E1E] text-[1em] 2xl:text-[1.1em];
 }
 
-.sortable_column {
+.sortable-column {
   @apply flex justify-center items-center gap-4 cursor-pointer;
 }
 
-.sortable_column span {
+.sortable-column span {
   @apply w-fit;
 }
 
