@@ -123,12 +123,25 @@ defmodule SaseMango.Securities do
       where: fs_ids.rank == 2
   end
 
+  defp filter_by_symbol_or_name(query, %{name: name}) when is_binary(name) do
+    search_value = "%#{name}%"
+
+    query
+    |> where(
+      [issuer: i],
+      like(i.symbol, ^search_value) or
+        like(fragment("(?->'SymbolDescription')::TEXT", i.info), ^search_value)
+    )
+  end
+
+  defp filter_by_symbol_or_name(query, _params), do: query
+
   @doc """
     Returns the list of securities.
 
     Generates the list of securities calculated by ask price.
   """
-  def list_securities() do
+  def list_securities(:bargains, filter_params \\ %{}) do
     current_financial_statement = current_financial_statement()
     previous_financial_statement = previous_financial_statement()
 
@@ -140,6 +153,7 @@ defmodule SaseMango.Securities do
       current: current_fs,
       previous: previous_fs
     })
+    |> filter_by_symbol_or_name(filter_params)
     |> where([issuer: i], fragment("(?->'BestAskPrice')::NUMERIC > 0", i.info))
     |> where([issuer: i], fragment("(?->'BestAskVolume')::NUMERIC > 0", i.info))
     |> Repo.all()
