@@ -5,6 +5,28 @@ defmodule SaseMangoWeb.Components.TableIconsComponent do
 
   use Phoenix.Component
 
+  def sort_icon(%{col_type: :text, sort_options: options, key: key} = assigns) do
+    match_text_icon(assigns, options, key)
+  end
+
+  def sort_icon(%{col_type: :number, sort_options: _options} = assigns) do
+    number_sort_icon(assigns)
+  end
+
+  def sort_icon(%{col_type: :text, sort_order: _none} = assigns), do: text_sort_asc(assigns)
+
+  defp match_text_icon(assigns, %{sort_by: sort_key, sort_order: :asc} = _options, key)
+       when sort_key == key do
+    text_sort_asc(assigns)
+  end
+
+  defp match_text_icon(assigns, %{sort_by: sort_key, sort_order: :desc} = _options, key)
+       when sort_key == key do
+    text_sort_desc(assigns)
+  end
+
+  defp match_text_icon(assigns, _options, _key), do: text_sort_asc(assigns)
+
   def text_sort_asc(assigns) do
     ~H"""
       <svg width="19" height="15"
