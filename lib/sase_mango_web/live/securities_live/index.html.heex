@@ -34,13 +34,19 @@
         <div class="tab-line"></div>
       </div>
       <div class="page-tab">
-        <%= live_redirect "Calculator", to: Routes.calculator_path(@socket, :index), class: "page-link"
-        %>
+        <%= live_redirect "Calculator", to: Routes.calculator_path(@socket, :index), 
+        class: "page-link" %>
         <div class="tab-line"></div>
       </div>
     </div>
 
-    <div></div>
+    <div>
+      <.live_component
+        module={FilterFormComponent}
+        id="filter_form"
+        filter={@filter_options}
+      />
+    </div>
 
   </div>
 
