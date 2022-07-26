@@ -16,12 +16,11 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     {:ok, socket}
   end
 
-  @impl true
   def handle_params(%{"sort_by" => sort_by, "sort_order" => sort_order} = params, _url, socket) do
-    opt_sort_by = String.to_atom(sort_by)
-    opt_sort_order = String.to_atom(sort_order || "asc")
+    new_sort_by = sort_by || "symbol"
+    new_sort_order = set_sort_order(sort_order)
 
-    sort_options = %{sort_by: opt_sort_by, sort_order: opt_sort_order}
+    sort_options = %{sort_by: new_sort_by, sort_order: new_sort_order}
 
     socket =
       socket
@@ -40,6 +39,24 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
      |> apply_action(socket.assigns.live_action, params)}
   end
 
+  @impl true
+  def handle_info(%Broadcast{event: "securities_update"}, socket) do
+    {:noreply, assign(socket, :securities, list_securities())}
+  end
+
+  @impl true
+  def handle_event("sort_column", %{"key" => key} = _params, socket) do
+    %{sort_options: %{sort_order: sort_order}} = socket.assigns
+
+    sort_order = if sort_order == :asc, do: :desc, else: :asc
+    sort_options = %{sort_by: key, sort_order: sort_order}
+
+    url_params = merge_url_params(socket, sort_options)
+    path = Routes.securities_index_path(socket, socket.assigns.live_action, url_params)
+
+    {:noreply, push_patch(socket, to: path, replace: true)}
+  end
+
   defp apply_action(socket, :securities, _params) do
     socket
     |> assign(:page_title, "List of securities")
@@ -52,27 +69,6 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     |> assign(:page_title, "Bargain securities")
     |> assign(:active_tab, :bargains)
     |> assign(:securities, list_securities())
-  end
-
-  defp sort_securities(socket, %{sort_by: field, sort_order: sort_order})
-       when sort_order in [:asc, :desc] do
-    securities = socket.assigns.securities
-
-    assign(socket, :securities, HandleTable.sort_table(securities, field, sort_order))
-  end
-
-  defp sort_securities(socket, _sort_options), do: socket
-
-  @impl true
-  def handle_info(%Broadcast{event: "securities_update"}, socket) do
-    {:noreply, assign(socket, :securities, list_securities())}
-  end
-
-  def handle_info({:url_update, options}, socket) do
-    url_params = merge_url_params(socket, options)
-    path = Routes.securities_index_path(socket, socket.assigns.live_action, url_params)
-
-    {:noreply, push_patch(socket, to: path, replace: true)}
   end
 
   defp merge_url_params(socket, options) do
@@ -89,6 +85,19 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   end
 
   defp list_securities(), do: Securities.list_securities()
+
+  defp set_sort_order("asc"), do: :asc
+  defp set_sort_order("desc"), do: :desc
+  defp set_sort_order(_value), do: :asc
+
+  defp sort_securities(socket, %{sort_by: field, sort_order: sort_order})
+       when sort_order in [:asc, :desc] do
+    securities = socket.assigns.securities
+
+    assign(socket, :securities, HandleTable.sort_table(securities, field, sort_order))
+  end
+
+  defp sort_securities(socket, _sort_options), do: socket
 
   def todays_date do
     {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()
