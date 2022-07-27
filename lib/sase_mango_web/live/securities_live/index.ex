@@ -112,10 +112,6 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     assign(socket, :securities, Securities.list_securities(type, filter_options))
   end
 
-  defp set_sort_order("asc"), do: :asc
-  defp set_sort_order("desc"), do: :desc
-  defp set_sort_order(_value), do: :asc
-
   defp sort_securities(socket, %{sort_by: field, sort_order: sort_order})
        when sort_order in [:asc, :desc] do
     securities = socket.assigns.securities
@@ -124,6 +120,10 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   end
 
   defp sort_securities(socket, _sort_options), do: socket
+
+  defp set_sort_order("asc"), do: :asc
+  defp set_sort_order("desc"), do: :desc
+  defp set_sort_order(_value), do: :asc
 
   def todays_date do
     {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()
