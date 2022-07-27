@@ -5,6 +5,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   alias SaseMango.Securities
   alias SaseMango.HandleTable.SearchFilter
   alias SaseMangoWeb.Components.FilterFormComponent
+  alias SaseMangoWeb.Components.HeaderComponent
   alias SaseMangoWeb.Components.SortingComponent
   alias SaseMangoWeb.Endpoint
   alias Phoenix.Socket.Broadcast
@@ -18,29 +19,21 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     {:ok, socket}
   end
 
-  def handle_params(%{"sort_by" => sort_by, "sort_order" => sort_order} = params, _url, socket) do
-    new_sort_by = sort_by || "symbol"
-    new_sort_order = set_sort_order(sort_order)
-
-    sort_options = %{sort_by: new_sort_by, sort_order: new_sort_order}
-
-    socket =
-      socket
-      |> assign(:sort_options, sort_options)
-      |> assign_filter_options(params)
-      |> apply_action(socket.assigns.live_action, params)
-      |> sort_securities(sort_options)
-
-    {:noreply, socket}
-  end
-
   @impl true
   def handle_params(params, _url, socket) do
     {:noreply,
      socket
      |> assign_filter_options(params)
-     |> assign(:sort_options, %{sort_by: params["sort_by"], sort_order: params["sort_order"]})
+     |> assign_sort_options(params)
      |> apply_action(socket.assigns.live_action, params)}
+  end
+
+  defp assign_sort_options(socket, params) do
+    new_sort_by = params["sort_by"] || nil
+    new_sort_order = set_sort_order(params["sort_order"])
+    sort_options = %{sort_by: new_sort_by, sort_order: new_sort_order}
+
+    assign(socket, :sort_options, sort_options)
   end
 
   defp assign_filter_options(socket, params) do
@@ -60,7 +53,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   end
 
   defp update_securities(socket, :securities) do
-    assign(socket, :securities, [])
+    assign(socket, :securities, Securities.list_securities(:securities))
   end
 
   defp update_securities(socket, :bargains) do
@@ -84,7 +77,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     socket
     |> assign(:page_title, "List of securities")
     |> assign(:active_tab, :securities)
-    |> assign(:securities, [])
+    |> assign_list_securities(:securities)
   end
 
   defp apply_action(socket, :bargains, _params) do
@@ -109,24 +102,27 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   end
 
   defp assign_list_securities(%{assigns: %{filter_options: filter_options}} = socket, type) do
-    assign(socket, :securities, Securities.list_securities(type, filter_options))
+    list_securities = Securities.list_securities(type, filter_options)
+
+    sort_securities(socket, list_securities)
   end
 
-  defp sort_securities(socket, %{sort_by: field, sort_order: sort_order})
+  defp sort_securities(
+         %{assigns: %{sort_options: %{sort_by: field, sort_order: sort_order}}} = socket,
+         list
+       )
        when sort_order in [:asc, :desc] do
-    securities = socket.assigns.securities
-
-    assign(socket, :securities, HandleTable.sort_table(securities, field, sort_order))
+    assign(socket, :securities, HandleTable.sort_table(list, field, sort_order))
   end
 
-  defp sort_securities(socket, _sort_options), do: socket
+  defp sort_securities(socket, list), do: assign(socket, :securities, list)
 
   defp set_sort_order("asc"), do: :asc
   defp set_sort_order("desc"), do: :desc
   defp set_sort_order(_value), do: :asc
 
-  def todays_date do
-    {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()
-    "#{day}.#{month}.#{year}"
-  end
+  # def todays_date do
+  #   {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()
+  #   "#{day}.#{month}.#{year}"
+  # end
 end
