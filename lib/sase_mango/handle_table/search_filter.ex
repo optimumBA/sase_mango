@@ -4,11 +4,11 @@ defmodule SaseMango.HandleTable.SearchFilter do
   """
   import Ecto.Changeset
 
-  defstruct [:name]
+  defstruct [:q]
 
-  @types %{name: :string}
+  @types %{q: :string}
 
   def changeset(%__MODULE__{} = search_filter, attrs \\ %{}) do
-    cast({search_filter, @types}, attrs, [:name])
+    cast({search_filter, @types}, attrs, [:q])
   end
 end

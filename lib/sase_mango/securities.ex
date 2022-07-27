@@ -123,7 +123,7 @@ defmodule SaseMango.Securities do
       where: fs_ids.rank == 2
   end
 
-  defp filter_by_symbol_or_name(query, %{name: name}) when is_binary(name) do
+  defp filter_by_symbol_or_name(query, %{q: name}) when is_binary(name) do
     search_value = "%#{name}%"
 
     query

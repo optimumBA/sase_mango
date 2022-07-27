@@ -15,12 +15,12 @@ defmodule SaseMangoWeb.Components.FilterFormComponent do
     assign(socket, :changeset, HandleTable.change_table_filter(filter))
   end
 
-  def handle_event("validate_filter", %{"filter" => %{"name" => filter_value}}, socket) do
+  def handle_event("validate_filter", %{"filter" => %{"q" => filter_value}}, socket) do
     :timer.sleep(500)
 
     changeset =
       %SearchFilter{}
-      |> HandleTable.change_table_filter(%{name: filter_value})
+      |> HandleTable.change_table_filter(%{q: filter_value})
       |> Map.put(:action, :insert)
 
     send_msg_to_parent(filter_value)
@@ -30,8 +30,8 @@ defmodule SaseMangoWeb.Components.FilterFormComponent do
 
   defp send_msg_to_parent(filter_value) do
     case String.length(filter_value) > 0 do
-      true -> send(self(), {:url_update, %{name: filter_value}})
-      false -> send(self(), {:url_update, %{name: nil}})
+      true -> send(self(), {:url_update, %{q: filter_value}})
+      false -> send(self(), {:url_update, %{q: nil}})
     end
   end
 
@@ -48,8 +48,7 @@ defmodule SaseMangoWeb.Components.FilterFormComponent do
         class="table-form"
       >
         <div>
-          <%= text_input f, :name, phx_debounce: 500, placeholder: "Search ...", class: "search-field" %>
-          <%= error_tag f, :name %>
+          <%= text_input f, :q, phx_debounce: 500, placeholder: "Search ...", class: "search-field" %>
           <div class="search-icon">
             <svg width="18" height="18"
               viewBox="0 0 14 14" fill="none"

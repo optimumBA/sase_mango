@@ -39,12 +39,12 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     {:noreply,
      socket
      |> assign_filter_options(params)
-     |> assign(:sort_options, %{sort_by: nil, sort_order: nil})
+     |> assign(:sort_options, %{sort_by: params["sort_by"], sort_order: params["sort_order"]})
      |> apply_action(socket.assigns.live_action, params)}
   end
 
   defp assign_filter_options(socket, params) do
-    assign(socket, :filter_options, %SearchFilter{name: params["name"] || nil})
+    assign(socket, :filter_options, %SearchFilter{q: params["q"] || nil})
   end
 
   @impl true
@@ -111,10 +111,6 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   defp assign_list_securities(%{assigns: %{filter_options: filter_options}} = socket, type) do
     assign(socket, :securities, Securities.list_securities(type, filter_options))
   end
-
-  # defp assign_list_securities(socket) do
-  #   assign(socket, :securities, Securities.list_securities())
-  # end
 
   defp set_sort_order("asc"), do: :asc
   defp set_sort_order("desc"), do: :desc
