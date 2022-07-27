@@ -305,8 +305,20 @@ th:last-child {
 
 /* Securities table */
 
+.table-wrapper {
+  @apply overflow-y-auto h-[75vh];
+}
+
 .securities-table {
-  @apply border-collapse w-full m-auto my-4;
+  @apply border-collapse w-full m-auto;
+}
+
+.securities-table > thead {
+  @apply sticky top-0;
+}
+
+.securities-table > tfoot {
+  @apply sticky bottom-0;
 }
 
 .securities-table > thead > tr > th {
