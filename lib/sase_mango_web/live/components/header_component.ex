@@ -37,8 +37,8 @@ defmodule SaseMangoWeb.Components.HeaderComponent do
             %>
             <div class="tab-line"></div>
           </div>
-          <div class="page-tab">
-            <%= live_redirect "Calculator", to: Routes.calculator_path(@socket, :index),
+          <div class={"page-tab #{if @active_tab == :calculator, do: "calculator"}"}>
+            <%= live_redirect "Calculator", to: Routes.calculator_index_path(@socket, :index),
             class: "page-link" %>
             <div class="tab-line"></div>
           </div>

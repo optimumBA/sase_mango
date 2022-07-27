@@ -8,62 +8,43 @@ defmodule SaseMango.Calculator do
   def run([], _input), do: []
 
   def run(securities, %Input{} = input) do
-    amount_per_issuer = Decimal.div(input.amount, length(securities))
+    security = Enum.find(securities, fn %{symbol: symbol} -> symbol == input.symbol end)
 
-    securities =
-      securities
-      |> Enum.map(fn %{} = security ->
-        volume =
-          amount_per_issuer
-          |> Decimal.div_int(security.ask_price)
-          |> Decimal.to_integer()
-          |> correct_volume(security.ask_price, input.fee, amount_per_issuer, security.ask_volume)
+    total_without_fee = Decimal.mult(input.amount, input.price)
+    fee_part = Decimal.div(Decimal.mult(total_without_fee, input.fee), 100)
+    total_with_fee = Decimal.add(total_without_fee, fee_part)
 
-        amount = Decimal.mult(volume, security.ask_price)
-        fee = Decimal.mult(amount, input.fee) |> Decimal.div(100)
-        total = Decimal.add(amount, fee)
-
-        %{
-          amount: amount,
-          fee: fee,
-          name: security.name,
-          symbol: security.symbol,
-          price: security.ask_price,
-          total: total,
-          volume: volume
-        }
-      end)
-      |> Enum.reject(fn row -> row.volume <= 0 end)
-
-    total =
-      Enum.reduce(securities, Decimal.new(0), fn result, total ->
-        Decimal.add(total, result.total)
-      end)
-
-    %{securities: securities, total: total}
+    %{
+      name: security.name,
+      amount: input.amount,
+      symbol: security.symbol,
+      price: Decimal.new(input.price),
+      total_without_fee: total_without_fee,
+      total_with_fee: total_with_fee
+    }
   end
 
-  defp correct_volume(volume, price, fee, max_amount, max_volume) do
-    amount = Decimal.mult(volume, price)
+  # defp correct_volume(volume, price, fee, max_amount, max_volume) do
+  #   amount = Decimal.mult(volume, price)
 
-    total_amount =
-      fee
-      |> Decimal.div(100)
-      |> Decimal.mult(amount)
-      |> Decimal.add(amount)
+  #   total_amount =
+  #     fee
+  #     |> Decimal.div(100)
+  #     |> Decimal.mult(amount)
+  #     |> Decimal.add(amount)
 
-    cond do
-      volume <= 0 ->
-        0
+  #   cond do
+  #     volume <= 0 ->
+  #       0
 
-      Decimal.gt?(total_amount, max_amount) ->
-        correct_volume(volume - 1, price, fee, max_amount, max_volume)
+  #     Decimal.gt?(total_amount, max_amount) ->
+  #       correct_volume(volume - 1, price, fee, max_amount, max_volume)
 
-      volume > max_volume ->
-        max_volume
+  #     volume > max_volume ->
+  #       max_volume
 
-      true ->
-        volume
-    end
-  end
+  #     true ->
+  #       volume
+  #   end
+  # end
 end

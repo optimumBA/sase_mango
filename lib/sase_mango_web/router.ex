@@ -30,7 +30,7 @@ defmodule SaseMangoWeb.Router do
     live_session :default do
       live "/", SecuritiesLive.Index, :securities
       live "/bargains", SecuritiesLive.Index, :bargains
-      live "/calculator", CalculatorLive, :index
+      live "/calculator", CalculatorLive.Index, :index
     end
   end
 

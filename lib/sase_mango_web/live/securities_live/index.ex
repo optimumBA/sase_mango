@@ -120,9 +120,4 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   defp set_sort_order("asc"), do: :asc
   defp set_sort_order("desc"), do: :desc
   defp set_sort_order(_value), do: :asc
-
-  # def todays_date do
-  #   {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()
-  #   "#{day}.#{month}.#{year}"
-  # end
 end
