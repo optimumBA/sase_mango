@@ -37,7 +37,7 @@ defmodule SaseMangoWeb.Components.FilterFormComponent do
 
   def render(assigns) do
     ~H"""
-    <div class="md:absolute md:right-2 md:-top-12 md:-translate-y-[100%] flex items-center gap-6">
+    <div>
       <.form
         let={f}
         for={@changeset}
@@ -48,31 +48,32 @@ defmodule SaseMangoWeb.Components.FilterFormComponent do
         class="table-form"
       >
         <div>
-          <%= text_input f, :q, phx_debounce: 500, placeholder: "Search ...", class: "search-field" %>
+          <%= text_input f, :q, phx_debounce: 500, placeholder: "Search...", class: "search-field" %>
           <div class="search-icon">
-            <svg width="18" height="18"
-              viewBox="0 0 14 14" fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M6.33333 11.6667C9.27885 11.6667 11.6667 9.27885 11.6667 6.33333C11.6667 3.38781 9.27885 1 6.33333 1C3.38781 1 1 3.38781 1 6.33333C1 9.27885 3.38781 11.6667 6.33333 11.6667Z"
-                stroke="#ADADAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M13.0001 13L10.1001 10.1"
-                stroke="#ADADAD" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round"
-              />
-            </svg>
+          <svg
+            width="28"
+            height="20"
+            viewBox="0 0 24 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="1" height="16" fill="#D9D9D9"/>
+            <path d="M16.3333 12.6667C19.2789 12.6667 21.6667 10.2789 21.6667 7.33333C21.6667 4.38781 19.2789 2 16.3333 2C13.3878 2 11 4.38781 11 7.33333C11 10.2789 13.3878 12.6667 16.3333 12.6667Z"
+              stroke="#ADADAD"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path d="M23 14L20.1 11.1"
+              stroke="#ADADAD"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
           </div>
         </div>
       </.form>
-      <div>
-        <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M19.6667 9L6.33337 9" stroke="#ADADAD" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M23.6667 2.33337L2.33337 2.33337" stroke="#ADADAD" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M15.6667 15.6666H10.3334" stroke="#ADADAD" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
     </div>
     """
   end

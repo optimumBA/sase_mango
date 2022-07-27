@@ -388,11 +388,11 @@ th:last-child {
 }
 
 .search-icon {
-  @apply absolute w-max right-6 top-[50%] -translate-y-[50%];
+  @apply absolute w-max right-5 top-[50%] -translate-y-[50%];
 }
 
 .search-field {
-  @apply text-[1em] duration-150 ease-linear text-[#3e3e3e] my-2 pl-8 pr-14 py-3 rounded-xl border border-[#D9D9D9];
+  @apply text-[1.2em] duration-150 ease-linear text-[#3e3e3e] my-2 pl-8 pr-14 py-3 rounded-xl border border-[#D9D9D9];
 }
 
 .search-field::placeholder {

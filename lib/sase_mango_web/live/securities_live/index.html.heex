@@ -7,12 +7,13 @@
    />     
 
 <div class="relative">
-
-  <.live_component
-    module={FilterFormComponent}
-    id="filter_form"
-    filter={@filter_options}
-  /> 
+  <div class="md:absolute md:right-2 md:-top-14 md:-translate-y-[100%]">
+    <.live_component
+      module={FilterFormComponent}
+      id="filter_form"
+      filter={@filter_options}
+    /> 
+  </div>
 
   <table class="securities-table font-montserrat">
     <thead>
