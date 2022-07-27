@@ -1,4 +1,3 @@
-const colors = require('tailwindcss/colors')
 const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
@@ -11,6 +10,7 @@ module.exports = {
       },
       fontFamily: {
         montserrat: ['Montserrat', ...defaultTheme.fontFamily.sans],
+        inter: ['Inter', ...defaultTheme.fontFamily.sans],
       },
     },
   },
