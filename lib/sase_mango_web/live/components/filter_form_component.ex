@@ -37,7 +37,7 @@ defmodule SaseMangoWeb.Components.FilterFormComponent do
 
   def render(assigns) do
     ~H"""
-    <div class="flex items-center gap-6">
+    <div class="md:absolute md:right-2 md:-top-12 md:-translate-y-[100%] flex items-center gap-6">
       <.form
         let={f}
         for={@changeset}
