@@ -1,14 +1,14 @@
 defmodule SaseMangoWeb.SecuritiesLive.Index do
   use SaseMangoWeb, :live_view
 
+  alias Phoenix.Socket.Broadcast
   alias SaseMango.HandleTable
-  alias SaseMango.Securities
   alias SaseMango.HandleTable.SearchFilter
+  alias SaseMango.Securities
   alias SaseMangoWeb.Components.FilterFormComponent
   alias SaseMangoWeb.Components.HeaderComponent
   alias SaseMangoWeb.Components.SortingComponent
   alias SaseMangoWeb.Endpoint
-  alias Phoenix.Socket.Broadcast
 
   @impl true
   def mount(_params, _session, socket) do
@@ -68,6 +68,13 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     sort_options = %{sort_by: key, sort_order: sort_order}
 
     url_params = merge_url_params(socket, sort_options)
+    path = Routes.securities_index_path(socket, socket.assigns.live_action, url_params)
+
+    {:noreply, push_patch(socket, to: path, replace: true)}
+  end
+
+  def handle_event("clear_form", _params, socket) do
+    url_params = merge_url_params(socket, %{q: nil})
     path = Routes.securities_index_path(socket, socket.assigns.live_action, url_params)
 
     {:noreply, push_patch(socket, to: path, replace: true)}
