@@ -34,13 +34,19 @@
         <div class="tab-line"></div>
       </div>
       <div class="page-tab">
-        <%= live_redirect "Calculator", to: Routes.calculator_path(@socket, :index), class: "page-link"
-        %>
+        <%= live_redirect "Calculator", to: Routes.calculator_path(@socket, :index), 
+        class: "page-link" %>
         <div class="tab-line"></div>
       </div>
     </div>
 
-    <div></div>
+    <div>
+      <.live_component
+        module={FilterFormComponent}
+        id="filter_form"
+        filter={@filter_options}
+      />
+    </div>
 
   </div>
 
@@ -54,8 +60,8 @@
           <SortingComponent.sort_link
             id={"sort-symbol"}
             col_text={"Symbol"}
-            key={"symbol"}
             col_type={:text}
+            key={"symbol"}
             sort_options={@sort_options} 
           />
         </div>
@@ -63,144 +69,145 @@
       <th class="">
         <div class="flex justify-center items-center gap-2">
           <SortingComponent.sort_link
-              id={"sort-issuer"}
-              col_text={"Issuer"}
-              key={"name"}
-              col_type={:text}
-              sort_options={@sort_options} 
-            />
+            id={"sort-issuer"}
+            col_text={"Issuer"}
+            col_type={:text}
+            key={"name"}
+            sort_options={@sort_options} 
+          />
         </div>
       </th>
       <th class="" >
         <div class="flex justify-center items-center gap-2">
-            <SortingComponent.sort_link
-              id={"sort-price"}
-              col_text={"Price"}
-              key={"price"}
-              col_type={:number}
-              sort_options={@sort_options} 
-            />
+          <SortingComponent.sort_link
+            id={"sort-price"}
+            col_text={"Price"}
+            col_type={:number}
+            key={"price"}
+            sort_options={@sort_options} 
+          />
         </div>
       </th>
       <th class="" >
         <div class="flex justify-center items-center gap-2">
-            <SortingComponent.sort_link
-              id={"sort-nominal-price"}
-              col_text={"Nominal price"}
-              key={"nominal_price"}
-              col_type={:number}
-              sort_options={@sort_options} 
-            />
+          <SortingComponent.sort_link
+            id={"sort-nominal-price"}
+            col_text={"Nominal price"}
+            col_type={:number}
+            key={"nominal_price"}
+            sort_options={@sort_options} 
+          />
         </div>
       </th>
       <th class="" colspan="2">
         <div class="flex justify-center items-center gap-2">
-            <SortingComponent.sort_link
-              id={"sort-ask"}
-              col_text={"Ask"}
-              key={"ask_price"}
-              col_type={:number}
-              sort_options={@sort_options} 
-            />
+          <SortingComponent.sort_link
+            id={"sort-ask"}
+            col_text={"Ask"}
+            col_type={:number}
+            key={"ask_price"}
+            sort_options={@sort_options} 
+          />
         </div>
       </th>
       <th class="" colspan="2">
         <div class="flex justify-center items-center gap-2">
-            <SortingComponent.sort_link
-              id={"sort-bid"}
-              col_text={"Bid"}
-              key={"bid_price"}
-              col_type={:number}
-              sort_options={@sort_options} 
-            />
+          <SortingComponent.sort_link
+            id={"sort-bid"}
+            col_text={"Bid"}
+            col_type={:number}
+            key={"bid_price"}
+            sort_options={@sort_options} 
+          />
         </div>
       </th>
       <th class="" >
         <div class="flex justify-center items-center gap-2">
-            <SortingComponent.sort_link
-              id={"sort-dividend-roi"}
-              col_text={"Dividend ROI (%)"}
-              key={"dividend_roi"}
-              col_type={:number}
-              sort_options={@sort_options} 
-            />
+          <SortingComponent.sort_link
+            id={"sort-dividend-roi"}
+            col_text={"Dividend ROI (%)"}
+            col_type={:number}
+            key={"dividend_roi"}
+            sort_options={@sort_options} 
+          />
         </div> 
       </th>
       <th class="">
         <div class="flex justify-center items-center gap-2">
-            <SortingComponent.sort_link
-              id={"sort-eps-roi"}
-              col_text={"EPS ROI (%)"}
-              key={"eps_roi"}
-              col_type={:number}
-              sort_options={@sort_options} 
-            />
+          <SortingComponent.sort_link
+            id={"sort-eps-roi"}
+            col_text={"EPS ROI (%)"}
+            col_type={:number}
+            key={"eps_roi"}
+            sort_options={@sort_options} 
+          />
         </div>
       </th>
       <th class="">
         <div class="flex justify-center items-center gap-2">
-            <SortingComponent.sort_link
-              id={"sort-pe"}
-              col_text={" P/E"}
-              key={"pe"}
-              col_type={:number}
-              sort_options={@sort_options} 
-            />
+          <SortingComponent.sort_link
+            id={"sort-pe"}
+            col_text={" P/E"}
+            col_type={:number}
+            key={"pe"}
+            sort_options={@sort_options} 
+          />
         </div>
       </th>
       <th class="">
         <div class="flex justify-center items-center gap-2">
-            <SortingComponent.sort_link
-              id={"sort-pb"}
-              col_text={"P/B"}
-              key={"pb"}
-              col_type={:number}
-              sort_options={@sort_options} 
-            />
+          <SortingComponent.sort_link
+            id={"sort-pb"}
+            col_text={"P/B"}
+            col_type={:number}
+            key={"pb"}
+            sort_options={@sort_options} 
+          />
         </div>
       </th>
       <th class="" colspan="2">
         <div class="flex justify-center items-center gap-2">
-            <SortingComponent.sort_link
-              id={"sort-market-value"}
-              col_text={"Market Value"}
-              key={"market_value"}
-              col_type={:number}
-              sort_options={@sort_options} 
-            />
+
+          <SortingComponent.sort_link
+            id={"sort-market-value"}
+            col_text={"Market Value"}
+            col_type={:number}
+            key={"market_value"}
+            sort_options={@sort_options} 
+          />
         </div>
       </th>
       <th class="" colspan="2">
         <div class="flex justify-center items-center gap-2">
-            <SortingComponent.sort_link
-              id={"sort-book-value"}
-              col_text={"Book Value"}
-              key={"book_value"}
-              col_type={:number}
-              sort_options={@sort_options} 
-            />
+          <SortingComponent.sort_link
+            id={"sort-book-value"}
+            col_text={"Book Value"}
+            col_type={:number}
+            key={"book_value"}
+            sort_options={@sort_options} 
+          />
         </div>
       </th>
       <th class="">
         <div class="flex justify-center items-center gap-2">
-            <SortingComponent.sort_link
-              id={"sort-bvs"}
-              col_text={"BVS"}
-              key={"bvs"}
-              col_type={:number}
-              sort_options={@sort_options} 
-            />
+          <SortingComponent.sort_link
+            id={"sort-bvs"}
+            col_text={"BVS"}
+            col_type={:number}
+            key={"bvs"}
+            sort_options={@sort_options} 
+          />
         </div>
       </th>
       <th class="">
         <div class="flex justify-center items-center gap-2">
-            <SortingComponent.sort_link
-              id={"sort-profit-margin"}
-              col_text={"Profit margin"}
-              key={"profit_margin"}
-              col_type={:number}
-              sort_options={@sort_options} 
-            />
+          <SortingComponent.sort_link
+            id={"sort-profit-margin"}
+            col_text={"Profit margin"}
+            col_type={:number}
+            key={"profit_margin"}
+            sort_options={@sort_options} 
+          />
         </div>
       </th>
     </tr>

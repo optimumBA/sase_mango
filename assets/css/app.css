@@ -349,11 +349,15 @@ th:last-child {
 }
 
 .page-link {
-  @apply text-[#8C8C8C] text-[0.95em] font-[400] px-8 hover:text-[#3b3a3a] duration-300 ease-in-out;
+  @apply block h-full py-5 text-[#8C8C8C] text-[0.95em] font-[400] px-8 duration-300 ease-in-out;
 }
 
 .page-tab {
-  @apply relative py-5;
+  @apply relative cursor-pointer;
+}
+
+.page-tab:hover a{
+  @apply text-[#3b3a3a];
 }
 
 .tab-line {
@@ -375,6 +379,28 @@ th:last-child {
     left: 0;
     width: 100%;
   }
+}
+
+/* Table search form */
+
+.table-form {
+  @apply relative;
+}
+
+.search-icon {
+  @apply absolute w-max right-6 top-[50%] -translate-y-[50%];
+}
+
+.search-field {
+  @apply text-[1em] duration-150 ease-linear text-[#3e3e3e] my-2 pl-8 pr-14 py-3 rounded-xl border border-[#D9D9D9];
+}
+
+.search-field::placeholder {
+  @apply text-[#9A9A9A];
+}
+
+.search-field:focus {
+  @apply border-[#bababa];
 }
 
 /* General style */

@@ -3,6 +3,8 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
 
   alias SaseMango.HandleTable
   alias SaseMango.Securities
+  alias SaseMango.HandleTable.SearchFilter
+  alias SaseMangoWeb.Components.FilterFormComponent
   alias SaseMangoWeb.Components.SortingComponent
   alias SaseMangoWeb.Endpoint
   alias Phoenix.Socket.Broadcast
@@ -24,8 +26,9 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
 
     socket =
       socket
-      |> apply_action(socket.assigns.live_action, params)
       |> assign(:sort_options, sort_options)
+      |> assign_filter_options(params)
+      |> apply_action(socket.assigns.live_action, params)
       |> sort_securities(sort_options)
 
     {:noreply, socket}
@@ -35,13 +38,33 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   def handle_params(params, _url, socket) do
     {:noreply,
      socket
-     |> assign(:sort_options, %{sort_by: nil, sort_order: nil})
+     |> assign_filter_options(params)
+     |> assign(:sort_options, %{sort_by: params["sort_by"], sort_order: params["sort_order"]})
      |> apply_action(socket.assigns.live_action, params)}
+  end
+
+  defp assign_filter_options(socket, params) do
+    assign(socket, :filter_options, %SearchFilter{q: params["q"] || nil})
   end
 
   @impl true
   def handle_info(%Broadcast{event: "securities_update"}, socket) do
-    {:noreply, assign(socket, :securities, list_securities())}
+    {:noreply, update_securities(socket, socket.assigns.live_action)}
+  end
+
+  def handle_info({:url_update, options}, socket) do
+    url_params = merge_url_params(socket, options)
+    path = Routes.securities_index_path(socket, socket.assigns.live_action, url_params)
+
+    {:noreply, push_patch(socket, to: path, replace: true)}
+  end
+
+  defp update_securities(socket, :securities) do
+    assign(socket, :securities, [])
+  end
+
+  defp update_securities(socket, :bargains) do
+    assign(socket, :securities, Securities.list_securities(:bargains))
   end
 
   @impl true
@@ -68,15 +91,16 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     socket
     |> assign(:page_title, "Bargain securities")
     |> assign(:active_tab, :bargains)
-    |> assign(:securities, list_securities())
+    |> assign_list_securities(:bargains)
   end
 
   defp merge_url_params(socket, options) do
-    %{sort_options: sort_options} = socket.assigns
+    %{sort_options: sort_options, filter_options: filter_options} = socket.assigns
 
     url_params =
       %{}
       |> Map.merge(sort_options)
+      |> Map.merge(Map.from_struct(filter_options))
       |> Map.merge(options)
       |> Enum.reject(fn {_key, value} -> is_nil(value) end)
       |> Map.new()
@@ -84,11 +108,9 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     url_params
   end
 
-  defp list_securities(), do: Securities.list_securities()
-
-  defp set_sort_order("asc"), do: :asc
-  defp set_sort_order("desc"), do: :desc
-  defp set_sort_order(_value), do: :asc
+  defp assign_list_securities(%{assigns: %{filter_options: filter_options}} = socket, type) do
+    assign(socket, :securities, Securities.list_securities(type, filter_options))
+  end
 
   defp sort_securities(socket, %{sort_by: field, sort_order: sort_order})
        when sort_order in [:asc, :desc] do
@@ -98,6 +120,10 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   end
 
   defp sort_securities(socket, _sort_options), do: socket
+
+  defp set_sort_order("asc"), do: :asc
+  defp set_sort_order("desc"), do: :desc
+  defp set_sort_order(_value), do: :asc
 
   def todays_date do
     {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()

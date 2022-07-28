@@ -4,6 +4,8 @@ defmodule SaseMango.HandleTable do
 
   """
 
+  alias __MODULE__.SearchFilter
+
   @number_fields [
     "ask_price",
     "bid_price",
@@ -20,6 +22,13 @@ defmodule SaseMango.HandleTable do
   ]
 
   @text_fields ["symbol", "name"]
+
+  @doc """
+    Returns a changeset for a `FilterForm.SearchFilter`.
+  """
+  def change_table_filter(%SearchFilter{} = filter, attrs \\ %{}) do
+    SearchFilter.changeset(filter, attrs)
+  end
 
   defp get_sort_params(field, sort_order) when field in @number_fields do
     {sort_order, Decimal}
