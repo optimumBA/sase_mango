@@ -3,13 +3,180 @@ defmodule SaseMango.SecuritiesHelper do
     Securities list helper module.
 
     Implements functions for managing lists of securities.
-
   """
 
   import Ecto.Query
+
   alias SaseMango.Securities.FinancialStatement
   alias SaseMango.Securities.Issuer
   alias SaseMango.Repo
+
+  @doc """
+    Returns the list of securities
+
+    List is calculated depending on the type(regular or bargains list)
+    by either regular or ask price.
+
+  """
+  def list_securities(list_type, filter_params \\ %{}) do
+    current_financial_statement = current_financial_statement()
+    previous_financial_statement = previous_financial_statement()
+
+    from(i in Issuer, as: :issuer)
+    |> join(:inner_lateral, [], fs_1 in subquery(current_financial_statement), as: :current_fs)
+    |> join(:inner_lateral, [], fs_2 in subquery(previous_financial_statement), as: :previous_fs)
+    |> select([issuer: i, current_fs: current_fs, previous_fs: previous_fs], %{
+      issuer: i,
+      current: current_fs,
+      previous: previous_fs
+    })
+    |> filter_by_symbol_or_name(filter_params)
+    |> maybe_filter_available_securities(list_type)
+    |> Repo.all()
+    |> Stream.map(fn %{} = security ->
+      calc_param = get_calculate_param(security, list_type)
+
+      symbol = security.issuer.symbol
+
+      balance_sheet = get_balance_sheet(security.current)
+      {book_value, previous_book_value} = get_book_values(balance_sheet)
+
+      equity_changes = get_equity_changes(security.current)
+      previous_equity_changes = get_equity_changes(security.previous)
+
+      profit_and_loss_account = get_profit_and_loss_account(security.current)
+      {income, previous_income} = get_incomes(profit_and_loss_account)
+      {profit, previous_profit} = get_profits(profit_and_loss_account)
+
+      total_dividends = get_total_dividends(equity_changes)
+      previous_total_dividends = get_total_dividends(previous_equity_changes)
+
+      {nominal_price, total_shares} = get_nominal_price_and_total_shares(security.current, symbol)
+
+      {_nominal_price, previous_total_shares} =
+        get_nominal_price_and_total_shares(security.previous, symbol)
+
+      bvs =
+        if(Decimal.equal?(total_shares, 0),
+          do: Decimal.new(0),
+          else: Decimal.div(book_value, total_shares)
+        )
+
+      previous_bvs =
+        if(Decimal.equal?(previous_total_shares, 0),
+          do: Decimal.new(0),
+          else: Decimal.div(previous_book_value, previous_total_shares)
+        )
+
+      dividend =
+        if(Decimal.equal?(total_shares, 0),
+          do: Decimal.new(0),
+          else: Decimal.div(total_dividends, total_shares)
+        )
+
+      previous_dividend =
+        if(Decimal.equal?(previous_total_shares, 0),
+          do: Decimal.new(0),
+          else: Decimal.div(previous_total_dividends, previous_total_shares)
+        )
+
+      price = convert_price_to_decimal(security.issuer.info["AvgPrice"])
+      ask_price = convert_price_to_decimal(security.issuer.info["BestAskPrice"])
+      bid_price = convert_price_to_decimal(security.issuer.info["BestBidPrice"])
+
+      last_trade_date = convert_date_format(security.issuer.info["LastTradeDate"])
+
+      eps =
+        if(Decimal.equal?(total_shares, 0),
+          do: Decimal.new(0),
+          else: Decimal.div(profit, total_shares)
+        )
+
+      previous_eps =
+        if(Decimal.equal?(previous_total_shares, 0),
+          do:
+            if(Decimal.equal?(total_shares, 0),
+              do: Decimal.new(0),
+              else: Decimal.div(previous_profit, total_shares)
+            ),
+          else: Decimal.div(previous_profit, previous_total_shares)
+        )
+
+      market_value =
+        if(Decimal.equal?(total_shares, 0),
+          do: Decimal.new(0),
+          else: Decimal.mult(calc_param, total_shares)
+        )
+
+      profit_margin =
+        if(Decimal.equal?(income, 0),
+          do: Decimal.new(0),
+          else: Decimal.div(profit, income)
+        )
+
+      previous_profit_margin =
+        if(Decimal.equal?(previous_income, 0),
+          do: Decimal.new(0),
+          else: Decimal.div(previous_profit, previous_income)
+        )
+
+      %{
+        ask_price: ask_price,
+        ask_volume: security.issuer.info["BestAskVolume"],
+        bid_price: bid_price,
+        bid_volume: security.issuer.info["BestBidVolume"],
+        book_value: book_value,
+        bvs: bvs,
+        dividend: dividend,
+        dividend_roi:
+          if(Decimal.equal?(calc_param, 0),
+            do: Decimal.new(0),
+            else: Decimal.div(dividend, calc_param)
+          ),
+        eps: eps,
+        eps_roi:
+          if(Decimal.equal?(calc_param, 0), do: Decimal.new(0), else: Decimal.div(eps, calc_param)),
+        last_trade_date: last_trade_date,
+        market_value: market_value,
+        name: security.issuer.info["SymbolDescription"],
+        nominal_price: nominal_price,
+        pb:
+          if(Decimal.equal?(book_value, 0),
+            do: Decimal.new(0),
+            else: Decimal.div(market_value, book_value)
+          ),
+        pe:
+          if(Decimal.equal?(total_shares, 0) || Decimal.equal?(profit, 0),
+            do: Decimal.new(0),
+            else: Decimal.div(calc_param, Decimal.div(profit, total_shares))
+          ),
+        previous_book_value: previous_book_value,
+        previous_bvs: previous_bvs,
+        previous_dividend: previous_dividend,
+        previous_dividend_roi:
+          if(
+            Decimal.equal?(calc_param, 0),
+            do: Decimal.new(0),
+            else: Decimal.div(previous_dividend, calc_param)
+          ),
+        previous_eps: previous_eps,
+        previous_eps_roi:
+          if(Decimal.equal?(calc_param, 0),
+            do: Decimal.new(0),
+            else: Decimal.div(previous_eps, calc_param)
+          ),
+        previous_profit: previous_profit,
+        previous_profit_margin: previous_profit_margin,
+        price: price,
+        profit: profit,
+        profit_margin: profit_margin,
+        segment: security.issuer.info["Segment"],
+        symbol: symbol
+      }
+    end)
+    |> maybe_additional_filter(list_type)
+    |> Enum.sort_by(& &1.eps_roi, {:desc, Decimal})
+  end
 
   defp financial_statements do
     current_year = NaiveDateTime.utc_now().year
@@ -43,340 +210,31 @@ defmodule SaseMango.SecuritiesHelper do
     query
     |> where(
       [issuer: i],
-      like(i.symbol, ^search_value) or
-        like(fragment("(?->'SymbolDescription')::TEXT", i.info), ^search_value)
+      ilike(i.symbol, ^search_value) or
+        ilike(fragment("(?->'SymbolDescription')::TEXT", i.info), ^search_value)
     )
   end
 
   defp filter_by_symbol_or_name(query, _params), do: query
 
-  @doc """
-    Returns the list of securities.
+  defp maybe_filter_available_securities(query, :securities), do: query
 
-    Generates the list of securities calculated by ask price.
-  """
-  def list_securities(type_atom, filter_params \\ %{})
-
-  def list_securities(:securities, filter_params) do
-    current_financial_statement = current_financial_statement()
-    previous_financial_statement = previous_financial_statement()
-
-    from(i in Issuer, as: :issuer)
-    |> join(:inner_lateral, [], fs_1 in subquery(current_financial_statement), as: :current_fs)
-    |> join(:inner_lateral, [], fs_2 in subquery(previous_financial_statement), as: :previous_fs)
-    |> select([issuer: i, current_fs: current_fs, previous_fs: previous_fs], %{
-      issuer: i,
-      current: current_fs,
-      previous: previous_fs
-    })
-    |> filter_by_symbol_or_name(filter_params)
-    |> Repo.all()
-    |> Stream.map(fn %{} = security ->
-      symbol = security.issuer.symbol
-
-      balance_sheet = get_balance_sheet(security.current)
-      {book_value, previous_book_value} = get_book_values(balance_sheet)
-
-      equity_changes = get_equity_changes(security.current)
-      previous_equity_changes = get_equity_changes(security.previous)
-
-      profit_and_loss_account = get_profit_and_loss_account(security.current)
-      {income, previous_income} = get_incomes(profit_and_loss_account)
-      {profit, previous_profit} = get_profits(profit_and_loss_account)
-
-      total_dividends = get_total_dividends(equity_changes)
-      previous_total_dividends = get_total_dividends(previous_equity_changes)
-
-      {nominal_price, total_shares} = get_nominal_price_and_total_shares(security.current, symbol)
-
-      {_nominal_price, previous_total_shares} =
-        get_nominal_price_and_total_shares(security.previous, symbol)
-
-      bvs =
-        if(Decimal.equal?(total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(book_value, total_shares)
-        )
-
-      previous_bvs =
-        if(Decimal.equal?(previous_total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(previous_book_value, previous_total_shares)
-        )
-
-      dividend =
-        if(Decimal.equal?(total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(total_dividends, total_shares)
-        )
-
-      previous_dividend =
-        if(Decimal.equal?(previous_total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(previous_total_dividends, previous_total_shares)
-        )
-
-      price = convert_price_to_decimal(security.issuer.info["AvgPrice"])
-      ask_price = convert_price_to_decimal(security.issuer.info["BestAskPrice"])
-      bid_price = convert_price_to_decimal(security.issuer.info["BestBidPrice"])
-
-      last_trade_date = convert_date_format(security.issuer.info["LastTradeDate"])
-
-      eps =
-        if(Decimal.equal?(total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(profit, total_shares)
-        )
-
-      previous_eps =
-        if(Decimal.equal?(previous_total_shares, 0),
-          do:
-            if(Decimal.equal?(total_shares, 0),
-              do: Decimal.new(0),
-              else: Decimal.div(previous_profit, total_shares)
-            ),
-          else: Decimal.div(previous_profit, previous_total_shares)
-        )
-
-      market_value =
-        if(Decimal.equal?(total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.mult(price, total_shares)
-        )
-
-      profit_margin =
-        if(Decimal.equal?(income, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(profit, income)
-        )
-
-      previous_profit_margin =
-        if(Decimal.equal?(previous_income, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(previous_profit, previous_income)
-        )
-
-      %{
-        ask_price: ask_price,
-        ask_volume: security.issuer.info["BestAskVolume"],
-        bid_price: bid_price,
-        bid_volume: security.issuer.info["BestBidVolume"],
-        book_value: book_value,
-        bvs: bvs,
-        dividend: dividend,
-        dividend_roi:
-          if(Decimal.equal?(price, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(dividend, price)
-          ),
-        eps: eps,
-        eps_roi:
-          if(Decimal.equal?(price, 0), do: Decimal.new(0), else: Decimal.div(eps, price)),
-        last_trade_date: last_trade_date,
-        market_value: market_value,
-        name: security.issuer.info["SymbolDescription"],
-        nominal_price: nominal_price,
-        pb:
-          if(Decimal.equal?(book_value, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(market_value, book_value)
-          ),
-        pe:
-          if(Decimal.equal?(total_shares, 0) || Decimal.equal?(profit, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(price, Decimal.div(profit, total_shares))
-          ),
-        previous_book_value: previous_book_value,
-        previous_bvs: previous_bvs,
-        previous_dividend: previous_dividend,
-        previous_dividend_roi:
-          if(
-            Decimal.equal?(price, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(previous_dividend, price)
-          ),
-        previous_eps: previous_eps,
-        previous_eps_roi:
-          if(Decimal.equal?(price, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(previous_eps, price)
-          ),
-        previous_profit: previous_profit,
-        previous_profit_margin: previous_profit_margin,
-        price: price,
-        profit: profit,
-        profit_margin: profit_margin,
-        segment: security.issuer.info["Segment"],
-        symbol: symbol
-      }
-    end)
-    |> Stream.filter(fn security ->
-      Decimal.gt?(security.profit, Decimal.new(0)) &&
-        Decimal.gt?(security.previous_profit, Decimal.new(0)) &&
-        Decimal.lt?(security.price, Decimal.mult(security.bvs, Decimal.div(2, 3))) &&
-        Decimal.lt?(security.pb, Decimal.new(20)) &&
-        Decimal.lt?(security.pe, Decimal.new(20)) &&
-        Decimal.gt?(security.eps_roi, Decimal.from_float(0.05))
-    end)
-    |> Enum.sort_by(& &1.eps_roi, {:desc, Decimal})
-  end
-
-  def list_securities(:bargains, filter_params) do
-    current_financial_statement = current_financial_statement()
-    previous_financial_statement = previous_financial_statement()
-
-    from(i in Issuer, as: :issuer)
-    |> join(:inner_lateral, [], fs_1 in subquery(current_financial_statement), as: :current_fs)
-    |> join(:inner_lateral, [], fs_2 in subquery(previous_financial_statement), as: :previous_fs)
-    |> select([issuer: i, current_fs: current_fs, previous_fs: previous_fs], %{
-      issuer: i,
-      current: current_fs,
-      previous: previous_fs
-    })
-    |> filter_by_symbol_or_name(filter_params)
+  defp maybe_filter_available_securities(query, :bargains) do
+    query
     |> where([issuer: i], fragment("(?->'BestAskPrice')::NUMERIC > 0", i.info))
     |> where([issuer: i], fragment("(?->'BestAskVolume')::NUMERIC > 0", i.info))
-    |> Repo.all()
-    |> Stream.map(fn %{} = security ->
-      symbol = security.issuer.symbol
+  end
 
-      balance_sheet = get_balance_sheet(security.current)
-      {book_value, previous_book_value} = get_book_values(balance_sheet)
+  defp get_calculate_param(security, :securities),
+    do: convert_price_to_decimal(security.issuer.info["AvgPrice"])
 
-      equity_changes = get_equity_changes(security.current)
-      previous_equity_changes = get_equity_changes(security.previous)
+  defp get_calculate_param(security, :bargains),
+    do: convert_price_to_decimal(security.issuer.info["BestAskPrice"])
 
-      profit_and_loss_account = get_profit_and_loss_account(security.current)
-      {income, previous_income} = get_incomes(profit_and_loss_account)
-      {profit, previous_profit} = get_profits(profit_and_loss_account)
+  defp maybe_additional_filter(securities, :securities), do: securities
 
-      total_dividends = get_total_dividends(equity_changes)
-      previous_total_dividends = get_total_dividends(previous_equity_changes)
-
-      {nominal_price, total_shares} = get_nominal_price_and_total_shares(security.current, symbol)
-
-      {_nominal_price, previous_total_shares} =
-        get_nominal_price_and_total_shares(security.previous, symbol)
-
-      bvs =
-        if(Decimal.equal?(total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(book_value, total_shares)
-        )
-
-      previous_bvs =
-        if(Decimal.equal?(previous_total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(previous_book_value, previous_total_shares)
-        )
-
-      dividend =
-        if(Decimal.equal?(total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(total_dividends, total_shares)
-        )
-
-      previous_dividend =
-        if(Decimal.equal?(previous_total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(previous_total_dividends, previous_total_shares)
-        )
-
-      price = convert_price_to_decimal(security.issuer.info["AvgPrice"])
-      ask_price = convert_price_to_decimal(security.issuer.info["BestAskPrice"])
-      bid_price = convert_price_to_decimal(security.issuer.info["BestBidPrice"])
-
-      last_trade_date = convert_date_format(security.issuer.info["LastTradeDate"])
-
-      eps =
-        if(Decimal.equal?(total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(profit, total_shares)
-        )
-
-      previous_eps =
-        if(Decimal.equal?(previous_total_shares, 0),
-          do:
-            if(Decimal.equal?(total_shares, 0),
-              do: Decimal.new(0),
-              else: Decimal.div(previous_profit, total_shares)
-            ),
-          else: Decimal.div(previous_profit, previous_total_shares)
-        )
-
-      market_value =
-        if(Decimal.equal?(total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.mult(ask_price, total_shares)
-        )
-
-      profit_margin =
-        if(Decimal.equal?(income, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(profit, income)
-        )
-
-      previous_profit_margin =
-        if(Decimal.equal?(previous_income, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(previous_profit, previous_income)
-        )
-
-      %{
-        ask_price: ask_price,
-        ask_volume: security.issuer.info["BestAskVolume"],
-        bid_price: bid_price,
-        bid_volume: security.issuer.info["BestBidVolume"],
-        book_value: book_value,
-        bvs: bvs,
-        dividend: dividend,
-        dividend_roi:
-          if(Decimal.equal?(ask_price, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(dividend, ask_price)
-          ),
-        eps: eps,
-        eps_roi:
-          if(Decimal.equal?(ask_price, 0), do: Decimal.new(0), else: Decimal.div(eps, ask_price)),
-        last_trade_date: last_trade_date,
-        market_value: market_value,
-        name: security.issuer.info["SymbolDescription"],
-        nominal_price: nominal_price,
-        pb:
-          if(Decimal.equal?(book_value, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(market_value, book_value)
-          ),
-        pe:
-          if(Decimal.equal?(total_shares, 0) || Decimal.equal?(profit, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(ask_price, Decimal.div(profit, total_shares))
-          ),
-        previous_book_value: previous_book_value,
-        previous_bvs: previous_bvs,
-        previous_dividend: previous_dividend,
-        previous_dividend_roi:
-          if(
-            Decimal.equal?(ask_price, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(previous_dividend, ask_price)
-          ),
-        previous_eps: previous_eps,
-        previous_eps_roi:
-          if(Decimal.equal?(ask_price, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(previous_eps, ask_price)
-          ),
-        previous_profit: previous_profit,
-        previous_profit_margin: previous_profit_margin,
-        price: price,
-        profit: profit,
-        profit_margin: profit_margin,
-        segment: security.issuer.info["Segment"],
-        symbol: symbol
-      }
-    end)
-    |> Stream.filter(fn security ->
+  defp maybe_additional_filter(securities, :bargains) do
+    Stream.filter(securities, fn security ->
       Decimal.gt?(security.profit, Decimal.new(0)) &&
         Decimal.gt?(security.previous_profit, Decimal.new(0)) &&
         Decimal.lt?(security.ask_price, Decimal.mult(security.bvs, Decimal.div(2, 3))) &&
@@ -384,7 +242,6 @@ defmodule SaseMango.SecuritiesHelper do
         Decimal.lt?(security.pe, Decimal.new(20)) &&
         Decimal.gt?(security.eps_roi, Decimal.from_float(0.05))
     end)
-    |> Enum.sort_by(& &1.eps_roi, {:desc, Decimal})
   end
 
   defp get_balance_sheet(financial_statement) do

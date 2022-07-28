@@ -7,8 +7,6 @@ defmodule SaseMango.Securities do
 
   """
 
-  # import Ecto.Query
-
   alias SaseMango.Securities.FinancialStatement
   alias SaseMango.Securities.Issuer
   alias SaseMango.SecuritiesHelper

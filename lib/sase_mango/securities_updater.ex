@@ -4,11 +4,11 @@ defmodule SaseMango.SecuritiesUpdater do
 
   """
 
+  require Logger
+
   alias SaseMango.SaseScraper
   alias SaseMango.Securities
   alias SaseMangoWeb.Endpoint
-
-  require Logger
 
   @doc """
     Updates existing or create new issuer.
