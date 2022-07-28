@@ -5,6 +5,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
   alias SaseMango.Calculator
   alias SaseMango.Securities
   alias SaseMangoWeb.Components.HeaderComponent
+  alias SaseMangoWeb.Components.TableIconsComponent
   alias SaseMangoWeb.Endpoint
 
   @impl true
@@ -56,6 +57,31 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
      |> calculate()}
   end
 
+  def handle_event("delete_row", %{"row_id" => row_id} = _params, socket) do
+    socket_results = socket.assigns.results
+
+    target_row =
+      Enum.find(
+        socket_results.securities,
+        fn %{id: id} -> id == row_id end
+      )
+
+    new_rows =
+      Enum.filter(
+        socket_results.securities,
+        fn %{id: id} -> id != row_id end
+      )
+
+    new_results = %{
+      securities: new_rows,
+      total_without_fee:
+        Decimal.sub(socket_results.total_without_fee, target_row.total_without_fee),
+      total_with_fee: Decimal.sub(socket_results.total_without_fee, target_row.total_with_fee)
+    }
+
+    {:noreply, assign(socket, :results, new_results)}
+  end
+
   @impl true
   def handle_info(%Broadcast{event: "securities_update"}, socket) do
     securities = Securities.list_securities(:bargains)
@@ -77,6 +103,8 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
     assign(socket, :symbols_list, symbols_list)
   end
 
+  def enable_form_submit?(changeset), do: changeset.valid?
+
   defp calculate(socket) do
     case Ecto.Changeset.apply_action(socket.assigns.changeset, :insert) do
       {:ok, input} ->
@@ -87,11 +115,20 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
 
         total_with_fee = Decimal.add(socket.assigns.results.total_with_fee, result.total_with_fee)
 
+        new_security =
+          Map.put(
+            result,
+            :id,
+            result.symbol <> Decimal.to_string(result.amount) <> Decimal.to_string(result.price)
+          )
+
         new_results = %{
-          securities: [result | socket.assigns.results.securities],
+          securities: [new_security | socket.assigns.results.securities],
           total_without_fee: total_without_fee,
           total_with_fee: total_with_fee
         }
+
+        IO.inspect(new_results)
 
         assign(socket, :results, new_results)
 
