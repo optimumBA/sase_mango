@@ -281,6 +281,55 @@ a {
   cursor: pointer;
 }
 
+/* General style */
+
+b,
+strong {
+  font-weight: bold;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 300;
+  letter-spacing: -0.1rem;
+  margin: 1rem 0;
+}
+h1 {
+  font-size: 4rem;
+  line-height: 1.2;
+}
+h2 {
+  font-size: 3rem;
+  line-height: 1.25;
+}
+h3 {
+  font-size: 2.4rem;
+  line-height: 1.3;
+}
+h4 {
+  font-size: 1.8rem;
+  letter-spacing: -0.08rem;
+  line-height: 1.35;
+}
+h5 {
+  font-size: 1.4rem;
+  letter-spacing: -0.05rem;
+  line-height: 1.5;
+}
+h6 {
+  font-size: 1.2rem;
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
+img {
+  max-width: 100%;
+}
+
 /* Tables */
 
 table {
@@ -368,7 +417,7 @@ th:last-child {
   @apply relative cursor-pointer;
 }
 
-.page-tab:hover a{
+.page-tab:hover a {
   @apply text-[#3b3a3a];
 }
 
@@ -399,12 +448,12 @@ th:last-child {
   @apply relative;
 }
 
-.search-icon {
-  @apply absolute w-max right-5 top-[50%] -translate-y-[50%];
+.search-icons {
+  @apply absolute w-max flex items-center gap-4 right-5 top-[50%] -translate-y-[50%];
 }
 
 .search-field {
-  @apply text-[1.2em] duration-150 ease-linear text-[#3e3e3e] my-2 pl-8 pr-14 py-3 rounded-xl border border-[#D9D9D9];
+  @apply text-[1.2em] duration-150 ease-linear text-[#3e3e3e] my-2 pl-8 pr-28 py-3 rounded-xl border border-[#D9D9D9];
 }
 
 .search-field::placeholder {
@@ -415,53 +464,8 @@ th:last-child {
   @apply border-[#bababa];
 }
 
-/* General style */
-
-b,
-strong {
-  font-weight: bold;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 300;
-  letter-spacing: -0.1rem;
-  margin: 1rem 0;
-}
-h1 {
-  font-size: 4rem;
-  line-height: 1.2;
-}
-h2 {
-  font-size: 3rem;
-  line-height: 1.25;
-}
-h3 {
-  font-size: 2.4rem;
-  line-height: 1.3;
-}
-h4 {
-  font-size: 1.8rem;
-  letter-spacing: -0.08rem;
-  line-height: 1.35;
-}
-h5 {
-  font-size: 1.4rem;
-  letter-spacing: -0.05rem;
-  line-height: 1.5;
-}
-h6 {
-  font-size: 1.2rem;
-  letter-spacing: 0;
-  line-height: 1.4;
-}
-
-img {
-  max-width: 100%;
+.clear-icon {
+  @apply cursor-pointer text-[#ADADAD] hover:text-[#565555];
 }
 
 /* Alerts and form errors used by phx.new */

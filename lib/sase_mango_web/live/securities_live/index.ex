@@ -1,14 +1,14 @@
 defmodule SaseMangoWeb.SecuritiesLive.Index do
   use SaseMangoWeb, :live_view
 
+  alias Phoenix.Socket.Broadcast
   alias SaseMango.HandleTable
-  alias SaseMango.Securities
   alias SaseMango.HandleTable.SearchFilter
+  alias SaseMango.Securities
   alias SaseMangoWeb.Components.FilterFormComponent
   alias SaseMangoWeb.Components.HeaderComponent
   alias SaseMangoWeb.Components.SortingComponent
   alias SaseMangoWeb.Endpoint
-  alias Phoenix.Socket.Broadcast
 
   @impl true
   def mount(_params, _session, socket) do
@@ -73,6 +73,13 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     {:noreply, push_patch(socket, to: path, replace: true)}
   end
 
+  def handle_event("clear_form", _params, socket) do
+    url_params = merge_url_params(socket, %{q: nil})
+    path = Routes.securities_index_path(socket, socket.assigns.live_action, url_params)
+
+    {:noreply, push_patch(socket, to: path, replace: true)}
+  end
+
   defp apply_action(socket, :securities, _params) do
     socket
     |> assign(:page_title, "List of securities")
@@ -120,9 +127,4 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   defp set_sort_order("asc"), do: :asc
   defp set_sort_order("desc"), do: :desc
   defp set_sort_order(_value), do: :asc
-
-  # def todays_date do
-  #   {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()
-  #   "#{day}.#{month}.#{year}"
-  # end
 end
