@@ -1,5 +1,5 @@
 
-<section class="px-[64px]">
+<section class="px-[64px] overflow-y-visible min-h-[80vh]">
 
   <HeaderComponent.header
     socket={@socket}
@@ -17,25 +17,50 @@
 
       <div class="">
           <%= label f, :symbol, "Issuer/Symbol", class: "flex w-max text-[#9A9A9A]" %>
-          <%= select f, :symbol, @symbols_list, prompt: "SELECT", class: "calc-select" %>
+          <%= live_component CustomSelectComponent,
+            id: "issuers_select",
+            f: f,
+            name: :symbol,
+            options: @select_list,
+            open: @select_open,
+            selected_item: @select_item
+          %>          
       </div>
 
-      <div class="w-[190px]">
-        <%= label f, :price, "Price", class: "flex w-max text-[#9A9A9A]" %>
-        <%= text_input f, :price, placeholder: "0.00 KM", class: "calc-field", phx_debounce: :blur %>
+      <div class="max-w-[180px]">
+        <div>
+          <%= label f, :price, "Price", for: :price, class: "flex text-[#9A9A9A]" %>
+          <div class="relative calc-field">
+            <%= text_input f, :price, placeholder: "0.00", disabled: !enable_forms_fields?(@select_item), class: "", phx_debounce: :blur %>
+            <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
+              <span class="text-gray-600 text-[1.2em]" id="price-currency"> KM </span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="w-[190px]">
-        <%= label f, :amount, "Amount", class: "flex w-max text-[#9A9A9A]" %>
-        <%= text_input f, :amount, placeholder: "0", class: "calc-field", phx_debounce: :blur %>
+      <div class="w-[150px]">
+        <div>
+          <%= label f, :amount, "Amount", class: "flex w-max text-[#9A9A9A]" %>
+          <div class="relative calc-field">
+            <%= text_input f, :amount, placeholder: "0", disabled: !enable_forms_fields?(@select_item), class: "", phx_debounce: :blur %>            
+          </div>
+        </div>
       </div>
 
-      <div class="w-[190px]">
-        <%= label f, :fee, "Fee percentage", class: "flex w-max text-[#9A9A9A]" %>
-        <%= text_input f, :fee, placeholder: "0%", class: "w-10 calc-field", phx_debounce: :blur %>
+      <div class="w-[150px]">
+        <div>
+          <%= label f, :fee, "Fee percentage", class: "flex w-max text-[#9A9A9A]" %>
+          <div class="relative calc-field">
+            <%= text_input f, :fee, placeholder: "0", disabled: !enable_forms_fields?(@select_item), class: "", phx_debounce: :blur %>
+            <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
+              <span class="text-gray-600 text-[1.2em]" id="price-currency"> % </span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="w-[190px]">
+      <div class="w-[150px]">
         <%= submit "Calculate",
             id: "calculate-btn",
             type: "submit",
@@ -71,9 +96,9 @@
             </td>
             <td class="text-center px-4" colspan="2"><%= result.name %></td>
             <td class="text-center px-4"><%= Decimal.round(result.amount, 0) %></td>
-            <td class="text-center px-4"><%= Decimal.round(result.price, 4) %></td>
-            <td class="text-center px-4" colspan="2"><%= Decimal.round(result.total_without_fee, 4) %></td>
-            <td class="text-center px-4" colspan="2"><%= Decimal.round(result.total_with_fee, 4) %></td>
+            <td class="text-center px-4"><%= Decimal.round(result.price, 2) %></td>
+            <td class="text-center px-4" colspan="2"><%= Decimal.round(result.total_without_fee, 2) %></td>
+            <td class="text-center px-4" colspan="2"><%= Decimal.round(result.total_with_fee, 2) %></td>
             <td class="text-center ">
               <TableIconsComponent.delete_row 
                 row_id={result.id}              
@@ -87,8 +112,8 @@
           <td class="px-4" colspan="2"></td>
           <td class="px-4"></td>
           <td class="px-4"></td>
-          <td class="px-4 text-center" colspan="2"><%= Decimal.round(@results.total_without_fee, 4) %></td>
-          <td class="text-center px-4" colspan="2"><%= Decimal.round(@results.total_with_fee, 4) %></td>
+          <td class="px-4 text-center" colspan="2"><%= Decimal.round(@results.total_without_fee, 2) %></td>
+          <td class="text-center px-4" colspan="2"><%= Decimal.round(@results.total_with_fee, 2) %></td>
           <td></td>
         </tr>
       </tbody>

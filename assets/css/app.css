@@ -40,16 +40,11 @@ input[type='reset'],
 input[type='submit'] {
   background-color: #9db9d3;
   border: 0.1rem solid #9db9d3;
-  /* border-radius: 10px; */
   color: #fff;
   cursor: pointer;
   display: inline-block;
-  /* font-size: 1em; */
-  /* font-weight: 700; */
   font-weight: bold;
   letter-spacing: 0.1rem;
-  /* line-height: 3.8rem; */
-  /* padding: 0 3rem; */
   text-align: center;
   text-decoration: none;
   white-space: nowrap;
@@ -237,7 +232,6 @@ select {
   font-size: 1.1em;
   font-weight: 300;
   padding: 1rem;
-  /* width: 100%; */
 }
 
 select:hover {
@@ -392,7 +386,7 @@ th:last-child {
 /* Securities table */
 
 .table-wrapper {
-  @apply overflow-y-auto h-[75vh];
+  @apply overflow-y-auto max-h-[75vh];
 }
 
 .securities-table {
@@ -527,7 +521,11 @@ th:last-child {
 }
 
 .calc-field {
-  @apply border border-[#979797] p-[1rem] rounded-[0.7rem] shadow-none text-[1.2em] font-[300] text-center;
+  @apply border border-[#979797] rounded-[0.7rem] shadow-none;
+}
+
+.calc-field > input {
+  @apply border-0 p-[1rem] text-[1.2em] font-[300] text-center;
 }
 
 .calc-field::placeholder {
