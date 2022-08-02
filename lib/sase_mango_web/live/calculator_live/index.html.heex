@@ -1,0 +1,123 @@
+
+<section class="px-[64px] overflow-y-visible min-h-[80vh]">
+
+  <HeaderComponent.header
+    socket={@socket}
+    active_tab={@active_tab}
+   />     
+
+  <.form 
+    let={f} 
+    for={@changeset} 
+    phx-submit="calculate"
+    phx-change="validate"
+    class="px-4 my-14 mt-[5rem] border-b border-[#D9D9D9]" 
+  >  
+    <div class="flex flex-row items-end gap-8 pb-12">
+
+      <div class="">
+          <%= label f, :symbol, "Issuer/Symbol", class: "flex w-max text-[#9A9A9A]" %>
+          <%= live_component CustomSelectComponent,
+            id: "issuers_select",
+            f: f,
+            name: :symbol,
+            options: @select_list,
+            open: @select_open,
+            selected_item: @select_item
+          %>          
+      </div>
+
+      <div class="max-w-[180px]">
+        <div>
+          <%= label f, :price, "Price", for: :price, class: "flex text-[#9A9A9A]" %>
+          <div class="relative calc-field">
+            <%= text_input f, :price, placeholder: "0.00", disabled: !enable_forms_fields?(@select_item), class: "", phx_debounce: :blur %>
+            <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
+              <span class="text-gray-600 text-[1.2em]" id="price-currency"> KM </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-[150px]">
+        <div>
+          <%= label f, :amount, "Amount", class: "flex w-max text-[#9A9A9A]" %>
+          <div class="relative calc-field">
+            <%= text_input f, :amount, placeholder: "0", disabled: !enable_forms_fields?(@select_item), class: "", phx_debounce: :blur %>            
+          </div>
+        </div>
+      </div>
+
+      <div class="w-[150px]">
+        <div>
+          <%= label f, :fee, "Fee percentage", class: "flex w-max text-[#9A9A9A]" %>
+          <div class="relative calc-field">
+            <%= text_input f, :fee, placeholder: "0", disabled: !enable_forms_fields?(@select_item), class: "", phx_debounce: :blur %>
+            <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
+              <span class="text-gray-600 text-[1.2em]" id="price-currency"> % </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-[150px]">
+        <%= submit "Calculate",
+            id: "calculate-btn",
+            type: "submit",
+            class: "py-[0.5rem] rounded-[6px] px-[2.5rem] text-[1.3em] font-[400]",
+            disabled: !enable_form_submit?(@changeset)           
+        %>
+      </div>
+    </div>
+    <p class="text-[0.9em] text-[#9A9A9A] mb-2">To calculate the price, please enter your requirements.</p>
+  </.form>
+
+  <%= if length(@results.securities) > 0 do %>
+
+    <p class="text-[1.6em] text-[#1E1E1E]">Stock prices</p>
+
+    <table class="data-table overflow-scroll w-max h-auto mt-8">
+      <thead>
+        <th class="text-center px-4" colspan="3">Symbol</th>
+        <th class="text-center px-4" colspan="2">Name</th>
+        <th class="text-center px-4">Amount</th>
+        <th class="text-center px-4">Price in KM</th>
+        <th class="text-center px-4" colspan="2">Total without fee percentage in KM</th>
+        <th class="text-center px-4" colspan="2">Total with fee percentage in  KM</th>
+      </thead>
+
+      <tbody>
+        <%= for result <- @results.securities do %>
+          <tr class="h-8">
+            <td class="text-center text-blue-400 px-4" colspan="3">
+              <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{ result.symbol }"} target="_blank">
+                <%= result.symbol %>
+              </a>
+            </td>
+            <td class="text-center px-4" colspan="2"><%= result.name %></td>
+            <td class="text-center px-4"><%= Decimal.round(result.amount, 0) %></td>
+            <td class="text-center px-4"><%= Decimal.round(result.price, 2) %></td>
+            <td class="text-center px-4" colspan="2"><%= Decimal.round(result.total_without_fee, 2) %></td>
+            <td class="text-center px-4" colspan="2"><%= Decimal.round(result.total_with_fee, 2) %></td>
+            <td class="text-center ">
+              <TableIconsComponent.delete_row 
+                row_id={result.id}              
+              />
+            </td>            
+          </tr>
+        <% end %>
+
+        <tr class="h-12">
+          <td class="px-4 text-center font-bold" colspan="3">TOTAL</td>
+          <td class="px-4" colspan="2"></td>
+          <td class="px-4"></td>
+          <td class="px-4"></td>
+          <td class="px-4 text-center" colspan="2"><%= Decimal.round(@results.total_without_fee, 2) %></td>
+          <td class="text-center px-4" colspan="2"><%= Decimal.round(@results.total_with_fee, 2) %></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  <% end %>
+
+</section>

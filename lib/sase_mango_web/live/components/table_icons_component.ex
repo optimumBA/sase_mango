@@ -107,4 +107,28 @@ defmodule SaseMangoWeb.Components.TableIconsComponent do
       </svg>
     """
   end
+
+  def delete_row(assigns) do
+    ~H"""
+    <div
+      phx-click="delete_row"
+      phx-value-row_id={@row_id}
+      class="delete-row"
+    >
+      <svg
+        width="16"
+        height="17"
+        viewBox="0 0 14 15"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+      <path d="M1 3.5H2.33333H13" stroke="#1E1E1E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M11.6663 3.50004V12.8334C11.6663 13.187 11.5259 13.5261 11.2758 13.7762C11.0258 14.0262 10.6866 14.1667 10.333 14.1667H3.66634C3.31272 14.1667 2.97358 14.0262 2.72353 13.7762C2.47348 13.5261 2.33301 13.187 2.33301 12.8334V3.50004M4.33301 3.50004V2.16671C4.33301 1.81309 4.47348 1.47395 4.72353 1.2239C4.97358 0.97385 5.31272 0.833374 5.66634 0.833374H8.33301C8.68663 0.833374 9.02577 0.97385 9.27582 1.2239C9.52586 1.47395 9.66634 1.81309 9.66634 2.16671V3.50004" stroke="#1E1E1E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M5.66699 6.83337V10.8334" stroke="#1E1E1E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8.33301 6.83337V10.8334" stroke="#1E1E1E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    """
+  end
+
 end
