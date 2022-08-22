@@ -419,7 +419,7 @@ th:last-child {
 
 .securities-table tbody tr td,
 .securities-table tbody tr th {
-  @apply text-center text-[#1E1E1E] text-[1em] 2xl:text-[1.1em];
+  @apply text-[#1E1E1E] text-[1em] 2xl:text-[1.1em];
 }
 
 .sortable-column {

@@ -1,5 +1,5 @@
 
-<section class="px-[64px]">
+<section class="px-[16px]">
 
   <HeaderComponent.header
     socket={@socket}
@@ -180,62 +180,62 @@
       <tbody id="securities">
         <%= for security <- @securities do %>
           <tr id={"security-#{security.symbol}"}>
-            <td class=" p-2 2xl:px-4 2xl:py-2">
+            <td class="text-center p-2 2xl:px-4 2xl:py-2">
               <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{security.symbol}"} target="_blank" 
                 class=" text-blue-400"
               >
                 <%= security.symbol %>
               </a>
             </td>
-            <td class=" p-2 2xl:px-4 2xl:py-2">          
+            <td class="text-center p-2 2xl:px-4 2xl:py-2">          
               <span class=""><%= security.name %></span><br />
               <span class=""><%= Securities.segment(security.segment) %></span>
             </td>
-            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= Decimal.round(security.price, 2) %></td>
-            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= Decimal.round(security.nominal_price, 2) %></td>
+            <td class="text-right 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= Decimal.round(security.price, 2) %></td>
+            <td class="text-right 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= Decimal.round(security.nominal_price, 2) %></td>
             <td class="p-2 2xl:px-4 2xl:py-2">
-                <div class="flex flex-col gap-4">
+                <div class="flex flex-col gap-4 text-right">
                     <span class=""><%= Decimal.round(security.ask_price, 2) %></span>
                     <span class=""><%= security.ask_volume %></span>
                 </div>            
             </td>
             <td class="p-2 2xl:px-4 2xl:py-2" >
-                <div class="flex flex-col gap-4">
+                <div class="flex flex-col gap-4 text-right">
                     <span class=""><%= Decimal.round(security.bid_price, 2) %></span>
                     <span class=""><%= security.bid_volume %></span>
                 </div>
             </td>
             <td class="p-2 2xl:px-4 2xl:py-2 ">
                 <div class="flex flex-col gap-4">
-                    <span class=""><%= Decimal.round(Decimal.mult(security.dividend_roi, 100), 2) %>%</span>
-                    <span class=""><%= Decimal.round(Decimal.mult(security.previous_dividend_roi, 100), 2) %>%</span>
+                    <span class="text-right"><%= Decimal.round(Decimal.mult(security.dividend_roi, 100), 2) %>%</span>
+                    <span class="text-right"><%= Decimal.round(Decimal.mult(security.previous_dividend_roi, 100), 2) %>%</span>
                 </div>
             </td>
             <td class="p-2 2xl:px-4 2xl:py-2 " >
                 <div class="flex flex-col gap-4">
-                    <span class=""><%= Decimal.round(Decimal.mult(security.eps_roi, 100), 2) %>%</span>
-                    <span class=""><%= Decimal.round(Decimal.mult(security.previous_eps_roi, 100), 2) %>%</span>
+                    <span class="text-right"><%= Decimal.round(Decimal.mult(security.eps_roi, 100), 2) %>%</span>
+                    <span class="text-right"><%= Decimal.round(Decimal.mult(security.previous_eps_roi, 100), 2) %>%</span>
                 </div>
             </td>
-            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 " ><%= Decimal.round(security.pe, 2) %></td>
-            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 " ><%= Decimal.round(security.pb, 2) %></td>
-            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 " ><%= Decimal.round(security.market_value, 0) %></td>
+            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 text-right" ><%= Decimal.round(security.pe, 2) %></td>
+            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 text-right" ><%= Decimal.round(security.pb, 2) %></td>
+            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 text-right" ><%= Decimal.round(security.market_value, 0) %></td>
             <td class="p-2 2xl:px-4 2xl:py-2 " >
                 <div class="flex flex-col gap-4">
-                    <span class=""><%= Decimal.round(security.book_value, 0) %></span>
-                    <span class=""><%= Decimal.round(security.previous_book_value, 0) %></span>
+                    <span class="text-right"><%= Decimal.round(security.book_value, 0) %></span>
+                    <span class="text-right"><%= Decimal.round(security.previous_book_value, 0) %></span>
                 </div>
             </td>
             <td class="p-2 2xl:px-4 2xl:py-2" >
                 <div class="flex flex-col gap-4">
-                    <span class=""><%= Decimal.round(security.bvs, 2) %></span>
-                    <span class=""><%= Decimal.round(security.previous_bvs, 2) %></span>
+                    <span class="text-right"><%= Decimal.round(security.bvs, 2) %></span>
+                    <span class="text-right"><%= Decimal.round(security.previous_bvs, 2) %></span>
                 </div>
             </td>
             <td class="p-2 2xl:px-4 2xl:py-2 " >
                 <div class="flex flex-col gap-4">
-                    <span class=""><%= Decimal.round(Decimal.mult(security.profit_margin, 100), 2) %>%</span>
-                    <span class=""><%= Decimal.round(Decimal.mult(security.previous_profit_margin, 100), 2) %>%</span>
+                    <span class="text-right"><%= Decimal.round(Decimal.mult(security.profit_margin, 100), 2) %>%</span>
+                    <span class="text-right"><%= Decimal.round(Decimal.mult(security.previous_profit_margin, 100), 2) %>%</span>
                 </div>
             </td>
           </tr>
