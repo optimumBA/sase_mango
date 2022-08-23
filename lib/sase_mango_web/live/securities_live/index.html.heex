@@ -219,11 +219,11 @@
             </td>
             <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 text-right" ><%= Decimal.round(security.pe, 2) %></td>
             <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 text-right" ><%= Decimal.round(security.pb, 2) %></td>
-            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 text-right" ><%= Decimal.round(security.market_value, 0) %></td>
+            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 text-right" ><%= Number.Delimit.number_to_delimited(security.market_value, delimiter: ".", separator: ",") %></td>
             <td class="p-2 2xl:px-4 2xl:py-2 " >
                 <div class="flex flex-col gap-4">
-                    <span class="text-right"><%= Decimal.round(security.book_value, 0) %></span>
-                    <span class="text-right"><%= Decimal.round(security.previous_book_value, 0) %></span>
+                    <span class="text-right"><%= Number.Delimit.number_to_delimited(security.book_value, delimiter: ".", separator: ",") %></span>
+                    <span class="text-right"><%= Number.Delimit.number_to_delimited(security.previous_book_value, delimiter: ".", separator: ",") %></span>
                 </div>
             </td>
             <td class="p-2 2xl:px-4 2xl:py-2" >
