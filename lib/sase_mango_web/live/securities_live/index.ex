@@ -1,5 +1,6 @@
 defmodule SaseMangoWeb.SecuritiesLive.Index do
   use SaseMangoWeb, :live_view
+  use Number
 
   alias Phoenix.Socket.Broadcast
   alias SaseMango.HandleTable
