@@ -8,7 +8,7 @@ defmodule SaseMangoWeb.Components.SortingComponent do
       <div
         phx-click="sort_column"
         phx-value-key={@key}
-        class="sortable-column"
+        class="sortable-column 2xl:flex-row"
       >
         <span><%= @col_text %></span>
 
