@@ -175,7 +175,6 @@ defmodule SaseMango.SecuritiesHelper do
       }
     end)
     |> maybe_additional_filter(list_type)
-    |> Enum.sort_by(& &1.eps_roi, {:desc, Decimal})
   end
 
   defp financial_statements do
