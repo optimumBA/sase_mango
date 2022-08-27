@@ -30,7 +30,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   end
 
   defp assign_sort_options(socket, params) do
-    new_sort_by = params["sort_by"] || nil
+    new_sort_by = params["sort_by"] || "eps_roi"
     new_sort_order = set_sort_order(params["sort_order"])
     sort_options = %{sort_by: new_sort_by, sort_order: new_sort_order}
 
@@ -127,5 +127,6 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
 
   defp set_sort_order("asc"), do: :asc
   defp set_sort_order("desc"), do: :desc
-  defp set_sort_order(_value), do: :asc
+  defp set_sort_order(_value), do: :desc
+
 end
