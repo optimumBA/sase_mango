@@ -15,7 +15,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
       socket
       |> assign(:changeset, Calculator.change_input(%Calculator.Input{}))
       |> assign_results()
-      |> assign(:securities, Securities.list_securities(:bargains))
+      |> assign(:securities, Securities.list_securities(:securities))
       |> assign(:active_tab, :calculator)
       |> assign(:select_open, false)
       |> assign(:select_item, %{key: "", value: nil})
