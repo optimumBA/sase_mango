@@ -16,7 +16,7 @@
     <div class="flex flex-row items-end gap-8 pb-12">
 
       <div class="">
-          <%= label f, :symbol, "Issuer/Symbol", class: "flex w-max text-[#9A9A9A]" %>
+          <%= label f, :symbol, "Issuer/Symbol", for: :symbol, class: "flex w-max text-[#9A9A9A]" %>
           <%= live_component CustomSelectComponent,
             id: "issuers_select",
             f: f,
@@ -31,7 +31,7 @@
         <div>
           <%= label f, :price, "Price", for: :price, class: "flex text-[#9A9A9A]" %>
           <div class="relative calc-field">
-            <%= text_input f, :price, placeholder: "0.00", disabled: !enable_forms_fields?(@select_item), class: "", phx_debounce: :blur %>
+            <%= text_input f, :price, placeholder: "0.00", disabled: !enable_forms_fields?(@select_item), class: "placeholder:focus:text-transparent", phx_debounce: :blur, autocomplete: "off" %>
             <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
               <span class="text-gray-600 text-[1.2em]" id="price-currency"> KM </span>
             </div>
@@ -43,7 +43,7 @@
         <div>
           <%= label f, :amount, "Amount", class: "flex w-max text-[#9A9A9A]" %>
           <div class="relative calc-field">
-            <%= text_input f, :amount, placeholder: "0", disabled: !enable_forms_fields?(@select_item), class: "", phx_debounce: :blur %>            
+            <%= text_input f, :amount, placeholder: "0", disabled: !enable_forms_fields?(@select_item), class: "placeholder:focus:text-transparent", phx_debounce: :blur, autocomplete: "off" %>            
           </div>
         </div>
       </div>
@@ -52,7 +52,7 @@
         <div>
           <%= label f, :fee, "Fee percentage", class: "flex w-max text-[#9A9A9A]" %>
           <div class="relative calc-field">
-            <%= text_input f, :fee, placeholder: "0", disabled: !enable_forms_fields?(@select_item), class: "", phx_debounce: :blur %>
+            <%= text_input f, :fee, placeholder: "0", disabled: !enable_forms_fields?(@select_item), class: "placeholder:focus:text-transparent", autocomplete: "off" %>
             <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
               <span class="text-gray-600 text-[1.2em]" id="price-currency"> % </span>
             </div>
