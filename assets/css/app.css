@@ -394,7 +394,7 @@ th:last-child {
 }
 
 .securities-table > thead {
-  @apply sticky top-0;
+  @apply sticky top-0 h-[42px];
 }
 
 .securities-table > tfoot {
@@ -402,7 +402,7 @@ th:last-child {
 }
 
 .securities-table > thead > tr > th {
-  @apply text-white bg-[#9DB9D3] align-bottom 2xl:align-middle font-[700] text-[0.95em] 2xl:text-[1em] px-6 pt-3 pb-6 2xl:py-8 2xl:px-4;
+  @apply text-white bg-[#9DB9D3] text-center font-[700] text-[12px] p-0 2xl:text-[1em] 2xl:py-8 2xl:px-4;
 }
 
 .securities-table > thead > tr > th:first-child {
@@ -419,11 +419,15 @@ th:last-child {
 
 .securities-table tbody tr td,
 .securities-table tbody tr th {
-  @apply text-[#1E1E1E] text-[1em] 2xl:text-[1.1em];
+  @apply text-[#1E1E1E] text-[12px] 2xl:text-[1em];
+}
+
+.securities-table tbody tr td {
+  @apply pr-2 pl-0 leading-[15px] 2xl:leading-[20px] font-normal
 }
 
 .sortable-column {
-  @apply flex flex-col items-center gap-4 cursor-pointer;
+  @apply flex justify-around items-center gap-1 2xl:justify-between 2xl:gap-4 cursor-pointer;
 }
 
 .sortable-column span {
@@ -486,7 +490,7 @@ th:last-child {
 }
 
 .search-field {
-  @apply text-[1.2em] duration-150 ease-linear text-[#3e3e3e] my-2 pl-8 pr-28 py-3 rounded-xl border border-[#D9D9D9];
+  @apply text-[1.0em] 2xl:text-[1.2em] duration-150 ease-linear text-[#3e3e3e] my-2 pl-8 pr-28 py-3 rounded-xl border border-[#D9D9D9];
 }
 
 .search-field::placeholder {
