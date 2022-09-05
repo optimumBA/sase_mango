@@ -5,7 +5,7 @@ defmodule SaseMangoWeb.Components.HeaderComponent do
 
   def header(assigns) do
     ~H"""
-    <div class="mt-[120px] mb-[2rem] text-[1.2em] py-4">
+    <div class="mt-[120px] mb-[2rem] text-[17px] 2xl:text-[1.2em] py-4">
       <div class="flex items-center gap-4 px-2">
         <span class="text-[#8C8C8C] font-[400]">Date:</span>
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
