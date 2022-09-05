@@ -29,20 +29,22 @@ defmodule SaseMangoWeb.Components.TableIconsComponent do
 
   def text_sort_asc(assigns) do
     ~H"""
-      <svg width="19" height="15"
+      <svg
+        width="14"
+        height="10"
         viewBox="0 0 19 15"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path d="M12.5 1V12"
           stroke="currentColor"
-          stroke-width="2.5"
+          stroke-width="2.0"
           stroke-linecap="round"
           stroke-linejoin="round"
         />
         <path d="M17.5 9L12.5 14L7.5 9"
           stroke="currentColor"
-          stroke-width="2.5"
+          stroke-width="2.0"
           stroke-linecap="round"
           stroke-linejoin="round"
         />
@@ -57,8 +59,8 @@ defmodule SaseMangoWeb.Components.TableIconsComponent do
   def text_sort_desc(assigns) do
     ~H"""
       <svg
-        width="19"
-        height="15"
+        width="14"
+        height="10"
         viewBox="0 0 19 15"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -86,21 +88,21 @@ defmodule SaseMangoWeb.Components.TableIconsComponent do
   def number_sort_icon(assigns) do
     ~H"""
       <svg
-        width="13"
-        height="12"
+        width="10"
+        height="15"
         viewBox="0 0 13 12"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path d="M6.61536 10.6666V1.33331"
           stroke="currentColor"
-          stroke-width="2.5"
+          stroke-width="1.8"
           stroke-linecap="round"
           stroke-linejoin="round"
         />
         <path d="M1.94873 5.99998L6.6154 1.33331L11.2821 5.99998"
           stroke="currentColor"
-          stroke-width="2.5"
+          stroke-width="1.8"
           stroke-linecap="round"
           stroke-linejoin="round"
         />
