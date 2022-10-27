@@ -1,11 +1,11 @@
-defmodule SaseMangoWeb.Components.SortingComponent do
+defmodule SaseMangoWeb.SecuritiesLive.SortingComponent do
   @moduledoc """
     Component that renders table sort link
   """
 
   use SaseMangoWeb, :component
 
-  alias SaseMangoWeb.Components.TableIconsComponent
+  alias SaseMangoWeb.SharedComponents.TableIconsComponent
 
   def sort_link(assigns) do
     ~H"""

@@ -1,4 +1,4 @@
-defmodule SaseMangoWeb.Components.FilterFormComponent do
+defmodule SaseMangoWeb.SecuritiesLive.FilterFormComponent do
   use SaseMangoWeb, :live_component
 
   alias SaseMango.HandleTable

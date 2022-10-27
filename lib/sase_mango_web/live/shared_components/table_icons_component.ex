@@ -1,4 +1,4 @@
-defmodule SaseMangoWeb.Components.TableIconsComponent do
+defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
   @moduledoc """
     Component that contains svg icons
   """

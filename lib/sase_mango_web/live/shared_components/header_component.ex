@@ -1,4 +1,4 @@
-defmodule SaseMangoWeb.Components.HeaderComponent do
+defmodule SaseMangoWeb.SharedComponents.HeaderComponent do
   use SaseMangoWeb, :component
 
   def header(assigns) do
