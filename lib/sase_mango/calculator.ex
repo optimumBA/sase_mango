@@ -36,11 +36,35 @@ defmodule SaseMango.Calculator do
     }
   end
 
+  def update_item(results, result) do
+    old_security = Enum.find(results.securities, &(&1.symbol == result.symbol))
+
+    total_without_fee =
+      Decimal.add(
+        Decimal.sub(results.total_without_fee, old_security.total_without_fee),
+        result.total_without_fee
+      )
+
+    total_with_fee =
+      Decimal.add(
+        Decimal.sub(results.total_with_fee, old_security.total_with_fee),
+        result.total_with_fee
+      )
+
+    filtered_securities = Enum.filter(results.securities, &(&1.symbol != result.symbol))
+
+    %{
+      securities: Enum.sort_by([result | filtered_securities], & &1.symbol, :asc),
+      total_without_fee: total_without_fee,
+      total_with_fee: total_with_fee
+    }
+  end
+
   def maybe_add_item(securities, results, input) when length(results.securities) > 0 do
     result = run(securities, input)
 
-    case Enum.any?(results.securities, &(&1.id == result.id)) do
-      true -> results
+    case Enum.any?(results.securities, &(&1.symbol == result.symbol)) do
+      true -> update_item(results, result)
       false -> add_new_item(results, result)
     end
   end
