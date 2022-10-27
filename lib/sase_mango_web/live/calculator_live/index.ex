@@ -4,9 +4,10 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
   alias Phoenix.Socket.Broadcast
   alias SaseMango.Calculator
   alias SaseMango.Securities
-  alias SaseMangoWeb.Components.CustomSelectComponent
-  alias SaseMangoWeb.Components.HeaderComponent
-  alias SaseMangoWeb.Components.TableIconsComponent
+  alias SaseMangoWeb.SharedComponents.CustomSelectComponent
+  alias SaseMangoWeb.SharedComponents.FormComponents
+  alias SaseMangoWeb.SharedComponents.HeaderComponent
+  alias SaseMangoWeb.SharedComponents.TableIconsComponent
   alias SaseMangoWeb.Endpoint
 
   @impl true
@@ -18,8 +19,9 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
       |> assign(:securities, Securities.list_securities(:securities))
       |> assign(:active_tab, :calculator)
       |> assign(:select_open, false)
-      |> assign(:select_item, %{key: "", value: nil})
-      |> get_select_list()
+      |> assign(:select_item, %{key: "", value: ""})
+      |> assign(:input_flip, false)
+      |> assign_select_list()
 
     if connected?(socket) do
       Endpoint.subscribe("securities")
@@ -39,20 +41,15 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
   end
 
   @impl true
+  def handle_event("calculate", %{"input" => input_params}, socket) do
+    {:noreply,
+     socket
+     |> reassign_changeset(input_params)
+     |> calculate()}
+  end
+
   def handle_event("validate", %{"input" => input_params}, socket) do
-    select_item = socket.assigns.select_item
-
-    changeset = Calculator.change_input(%Calculator.Input{}, input_params)
-
-    changes = Map.merge(changeset.changes, %{symbol: select_item.key})
-
-    changeset =
-      changeset
-      |> Map.put(:changes, changes)
-      |> Map.put(:action, :validate)
-
-    IO.inspect(changeset)
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply, reassign_changeset(socket, input_params)}
   end
 
   def handle_event("toggle", _params, socket) do
@@ -60,28 +57,36 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
   end
 
   def handle_event("hide_select", _params, socket) do
-    {:noreply, assign(socket, :select_open, false)}
+    input_flip = if String.length(socket.assigns.select_item.value) > 0, do: true, else: false
+
+    {:noreply,
+     socket
+     |> assign(:select_open, false)
+     |> assign(:input_flip, input_flip)}
+  end
+
+  def handle_event("input_flip", _, socket) do
+    {:noreply, assign(socket, :input_flip, !socket.assigns.input_flip)}
   end
 
   def handle_event("custom_select", %{"symbol" => symbol} = _params, socket) do
     selected_item = Enum.find(socket.assigns.select_list, &(&1.key == symbol))
 
-    {:noreply,
-     socket
-     |> assign(:select_open, false)
-     |> assign(:select_item, selected_item)}
-  end
+    changeset_from_socket = socket.assigns.changeset
 
-  def handle_event("calculate", %{"input" => input_params}, socket) do
+    changes_from_socket = Map.merge(changeset_from_socket.changes, %{symbol: symbol})
+
     changeset =
       %Calculator.Input{}
-      |> Calculator.change_input(input_params)
-      |> Map.put(:action, :insert)
+      |> Calculator.change_input(changes_from_socket)
+      |> Map.put(:action, :validate)
 
     {:noreply,
      socket
      |> assign(:changeset, changeset)
-     |> calculate()}
+     |> assign(:select_open, false)
+     |> assign(:input_flip, true)
+     |> assign(:select_item, selected_item)}
   end
 
   def handle_event("delete_row", %{"row_id" => row_id} = _params, socket) do
@@ -110,7 +115,51 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
      |> calculate()}
   end
 
-  def get_select_list(socket) do
+  def handle_info({:update_state}, socket) do
+    {:noreply,
+     socket
+     |> assign(:select_open, true)
+     |> assign(:input_flip, false)
+     |> assign(:select_item, %{key: "", value: ""})}
+  end
+
+  def handle_info({:update_state, value}, socket) do
+    selected_item =
+      Enum.find(
+        socket.assigns.select_list,
+        &(String.starts_with?(&1.key, value) || String.starts_with?(&1.value, value))
+      )
+
+    case selected_item do
+      nil ->
+        {
+          :noreply,
+          socket
+          |> assign(:select_open, false)
+          |> assign(:input_flip, false)
+        }
+
+      selected_item ->
+        changeset_from_socket = socket.assigns.changeset
+
+        changes_from_socket =
+          Map.merge(changeset_from_socket.changes, %{symbol: selected_item.key})
+
+        changeset =
+          %Calculator.Input{}
+          |> Calculator.change_input(changes_from_socket)
+          |> Map.put(:action, :validate)
+
+        {:noreply,
+         socket
+         |> assign(:changeset, changeset)
+         |> assign(:select_open, false)
+         |> assign(:input_flip, true)
+         |> assign(:select_item, selected_item)}
+    end
+  end
+
+  def assign_select_list(socket) do
     securities = socket.assigns.securities
 
     select_list =
@@ -121,9 +170,18 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
     assign(socket, :select_list, select_list)
   end
 
-  def enable_form_submit?(changeset), do: changeset.valid?
-  def enable_forms_fields?(select_item) when is_binary(select_item.key), do: String.length(select_item.key) > 0
-  def enable_forms_fields?(_select_item), do: false
+  defp reassign_changeset(socket, input_params) do
+    select_item = socket.assigns.select_item
+
+    changeset_params = Map.merge(input_params, %{"symbol" => select_item.key})
+
+    changeset =
+      %Calculator.Input{}
+      |> Calculator.change_input(changeset_params)
+      |> Map.put(:action, :validate)
+
+    assign(socket, :changeset, changeset)
+  end
 
   defp calculate(socket) do
     socket_results = socket.assigns.results
