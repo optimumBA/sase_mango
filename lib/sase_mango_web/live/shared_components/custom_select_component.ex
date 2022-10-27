@@ -1,4 +1,8 @@
 defmodule SaseMangoWeb.SharedComponents.CustomSelectComponent do
+  @moduledoc """
+    Custom component that selects issuer smbol/name
+  """
+
   use SaseMangoWeb, :live_component
 
   @impl true

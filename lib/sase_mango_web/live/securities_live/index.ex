@@ -5,9 +5,9 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   alias SaseMango.HandleTable
   alias SaseMango.HandleTable.SearchFilter
   alias SaseMango.Securities
-  alias SaseMangoWeb.Components.FilterFormComponent
-  alias SaseMangoWeb.Components.HeaderComponent
-  alias SaseMangoWeb.Components.SortingComponent
+  alias SaseMangoWeb.SecuritiesLive.FilterFormComponent
+  alias SaseMangoWeb.SharedComponents.HeaderComponent
+  alias SaseMangoWeb.SecuritiesLive.SortingComponent
   alias SaseMangoWeb.Endpoint
 
   @impl true
