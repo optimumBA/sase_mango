@@ -1,5 +1,5 @@
 
-<section class="px-[64px] overflow-y-visible min-h-[80vh]">
+<section class="px-[8px] sm:px-[64px] min-h-[85vh] 2xl:px-[64px]">
 
   <HeaderComponent.header
     socket={@socket}
@@ -11,27 +11,27 @@
     for={@changeset} 
     phx-submit="calculate"
     phx-change="validate"
-    class="px-4 my-14 mt-[5rem] border-b border-[#D9D9D9]" 
-  >  
-    <div class="flex flex-row items-end gap-8 pb-12">
+    class="px-0 sm:px-4 my-14 mt-[5rem] border-b border-[#D9D9D9]" 
+  >
+    <div class="w-full flex flex-col flex-wrap sm:flex-row items-center sm:items-end gap-8 pb-12">
 
-      <div class="">
-          <%= label f, :symbol, "Issuer/Symbol", for: :symbol, class: "flex w-max text-[#9A9A9A]" %>
-          <%= live_component CustomSelectComponent,
-            id: "issuers_select",
-            f: f,
-            name: :symbol,
-            options: @select_list,
-            open: @select_open,
-            selected_item: @select_item
-          %>          
+      <div class="w-max">
+          <%= label f, :symbol, "Issuer or symbol", for: :symbol, class: "flex w-max text-[#9A9A9A]" %>
+          <.live_component module={CustomSelectComponent} 
+            id="issuers_select_comp" 
+            input_flip={@input_flip}
+            options={@select_list}
+            open={@select_open}
+            selected_item={@select_item}
+          />  
+
       </div>
 
-      <div class="max-w-[180px]">
+      <div class="min-w-[150px] max-w-[150px]">
         <div>
           <%= label f, :price, "Price", for: :price, class: "flex text-[#9A9A9A]" %>
-          <div class="relative calc-field">
-            <%= text_input f, :price, placeholder: "0.00", disabled: !enable_forms_fields?(@select_item), class: "placeholder:focus:text-transparent", phx_debounce: :blur, autocomplete: "off" %>
+          <div class="relative border border-[#979797] rounded-[0.7rem] shadow-none">
+            <%= text_input f, :price, placeholder: "0.00", class: "border-0 p-[1rem] text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>
             <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
               <span class="text-gray-600 text-[1.2em]" id="price-currency"> KM </span>
             </div>
@@ -39,34 +39,34 @@
         </div>
       </div>
 
-      <div class="w-[150px]">
+      <div class="min-w-[150px] max-w-[150px]">
         <div>
           <%= label f, :amount, "Amount", class: "flex w-max text-[#9A9A9A]" %>
-          <div class="relative calc-field">
-            <%= text_input f, :amount, placeholder: "0", disabled: !enable_forms_fields?(@select_item), class: "placeholder:focus:text-transparent", phx_debounce: :blur, autocomplete: "off" %>            
+          <div class="relative border border-[#979797] rounded-[0.7rem] shadow-none">
+            <%= text_input f, :amount, placeholder: "0", class: "border-0 p-[1rem] text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>            
           </div>
         </div>
       </div>
 
-      <div class="w-[150px]">
+      <div class="min-w-[150px] max-w-[150px]">
         <div>
           <%= label f, :fee, "Fee percentage", class: "flex w-max text-[#9A9A9A]" %>
-          <div class="relative calc-field">
-            <%= text_input f, :fee, placeholder: "0", disabled: !enable_forms_fields?(@select_item), class: "placeholder:focus:text-transparent", autocomplete: "off" %>
+          <div class="relative border border-[#979797] rounded-[0.7rem] shadow-none">
+            <%= text_input f, :fee, placeholder: "0", phx_debounce: "500", class: "border-0 p-[1rem] text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", autocomplete: "off" %>
             <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
-              <span class="text-gray-600 text-[1.2em]" id="price-currency"> % </span>
+              <span class="text-gray-600 text-[1.2em]" id="price-currency-2"> % </span>
             </div>
           </div>
         </div>
       </div>
 
       <div class="w-[150px]">
-        <%= submit "Calculate",
-            id: "calculate-btn",
-            type: "submit",
-            class: "py-[0.5rem] rounded-[6px] px-[2.5rem] text-[1.3em] font-[400]",
-            disabled: !enable_form_submit?(@changeset)           
-        %>
+
+        <FormComponents.submit_button 
+          changeset={@changeset} 
+          class="button py-[0.5rem] rounded-[6px] px-[2.5rem] text-[1.3em] font-[400]" 
+          text="Calculate" 
+        />
       </div>
     </div>
     <p class="text-[0.9em] text-[#9A9A9A] mb-2">To calculate the price, please enter your requirements.</p>
@@ -76,7 +76,7 @@
 
     <p class="text-[1.6em] text-[#1E1E1E]">Stock prices</p>
 
-    <table class="data-table overflow-scroll w-max h-auto mt-8">
+    <table class="data-table overflow-scroll w-max h-auto my-8">
       <thead>
         <th class="text-center px-4" colspan="3">Symbol</th>
         <th class="text-center px-4" colspan="2">Name</th>
