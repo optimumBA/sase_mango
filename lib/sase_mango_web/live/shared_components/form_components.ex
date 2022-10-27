@@ -1,4 +1,8 @@
 defmodule SaseMangoWeb.SharedComponents.FormComponents do
+  @moduledoc """
+    Helper module with form components
+  """
+
   use SaseMangoWeb, :component
 
   def submit_button(%{changeset: %Ecto.Changeset{valid?: valid?}, class: class} = assigns) do
