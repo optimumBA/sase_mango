@@ -3,7 +3,7 @@ defmodule SaseMangoWeb.Components.TableIconsComponent do
     Component that contains svg icons
   """
 
-  use Phoenix.Component
+  use SaseMangoWeb, :component
 
   def sort_icon(%{col_type: :text, sort_options: options, key: key} = assigns) do
     match_text_icon(assigns, options, key)
@@ -132,5 +132,4 @@ defmodule SaseMangoWeb.Components.TableIconsComponent do
     </div>
     """
   end
-
 end

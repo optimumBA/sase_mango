@@ -1,5 +1,9 @@
 defmodule SaseMangoWeb.Components.SortingComponent do
-  use Phoenix.Component
+  @moduledoc """
+    Component that renders table sort link
+  """
+
+  use SaseMangoWeb, :component
 
   alias SaseMangoWeb.Components.TableIconsComponent
 

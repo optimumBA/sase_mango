@@ -1,7 +1,5 @@
 defmodule SaseMangoWeb.Components.HeaderComponent do
-  use Phoenix.Component
-
-  alias SaseMangoWeb.Router.Helpers, as: Routes
+  use SaseMangoWeb, :component
 
   def header(assigns) do
     ~H"""
@@ -24,7 +22,7 @@ defmodule SaseMangoWeb.Components.HeaderComponent do
 
       <div class="w-full mt-8 flex items-end justify-start border-b border-[#D9D9D9]">
 
-        <div class="flex gap-6 flex-col items-center w-full md:flex-row">
+        <div class="flex gap-6 items-center w-full flex-row">
           <div class={"page-tab #{if @active_tab == :securities, do: "securities"}"} >
             <%= live_patch "List of securities", to: Routes.securities_index_path(@socket, :securities),
               class: "page-link"
