@@ -51,7 +51,7 @@ defmodule SaseMangoWeb.Components.FilterFormComponent do
           <%= text_input f, :q, phx_debounce: 500, placeholder: "Search...", class: "search-field" %>
           <div class="search-icons">
             <%= if !is_nil(@filter.q) && String.length(@filter.q) > 0 do %>
-              <div class="clear-icon" phx-click="clear_form">
+              <div class="cursor-pointer text-[#ADADAD] hover:text-[#565555]" phx-click="clear_form">
                 <svg
                   width="12"
                   height="12"
