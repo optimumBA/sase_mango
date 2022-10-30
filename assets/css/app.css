@@ -427,7 +427,7 @@ th:last-child {
 }
 
 .securities-table tbody tr td {
-  @apply pr-2 pl-0 leading-[15px] 2xl:leading-[20px] font-normal
+  @apply pr-2 pl-0 leading-[15px] 2xl:leading-[20px] font-normal;
 }
 
 .sortable-column {
