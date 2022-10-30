@@ -12,6 +12,9 @@ module.exports = {
         montserrat: ['Montserrat', ...defaultTheme.fontFamily.sans],
         inter: ['Inter', ...defaultTheme.fontFamily.sans],
       },
+      screens: {
+        'md-2': '850px',
+      }
     },
   },
   plugins: [require('@tailwindcss/forms')],
