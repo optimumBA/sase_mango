@@ -2,13 +2,16 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   use SaseMangoWeb, :live_view
 
   alias Phoenix.Socket.Broadcast
+  alias SaseMango.BargainsCache
   alias SaseMango.HandleTable
   alias SaseMango.HandleTable.SearchFilter
   alias SaseMango.Securities
-  alias SaseMangoWeb.SecuritiesLive.FilterFormComponent
-  alias SaseMangoWeb.SharedComponents.HeaderComponent
-  alias SaseMangoWeb.SecuritiesLive.SortingComponent
+  alias SaseMango.SecuritiesCache
   alias SaseMangoWeb.Endpoint
+  alias SaseMangoWeb.SecuritiesLive.FilterFormComponent
+  alias SaseMangoWeb.SecuritiesLive.SortingComponent
+  alias SaseMangoWeb.SecuritiesLive.TableRowComponent
+  alias SaseMangoWeb.SharedComponents.HeaderComponent
 
   @impl true
   def mount(_params, _session, socket) do
@@ -16,11 +19,21 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
       Endpoint.subscribe("securities")
     end
 
-    {:ok, socket}
+    {:ok,
+     socket
+     |> assign(:active_tab, socket.assigns.live_action)
+     |> assign_list_securities(socket.assigns.live_action)}
   end
 
   @impl true
   def handle_params(params, _url, socket) do
+    socket =
+      if socket.assigns.live_action != socket.assigns.active_tab do
+        assign_list_securities(socket, socket.assigns.live_action)
+      else
+        socket
+      end
+
     {:noreply,
      socket
      |> assign_filter_options(params)
@@ -53,11 +66,15 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   end
 
   defp update_securities(socket, :securities) do
-    assign(socket, :securities, Securities.list_securities(:securities))
+    socket
+    |> assign_list_securities(:securities)
+    |> maybe_filter_securities(:securities)
   end
 
   defp update_securities(socket, :bargains) do
-    assign(socket, :securities, Securities.list_securities(:bargains))
+    socket
+    |> assign_list_securities(:bargains)
+    |> maybe_filter_securities(:bargains)
   end
 
   @impl true
@@ -84,14 +101,14 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     socket
     |> assign(:page_title, "List of securities")
     |> assign(:active_tab, :securities)
-    |> assign_list_securities(:securities)
+    |> maybe_filter_securities(:securities)
   end
 
   defp apply_action(socket, :bargains, _params) do
     socket
     |> assign(:page_title, "Bargain securities")
     |> assign(:active_tab, :bargains)
-    |> assign_list_securities(:bargains)
+    |> maybe_filter_securities(:bargains)
   end
 
   defp merge_url_params(socket, options) do
@@ -108,11 +125,38 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     url_params
   end
 
-  defp assign_list_securities(%{assigns: %{filter_options: filter_options}} = socket, type) do
-    list_securities = Securities.list_securities(type, filter_options)
+  defp assign_list_securities(socket, :securities) do
+    securities = SecuritiesCache.get_securities()
 
-    sort_securities(socket, list_securities)
+    socket
+    |> assign(:securities, securities)
+    |> assign(:reserve_list, securities)
   end
+
+  defp assign_list_securities(socket, :bargains) do
+    securities = BargainsCache.get_bargains()
+
+    socket
+    |> assign(:securities, BargainsCache.get_bargains())
+    |> assign(:reserve_list, securities)
+  end
+
+  defp maybe_filter_securities(%{assigns: %{filter_options: %{q: search_value}}} = socket, action)
+       when is_binary(search_value) do
+    filtered_securities_list =
+      case action do
+        :securities ->
+          SecuritiesCache.filter_securities(%{q: search_value})
+
+        :bargains ->
+          BargainsCache.filter_bargains(%{q: search_value})
+      end
+
+    sort_securities(socket, filtered_securities_list)
+  end
+
+  defp maybe_filter_securities(socket, _action),
+    do: sort_securities(socket, socket.assigns.reserve_list)
 
   defp sort_securities(
          %{assigns: %{sort_options: %{sort_by: field, sort_order: sort_order}}} = socket,
@@ -127,5 +171,4 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   defp set_sort_order("asc"), do: :asc
   defp set_sort_order("desc"), do: :desc
   defp set_sort_order(_value), do: :desc
-
 end
