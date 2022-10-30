@@ -5,7 +5,8 @@ defmodule SaseMango.TickerUpdater do
 
   alias SaseMango.SaseScraper
   alias SaseMango.Securities
-  alias SaseMangoWeb.Endpoint
+  alias SaseMango.SecuritiesCache
+  alias SaseMango.BargainsCache
 
   @doc """
     Updates each issuer in db.
@@ -51,6 +52,7 @@ defmodule SaseMango.TickerUpdater do
       end
     end
 
-    Endpoint.broadcast("securities", "securities_update", %{})
+    SecuritiesCache.update_securities()
+    BargainsCache.update_bargains()
   end
 end
