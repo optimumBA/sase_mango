@@ -8,7 +8,7 @@
 
 <div class="relative">
 
-  <div class="md:absolute md:right-2 md:-top-14 md:-translate-y-[100%]">
+  <div class="mb-2 md-2:absolute md-2:right-2 md-2:-top-14 md-2:mb-0 md-2:-translate-y-[100%]">
     <.live_component
       module={FilterFormComponent}
       id="filter_form"
@@ -179,7 +179,8 @@
       </thead>
       <tbody id="securities">
         <%= for security <- @securities do %>
-          <tr id={"security-#{security.symbol}"}>
+          <TableRowComponent.table_row live_action={@active_tab} security={security} >
+          
             <td class="text-center p-2 2xl:px-4 2xl:py-2">
               <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{security.symbol}"} target="_blank" 
                 class=" text-blue-400"
@@ -238,7 +239,7 @@
                     <span class="text-right"><%= Decimal.round(Decimal.mult(security.previous_profit_margin, 100), 2) %>%</span>
                 </div>
             </td>
-          </tr>
+          </TableRowComponent.table_row>
         <% end %>
       </tbody>
 
@@ -249,11 +250,13 @@
 
   <%= if Enum.empty?(@securities) do %>
     <tr>
-      <p class="w-max m-auto my-[4rem] text-[1.2em] alert alert-info"> 
+      <p class="w-max m-auto my-[4rem] text-[1.1em] alert alert-info"> 
       No results found!
       </p>
     </tr>
   <% end %>
 </div>
+
+<div class="h-2 mt-4"></div>
 
 </section>
