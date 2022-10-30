@@ -171,7 +171,6 @@ input:not([type]),
 textarea,
 select {
   -webkit-appearance: none;
-  background-color: transparent;
   box-shadow: none;
   box-sizing: inherit;
   width: 100%;
@@ -247,7 +246,6 @@ label,
 legend {
   display: block;
   font-size: 1.6rem;
-  margin-bottom: 0.5rem;
 }
 fieldset {
   border-width: 0;
@@ -387,6 +385,12 @@ th:last-child {
 
 .table-wrapper {
   @apply overflow-y-auto max-h-[75vh];
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
+}
+
+.table-wrapper::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, and Opera */
 }
 
 .securities-table {
@@ -436,12 +440,12 @@ th:last-child {
 
 .rotate-up svg {
   transform: rotateX(180deg);
-  @apply duration-500 ease-linear;
+  @apply duration-[200ms] ease-linear;
 }
 
 .rotate-down svg {
   transform: rotateX(0deg);
-  @apply duration-500 ease-linear;
+  @apply duration-[200ms] ease-linear;
 }
 
 /* Header with page links */
@@ -501,7 +505,6 @@ th:last-child {
   @apply border-[#bababa];
 }
 
-
 /* Alerts and form errors used by phx.new */
 
 .alert {
@@ -535,9 +538,8 @@ th:last-child {
   display: none;
 }
 .invalid-feedback {
-  color: #a94442;
-  display: block;
-  margin: -1rem 0 2rem;
+  @apply text-[#B9121C] block my-4 ml-4;
+  animation: 0.2s ease-in 0s normal forwards 1 fade-in-scale-keys;
 }
 
 /* LiveView specific classes for your customization */
@@ -545,6 +547,10 @@ th:last-child {
 .phx-no-feedback.invalid-feedback,
 .phx-no-feedback .invalid-feedback {
   display: none;
+}
+
+.phx-no-feedback .label-invalid {
+  @apply text-[#9A9A9A];
 }
 
 .phx-click-loading {
