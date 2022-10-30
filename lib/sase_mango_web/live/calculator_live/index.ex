@@ -3,12 +3,12 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
 
   alias Phoenix.Socket.Broadcast
   alias SaseMango.Calculator
-  alias SaseMango.Securities
+  alias SaseMango.SecuritiesCache
+  alias SaseMangoWeb.Endpoint
   alias SaseMangoWeb.SharedComponents.CustomSelectComponent
   alias SaseMangoWeb.SharedComponents.FormComponents
   alias SaseMangoWeb.SharedComponents.HeaderComponent
   alias SaseMangoWeb.SharedComponents.TableIconsComponent
-  alias SaseMangoWeb.Endpoint
 
   @impl true
   def mount(_params, _session, socket) do
@@ -16,10 +16,10 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
       socket
       |> assign(:changeset, Calculator.change_input(%Calculator.Input{}))
       |> assign_results()
-      |> assign(:securities, Securities.list_securities(:securities))
+      |> assign(:securities, SecuritiesCache.get_securities())
       |> assign(:active_tab, :calculator)
       |> assign(:select_open, false)
-      |> assign(:select_item, %{key: "", value: ""})
+      |> assign(:select_item, %{symbol: "", name: ""})
       |> assign(:input_flip, false)
       |> assign_select_list()
 
@@ -57,7 +57,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
   end
 
   def handle_event("hide_select", _params, socket) do
-    input_flip = if String.length(socket.assigns.select_item.value) > 0, do: true, else: false
+    input_flip = if String.length(socket.assigns.select_item.name) > 0, do: true, else: false
 
     {:noreply,
      socket
@@ -70,7 +70,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
   end
 
   def handle_event("custom_select", %{"symbol" => symbol} = _params, socket) do
-    selected_item = Enum.find(socket.assigns.select_list, &(&1.key == symbol))
+    selected_item = Enum.find(socket.assigns.select_list, &(&1.symbol == symbol))
 
     changeset_from_socket = socket.assigns.changeset
 
@@ -107,7 +107,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
 
   @impl true
   def handle_info(%Broadcast{event: "securities_update"}, socket) do
-    securities = Securities.list_securities(:bargains)
+    securities = SecuritiesCache.get_securities()
 
     {:noreply,
      socket
@@ -120,14 +120,14 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
      socket
      |> assign(:select_open, true)
      |> assign(:input_flip, false)
-     |> assign(:select_item, %{key: "", value: ""})}
+     |> assign(:select_item, %{symbol: "", name: ""})}
   end
 
   def handle_info({:update_state, value}, socket) do
     selected_item =
       Enum.find(
         socket.assigns.select_list,
-        &(String.starts_with?(&1.key, value) || String.starts_with?(&1.value, value))
+        &(String.starts_with?(&1.symbol, value) || String.starts_with?(&1.name, value))
       )
 
     case selected_item do
@@ -143,7 +143,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
         changeset_from_socket = socket.assigns.changeset
 
         changes_from_socket =
-          Map.merge(changeset_from_socket.changes, %{symbol: selected_item.key})
+          Map.merge(changeset_from_socket.changes, %{symbol: selected_item.symbol})
 
         changeset =
           %Calculator.Input{}
@@ -164,7 +164,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
 
     select_list =
       Enum.reduce(securities, [], fn %{symbol: symbol, name: name} = _security, select_list ->
-        [%{key: symbol, value: name} | select_list]
+        [%{symbol: symbol, name: name} | select_list]
       end)
 
     assign(socket, :select_list, select_list)
@@ -173,7 +173,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
   defp reassign_changeset(socket, input_params) do
     select_item = socket.assigns.select_item
 
-    changeset_params = Map.merge(input_params, %{"symbol" => select_item.key})
+    changeset_params = Map.merge(input_params, %{"symbol" => select_item.symbol})
 
     changeset =
       %Calculator.Input{}
