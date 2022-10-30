@@ -18,7 +18,7 @@ defmodule SaseMango.SecuritiesHelper do
     by either regular or ask price.
 
   """
-  def list_securities(list_type, filter_params \\ %{}) do
+  def list_securities(list_type, params \\ %{}) do
     current_financial_statement = current_financial_statement()
     previous_financial_statement = previous_financial_statement()
 
@@ -30,7 +30,6 @@ defmodule SaseMango.SecuritiesHelper do
       current: current_fs,
       previous: previous_fs
     })
-    |> filter_by_symbol_or_name(filter_params)
     |> maybe_filter_available_securities(list_type)
     |> Repo.all()
     |> Stream.map(fn %{} = security ->
@@ -202,19 +201,6 @@ defmodule SaseMango.SecuritiesHelper do
       where: fs_ids.issuer_id == parent_as(:issuer).id,
       where: fs_ids.rank == 2
   end
-
-  defp filter_by_symbol_or_name(query, %{q: name}) when is_binary(name) do
-    search_value = "%#{name}%"
-
-    query
-    |> where(
-      [issuer: i],
-      ilike(i.symbol, ^search_value) or
-        ilike(fragment("(?->'SymbolDescription')::TEXT", i.info), ^search_value)
-    )
-  end
-
-  defp filter_by_symbol_or_name(query, _params), do: query
 
   defp maybe_filter_available_securities(query, :securities), do: query
 
