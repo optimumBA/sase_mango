@@ -4,7 +4,7 @@
   <HeaderComponent.header
     socket={@socket}
     active_tab={@active_tab}
-   />     
+   />
 
   <.form 
     let={f} 
@@ -16,56 +16,66 @@
     <div class="w-full flex flex-col flex-wrap sm:flex-row items-center sm:items-end gap-8 pb-12">
 
       <div class="w-max">
-          <%= label f, :symbol, "Issuer or symbol", for: :symbol, class: "flex w-max text-[#9A9A9A]" %>
+          <%= label f, :symbol, "Issuer or symbol", for: :symbol, class: "w-max mb-[0.5rem] text-[#9A9A9A]" %>
           <.live_component module={CustomSelectComponent} 
             id="issuers_select_comp" 
             input_flip={@input_flip}
             options={@select_list}
             open={@select_open}
             selected_item={@select_item}
-          />  
-
+          />
       </div>
 
       <div class="min-w-[150px] max-w-[150px]">
-        <div>
-          <%= label f, :price, "Price", for: :price, class: "flex text-[#9A9A9A]" %>
-          <div class="relative border border-[#979797] rounded-[0.7rem] shadow-none">
-            <%= text_input f, :price, placeholder: "0.00", class: "border-0 p-[1rem] text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>
+        <FormComponents.input_wrapper 
+          field={:price}
+          form={f}
+          label="Price"
+        >
+          <div class="relative rounded-[0.7rem] shadow-none">
+            <%= text_input f, :price, placeholder: "0.00", 
+              class: "border-1 border-[#979797] focus:border-[#979797] " <> "#{if(@changeset.valid?, do: "text-inherit", else: "text-[#9A9A9A]")}" <> " placeholder-[#9A9A9A] rounded-[0.7rem] p-[1rem] text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>
             <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
-              <span class="text-gray-600 text-[1.2em]" id="price-currency"> KM </span>
+              <span class={"#{if(@changeset.valid?, do: "text-gray-600", else: "text-[#9A9A9A]")} text-[1.2em]"} id="price-currency"> KM </span>
             </div>
           </div>
-        </div>
+        </FormComponents.input_wrapper>
       </div>
 
       <div class="min-w-[150px] max-w-[150px]">
-        <div>
-          <%= label f, :amount, "Amount", class: "flex w-max text-[#9A9A9A]" %>
-          <div class="relative border border-[#979797] rounded-[0.7rem] shadow-none">
-            <%= text_input f, :amount, placeholder: "0", class: "border-0 p-[1rem] text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>            
+        <FormComponents.input_wrapper 
+          field={:amount}
+          form={f}
+          label="Amount"
+        >
+          <div class="relative rounded-[0.7rem] shadow-none">
+            <%= text_input f, :amount, placeholder: "0", 
+              class: "border-1 border-[#979797] focus:border-[#979797] " <> "#{if(@changeset.valid?, do: "text-inherit", else: "text-[#9A9A9A]")}" <> " placeholder-[#9A9A9A] rounded-[0.7rem] p-[1rem] text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>            
           </div>
-        </div>
+        </FormComponents.input_wrapper>
       </div>
 
       <div class="min-w-[150px] max-w-[150px]">
-        <div>
-          <%= label f, :fee, "Fee percentage", class: "flex w-max text-[#9A9A9A]" %>
-          <div class="relative border border-[#979797] rounded-[0.7rem] shadow-none">
-            <%= text_input f, :fee, placeholder: "0", phx_debounce: "500", class: "border-0 p-[1rem] text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", autocomplete: "off" %>
+        <FormComponents.input_wrapper
+          field={:fee}
+          form={f}
+          label="Fee percentage"
+        >
+          <div class="relative rounded-[0.7rem] shadow-none">
+            <%= text_input f, :fee, placeholder: "0", phx_debounce: "500", 
+              class: "border-1 border-[#979797] focus:border-[#979797] " <> "#{if(@changeset.valid?, do: "text-inherit", else: "text-[#9A9A9A]")}" <> " placeholder-[#9A9A9A] rounded-[0.7rem] p-[1rem] text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", autocomplete: "off" %>
             <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
-              <span class="text-gray-600 text-[1.2em]" id="price-currency-2"> % </span>
+              <span class={"#{if(@changeset.valid?, do: "text-gray-600", else: "text-[#9A9A9A]")} text-[1.2em]"} id="price-currency-2"> % </span>
             </div>
           </div>
-        </div>
+        </FormComponents.input_wrapper>
       </div>
 
       <div class="w-[150px]">
-
         <FormComponents.submit_button 
           changeset={@changeset} 
           class="button py-[0.5rem] rounded-[6px] px-[2.5rem] text-[1.3em] font-[400]" 
-          text="Calculate" 
+          text="Calculate"
         />
       </div>
     </div>
