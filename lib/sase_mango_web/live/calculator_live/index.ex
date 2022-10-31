@@ -52,7 +52,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
     {:noreply, reassign_changeset(socket, input_params)}
   end
 
-  def handle_event("toggle", _params, socket) do
+  def handle_event("toggle_select", _params, socket) do
     {:noreply, assign(socket, :select_open, !socket.assigns.select_open)}
   end
 
@@ -65,7 +65,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
      |> assign(:input_flip, input_flip)}
   end
 
-  def handle_event("input_flip", _, socket) do
+  def handle_event("flip_input", _, socket) do
     {:noreply, assign(socket, :input_flip, !socket.assigns.input_flip)}
   end
 
@@ -115,7 +115,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
      |> calculate()}
   end
 
-  def handle_info({:update_state}, socket) do
+  def handle_info(:update_state, socket) do
     {:noreply,
      socket
      |> assign(:select_open, true)
