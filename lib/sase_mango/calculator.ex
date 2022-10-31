@@ -25,7 +25,20 @@ defmodule SaseMango.Calculator do
     }
   end
 
-  def add_new_item(results, result) do
+  def maybe_add_item(securities, results, input) when length(results.securities) > 0 do
+    result = run(securities, input)
+
+    case Enum.any?(results.securities, &(&1.symbol == result.symbol)) do
+      true -> update_item(results, result)
+      false -> add_new_item(results, result)
+    end
+  end
+
+  def maybe_add_item(securities, results, input) do
+    add_new_item(results, run(securities, input))
+  end
+
+  defp add_new_item(results, result) do
     total_without_fee = Decimal.add(results.total_without_fee, result.total_without_fee)
     total_with_fee = Decimal.add(results.total_with_fee, result.total_with_fee)
 
@@ -36,7 +49,7 @@ defmodule SaseMango.Calculator do
     }
   end
 
-  def update_item(results, result) do
+  defp update_item(results, result) do
     old_security = Enum.find(results.securities, &(&1.symbol == result.symbol))
 
     total_without_fee =
@@ -58,18 +71,5 @@ defmodule SaseMango.Calculator do
       total_without_fee: total_without_fee,
       total_with_fee: total_with_fee
     }
-  end
-
-  def maybe_add_item(securities, results, input) when length(results.securities) > 0 do
-    result = run(securities, input)
-
-    case Enum.any?(results.securities, &(&1.symbol == result.symbol)) do
-      true -> update_item(results, result)
-      false -> add_new_item(results, result)
-    end
-  end
-
-  def maybe_add_item(securities, results, input) do
-    add_new_item(results, run(securities, input))
   end
 end
