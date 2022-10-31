@@ -6,10 +6,10 @@ defmodule SaseMango.SecuritiesUpdater do
 
   require Logger
 
-  alias SaseMango.SaseScraper
+  alias SaseMango.BargainsCache
   alias SaseMango.Securities
   alias SaseMango.SecuritiesCache
-  alias SaseMango.BargainsCache
+  alias SaseMango.SaseScraper
 
   @doc """
     Updates existing or create new issuer.
