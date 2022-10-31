@@ -1,6 +1,6 @@
 defmodule SaseMangoWeb.SecuritiesLive.SortingComponent do
   @moduledoc """
-    Component that renders table sort link
+  Component that renders table sort link
   """
 
   use SaseMangoWeb, :component

@@ -1,6 +1,6 @@
 defmodule SaseMangoWeb.SecuritiesLive.TableRowComponent do
   @moduledoc """
-    Component that renders securitity table row
+  Component that renders securitity table row
   """
 
   use SaseMangoWeb, :component
