@@ -8,7 +8,7 @@ CalculatorInputHooks.FieldReset = {
 
         flipElement.addEventListener('click', (e) => {
 
-            this.pushEvent('input_flip', {})
+            this.pushEvent('flip_input', {})
 
             inputElement.focus()
             inputElement.value = ""
