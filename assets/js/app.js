@@ -24,10 +24,10 @@ import 'phoenix_html'
 import { Socket } from 'phoenix'
 import { LiveSocket } from 'phoenix_live_view'
 import topbar from '../vendor/topbar'
-import CalculatorInputHooks from './hooks/input_hook'
+import CalculatorInputHooks from './hooks/calculator_input_hooks'
 
 const Hooks = {
-  ...CalculatorInputHooks 
+  ...CalculatorInputHooks
 }
 
 let csrfToken = document
