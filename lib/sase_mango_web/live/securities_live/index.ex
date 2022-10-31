@@ -137,7 +137,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     securities = BargainsCache.get_bargains()
 
     socket
-    |> assign(:securities, BargainsCache.get_bargains())
+    |> assign(:securities, securities)
     |> assign(:reserve_list, securities)
   end
 
