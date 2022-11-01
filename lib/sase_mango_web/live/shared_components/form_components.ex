@@ -1,6 +1,6 @@
 defmodule SaseMangoWeb.SharedComponents.FormComponents do
   @moduledoc """
-    Helper module with form components
+  Helper module with form components
   """
 
   use SaseMangoWeb, :component
@@ -20,7 +20,7 @@ defmodule SaseMangoWeb.SharedComponents.FormComponents do
       phx-feedback-for={@phx_feedback_for}>
       <%= label @form, @field, class: if(@show_feedback,
           do: label_class(@form, @field),
-          else: "mb-[0.5rem] text-[#9A9A9A]")
+          else: "mb-[0.5rem] text-[0.8em] xl:text-[1em] text-[#9A9A9A]")
       do %>
         <%= @label %>
       <% end %>
@@ -37,8 +37,8 @@ defmodule SaseMangoWeb.SharedComponents.FormComponents do
   def label_class(form, field),
     do:
       if(field_has_error?(form, field),
-        do: "mb-[0.5rem] text-[#B9121C] label-invalid",
-        else: "mb-[0.5rem] text-[#9A9A9A]"
+        do: "mb-[0.5rem] text-[0.8em] xl:text-[1em] text-[#B9121C] label-invalid",
+        else: "mb-[0.5rem] text-[0.8em] xl:text-[1em] text-[#9A9A9A]"
       )
 
   @spec field_has_error?(atom | %{:errors => keyword, optional(any) => any}, atom) :: boolean
@@ -55,7 +55,7 @@ defmodule SaseMangoWeb.SharedComponents.FormComponents do
       end
 
     ~H"""
-      <%= submit(@text, attrs) %>
+    <%= submit(@text, attrs) %>
     """
   end
 end
