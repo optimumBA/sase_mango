@@ -24,12 +24,6 @@ defmodule SaseMango.BargainsCache do
     GenServer.call(__MODULE__, :get_bargains)
   end
 
-  def filter_bargains(%{q: name} = filter_params) when is_binary(name) do
-    GenServer.call(__MODULE__, {:filter_bargains, filter_params})
-  end
-
-  def filter_bargains(_filter_params), do: GenServer.call(__MODULE__, :get_bargains)
-
   def update_bargains() do
     GenServer.cast(__MODULE__, :update_bargains)
   end
@@ -43,23 +37,6 @@ defmodule SaseMango.BargainsCache do
   @impl true
   def handle_call(:get_bargains, _from, %__MODULE__{today_bargains: bargains_list} = state) do
     {:reply, bargains_list, state, :hibernate}
-  end
-
-  def handle_call(
-        {:filter_bargains, filter_params},
-        _from,
-        %__MODULE__{today_bargains: bargains_list} = state
-      ) do
-    %{q: search_value} = filter_params
-
-    filtered_bargains_list =
-      Enum.filter(
-        bargains_list,
-        &(String.starts_with?(&1.symbol, search_value) ||
-            String.starts_with?(&1.name, search_value))
-      )
-
-    {:reply, filtered_bargains_list, state, :hibernate}
   end
 
   @impl true

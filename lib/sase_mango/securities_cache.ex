@@ -22,12 +22,6 @@ defmodule SaseMango.SecuritiesCache do
     GenServer.call(__MODULE__, :get_securities)
   end
 
-  def filter_securities(%{q: name} = filter_params) when is_binary(name) do
-    GenServer.call(__MODULE__, {:filter_securities, filter_params})
-  end
-
-  def filter_securities(_filter_params), do: GenServer.call(__MODULE__, :get_securities)
-
   def update_securities() do
     GenServer.cast(__MODULE__, :update_securities)
   end
@@ -42,23 +36,6 @@ defmodule SaseMango.SecuritiesCache do
   @impl true
   def handle_call(:get_securities, _from, %__MODULE__{securities_list: list} = state) do
     {:reply, list, state, :hibernate}
-  end
-
-  def handle_call(
-        {:filter_securities, filter_params},
-        _from,
-        %__MODULE__{securities_list: list} = state
-      ) do
-    %{q: search_value} = filter_params
-
-    filtered_securities_list =
-      Enum.filter(
-        list,
-        &(String.starts_with?(&1.symbol, search_value) ||
-            String.starts_with?(&1.name, search_value))
-      )
-
-    {:reply, filtered_securities_list, state, :hibernate}
   end
 
   @impl true
