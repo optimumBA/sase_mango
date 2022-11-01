@@ -1,5 +1,4 @@
-
-<section class="px-[8px] sm:px-[64px] min-h-[85vh] 2xl:px-[64px]">
+<section class="px-[8px] min-h-[85vh] 2xl:px-[64px]">
 
   <HeaderComponent.header
     socket={@socket}
@@ -11,12 +10,12 @@
     for={@changeset} 
     phx-submit="calculate"
     phx-change="validate"
-    class="px-0 sm:px-4 my-14 mt-[5rem] border-b border-[#D9D9D9]" 
+    class="ml-[48px] xl:ml-[64px] mr-[8px] xl:mr-[64px] sm:px-4 my-14 mt-[5rem] border-b border-[#D9D9D9]" 
   >
     <div class="w-full flex flex-col flex-wrap sm:flex-row items-center sm:items-end gap-8 pb-12">
 
       <div class="w-max">
-          <%= label f, :symbol, "Issuer or symbol", for: :symbol, class: "w-max mb-[0.5rem] text-[#9A9A9A]" %>
+          <%= label f, :symbol, "Issuer or symbol", for: :symbol, class: "w-max mb-[0.5rem] text-[0.8em] xl:text-[1em] text-[#9A9A9A]" %>
           <.live_component module={CustomSelectComponent} 
             id="issuers_select_comp" 
             input_flip={@input_flip}
@@ -34,9 +33,9 @@
         >
           <div class="relative rounded-[0.7rem] shadow-none">
             <%= text_input f, :price, placeholder: "0.00", 
-              class: "border-1 border-[#979797] focus:border-[#979797] " <> "#{if(@changeset.valid?, do: "text-inherit", else: "text-[#9A9A9A]")}" <> " placeholder-[#9A9A9A] rounded-[0.7rem] p-[1rem] text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>
+              class: "border-1 border-[#979797] focus:border-[#979797] placeholder-[#9A9A9A] rounded-[0.7rem] p-[1rem] text-[1em] xl:text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>
             <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
-              <span class={"#{if(@changeset.valid?, do: "text-gray-600", else: "text-[#9A9A9A]")} text-[1.2em]"} id="price-currency"> KM </span>
+              <span class={if(Keyword.has_key?(@changeset.errors, :price), do: "text-[#9A9A9A]", else: "text-gray-600") <> " text-[1em] xl:text-[1.2em]"} id="price-currency"> KM </span>
             </div>
           </div>
         </FormComponents.input_wrapper>
@@ -50,7 +49,7 @@
         >
           <div class="relative rounded-[0.7rem] shadow-none">
             <%= text_input f, :amount, placeholder: "0", 
-              class: "border-1 border-[#979797] focus:border-[#979797] " <> "#{if(@changeset.valid?, do: "text-inherit", else: "text-[#9A9A9A]")}" <> " placeholder-[#9A9A9A] rounded-[0.7rem] p-[1rem] text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>            
+              class: "border-1 border-[#979797] focus:border-[#979797] placeholder-[#9A9A9A] rounded-[0.7rem] p-[1rem] text-[1em] xl:text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>            
           </div>
         </FormComponents.input_wrapper>
       </div>
@@ -63,9 +62,9 @@
         >
           <div class="relative rounded-[0.7rem] shadow-none">
             <%= text_input f, :fee, placeholder: "0", phx_debounce: "500", 
-              class: "border-1 border-[#979797] focus:border-[#979797] " <> "#{if(@changeset.valid?, do: "text-inherit", else: "text-[#9A9A9A]")}" <> " placeholder-[#9A9A9A] rounded-[0.7rem] p-[1rem] text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", autocomplete: "off" %>
+              class: "border-1 border-[#979797] focus:border-[#979797] placeholder-[#9A9A9A] rounded-[0.7rem] p-[1rem] text-[1em] xl:text-[1.2em] font-[300] text-center placeholder:focus:text-transparent", autocomplete: "off" %>
             <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
-              <span class={"#{if(@changeset.valid?, do: "text-gray-600", else: "text-[#9A9A9A]")} text-[1.2em]"} id="price-currency-2"> % </span>
+              <span class={if(Keyword.has_key?(@changeset.errors, :fee), do: "text-[#9A9A9A]", else: "text-gray-600") <> " text-[1em] xl:text-[1.2em]"} id="price-currency-2"> % </span>
             </div>
           </div>
         </FormComponents.input_wrapper>
@@ -74,60 +73,62 @@
       <div class="w-[150px]">
         <FormComponents.submit_button 
           changeset={@changeset} 
-          class="button py-[0.5rem] rounded-[6px] px-[2.5rem] text-[1.3em] font-[400]" 
+          class="button py-[0.5rem] rounded-[6px] px-[2.5rem] text-[1.1em] xl:font-[700] xl:text-[1.3em]" 
           text="Calculate"
         />
       </div>
     </div>
-    <p class="text-[0.9em] text-[#9A9A9A] mb-2">To calculate the price, please enter your requirements.</p>
+    <p class="text-[0.8em] xl:text-[0.95em] text-[#9A9A9A] mb-2">To calculate the price, please enter your requirements.</p>
   </.form>
 
   <%= if length(@results.securities) > 0 do %>
 
-    <p class="text-[1.6em] text-[#1E1E1E]">Stock prices</p>
+    <div class="ml-[48px]">
+      <p class="text-[1.6em] text-[#1E1E1E]">Stock prices</p>
 
-    <table class="data-table overflow-scroll w-max h-auto my-8">
-      <thead>
-        <th class="text-center px-4" colspan="3">Symbol</th>
-        <th class="text-center px-4" colspan="2">Name</th>
-        <th class="text-center px-4">Amount</th>
-        <th class="text-center px-4">Price in KM</th>
-        <th class="text-center px-4" colspan="2">Total without fee percentage in KM</th>
-        <th class="text-center px-4" colspan="2">Total with fee percentage in  KM</th>
-      </thead>
+      <table class="data-table overflow-scroll w-max h-auto my-8">
+        <thead>
+          <th class="text-center px-4" colspan="3">Symbol</th>
+          <th class="text-center px-4" colspan="2">Name</th>
+          <th class="text-center px-4">Amount</th>
+          <th class="text-center px-4">Price in KM</th>
+          <th class="text-center px-4" colspan="2">Total without fee percentage in KM</th>
+          <th class="text-center px-4" colspan="2">Total with fee percentage in  KM</th>
+        </thead>
 
-      <tbody>
-        <%= for result <- @results.securities do %>
-          <tr class="h-8">
-            <td class="text-center text-blue-400 px-4" colspan="3">
-              <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{ result.symbol }"} target="_blank">
-                <%= result.symbol %>
-              </a>
-            </td>
-            <td class="text-center px-4" colspan="2"><%= result.name %></td>
-            <td class="text-center px-4"><%= Decimal.round(result.amount, 0) %></td>
-            <td class="text-center px-4"><%= Decimal.round(result.price, 2) %></td>
-            <td class="text-center px-4" colspan="2"><%= Decimal.round(result.total_without_fee, 2) %></td>
-            <td class="text-center px-4" colspan="2"><%= Decimal.round(result.total_with_fee, 2) %></td>
-            <td class="text-center ">
-              <TableIconsComponent.delete_row 
-                row_id={result.id}              
-              />
-            </td>            
+        <tbody>
+          <%= for result <- @results.securities do %>
+            <tr class="h-8">
+              <td class="text-center text-blue-400 px-4" colspan="3">
+                <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{ result.symbol }"} target="_blank">
+                  <%= result.symbol %>
+                </a>
+              </td>
+              <td class="text-center px-4" colspan="2"><%= result.name %></td>
+              <td class="text-center px-4"><%= Decimal.round(result.amount, 0) %></td>
+              <td class="text-center px-4"><%= Decimal.round(result.price, 2) %></td>
+              <td class="text-center px-4" colspan="2"><%= Decimal.round(result.total_without_fee, 2) %></td>
+              <td class="text-center px-4" colspan="2"><%= Decimal.round(result.total_with_fee, 2) %></td>
+              <td class="text-center ">
+                <TableIconsComponent.delete_row 
+                  row_id={result.id}              
+                />
+              </td>            
+            </tr>
+          <% end %>
+
+          <tr class="h-12">
+            <td class="px-4 text-center font-bold" colspan="3">TOTAL</td>
+            <td class="px-4" colspan="2"></td>
+            <td class="px-4"></td>
+            <td class="px-4"></td>
+            <td class="px-4 text-center" colspan="2"><%= Decimal.round(@results.total_without_fee, 2) %></td>
+            <td class="text-center px-4" colspan="2"><%= Decimal.round(@results.total_with_fee, 2) %></td>
+            <td></td>
           </tr>
-        <% end %>
-
-        <tr class="h-12">
-          <td class="px-4 text-center font-bold" colspan="3">TOTAL</td>
-          <td class="px-4" colspan="2"></td>
-          <td class="px-4"></td>
-          <td class="px-4"></td>
-          <td class="px-4 text-center" colspan="2"><%= Decimal.round(@results.total_without_fee, 2) %></td>
-          <td class="text-center px-4" colspan="2"><%= Decimal.round(@results.total_with_fee, 2) %></td>
-          <td></td>
-        </tr>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   <% end %>
 
 </section>
