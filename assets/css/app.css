@@ -43,7 +43,6 @@ input[type='submit'] {
   color: #fff;
   cursor: pointer;
   display: inline-block;
-  font-weight: bold;
   letter-spacing: 0.1rem;
   text-align: center;
   text-decoration: none;
@@ -406,7 +405,7 @@ th:last-child {
 }
 
 .securities-table > thead > tr > th {
-  @apply text-white bg-[#9DB9D3] text-center font-[700] text-[12px] p-0 2xl:text-[1em] 2xl:py-8 2xl:px-4;
+  @apply text-white bg-[#9DB9D3] text-center font-[600] text-[12px] px-0 py-2 2xl:text-[15px] 2xl:py-6 2xl:px-4;
 }
 
 .securities-table > thead > tr > th:first-child {
@@ -451,7 +450,7 @@ th:last-child {
 /* Header with page links */
 
 .page-link {
-  @apply block h-full py-5 text-[#8C8C8C] text-[0.85em] sm:text-[0.95em] font-[400] px-8 duration-300 ease-in-out;
+  @apply block h-full py-5 text-[#8C8C8C] text-[0.9em] xl:text-[1em] font-[400] px-8 duration-300 ease-in-out;
 }
 
 .page-tab {
