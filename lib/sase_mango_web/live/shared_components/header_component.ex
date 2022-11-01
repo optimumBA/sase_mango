@@ -1,4 +1,8 @@
 defmodule SaseMangoWeb.SharedComponents.HeaderComponent do
+  @moduledoc """
+  Component that renders page tabs with links
+  """
+
   use SaseMangoWeb, :component
 
   def header(assigns) do
