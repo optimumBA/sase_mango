@@ -4,9 +4,9 @@ defmodule SaseMango.TickerUpdater do
   """
 
   alias SaseMango.BargainsCache
+  alias SaseMango.SaseScraper
   alias SaseMango.Securities
   alias SaseMango.SecuritiesCache
-  alias SaseMango.SaseScraper
 
   @doc """
     Updates each issuer in db.
