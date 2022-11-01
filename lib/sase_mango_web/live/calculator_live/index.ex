@@ -124,10 +124,13 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
   end
 
   def handle_info({:update_state, value}, socket) do
+
+    search_value = String.downcase(value)
+
     selected_item =
       Enum.find(
         socket.assigns.select_list,
-        &(String.starts_with?(&1.symbol, value) || String.starts_with?(&1.name, value))
+        &(String.starts_with?(String.downcase(&1.symbol), search_value) || String.starts_with?(String.downcase(&1.name), search_value))
       )
 
     case selected_item do
