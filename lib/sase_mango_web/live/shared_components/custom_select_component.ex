@@ -1,6 +1,6 @@
 defmodule SaseMangoWeb.SharedComponents.CustomSelectComponent do
   @moduledoc """
-    Custom component that selects issuer smbol/name
+  Custom component that selects issuer smbol/name
   """
 
   use SaseMangoWeb, :live_component
@@ -22,6 +22,8 @@ defmodule SaseMangoWeb.SharedComponents.CustomSelectComponent do
   def handle_event("select_input_changed", %{"key" => key, "value" => value} = _params, socket) do
     %{options: options_from_socket} = socket.assigns
 
+    search_value = String.downcase(value)
+
     case key do
       "Enter" ->
         if String.length(value) > 0, do: send(self(), {:update_state, value})
@@ -31,19 +33,19 @@ defmodule SaseMangoWeb.SharedComponents.CustomSelectComponent do
       _other ->
         filtered_options =
           Enum.filter(options_from_socket, fn opt ->
-            String.starts_with?(opt.symbol, value) || String.starts_with?(opt.name, value)
+            String.starts_with?(String.downcase(opt.symbol), search_value) || String.starts_with?(String.downcase(opt.name), search_value)
           end)
 
         suggested_element =
           if length(filtered_options) > 0 do
             f_element = List.first(filtered_options)
 
-            is_suggested_by_symbol? = String.starts_with?(f_element.symbol, value)
+            is_suggested_by_symbol? = String.starts_with?(String.downcase(f_element.symbol), search_value)
 
             if is_suggested_by_symbol?, do: f_element.symbol, else: f_element.name
           end
 
-        if String.length(value) > 0, do: send(self(), {:update_state})
+        if String.length(value) > 0, do: send(self(), :update_state)
 
         {
           :noreply,
@@ -59,37 +61,34 @@ defmodule SaseMangoWeb.SharedComponents.CustomSelectComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div
-      id={@id}
-      class=""
-    >
+    <div id={@id}>
       <div class="relative mt-1">
         <div
-          class="relative cursor-pointer w-full sm:min-w-[380px] w-full px-[1rem] py-0 text-left bg-white border border-[#979797] hover:border-[#565555] rounded-[0.6rem] shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-[1em] font-[300]"
+          class="relative cursor-pointer w-full sm:min-w-[380px] w-full px-[1rem] py-0 text-left bg-white border border-[#979797] hover:border-[#565555] rounded-[0.8rem] shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 font-[300]"
           phx-click-away="hide_select"
-          phx-click="toggle"
+          phx-click="toggle_select"
         >
             <%= if @input_flip do %>
-              <div id="input-cover" class=" z-[10] bg-white flex items-center gap-2 text-left py-[0.9rem] mr-16"
+              <div id="input-cover" class="z-[10] text-[0.86em] xl:text-[1.02em] bg-white flex items-center gap-2 text-left py-[0.9rem] mr-16"
                 phx-hook="FieldReset"
               >
                 <span class="block truncate text-[#5B92D7]"><%= @selected_item.symbol %></span>
                 <span class="block truncate text-[#1E1E1E]"><%= @selected_item.name %></span>
               </div>
             <% end %>
-            <div class={"#{if !@input_flip, do: "relative", else: ""}"}>
+            <div class={if(!@input_flip, do: "relative", else: "")}>
               <input
                 autocomplete="off"
                 id="select-field"
                 type="text"
                 placeholder="SELECT"
-                class={"#{if @input_flip, do: "absolute top-1 left-1 -z-[10]", else: "block"} border-0 p-[1rem] tracking-normal bg-transparent text-[1.2em] font-[300] pr-8 placeholder:focus:text-transparent"}
+                class={if(@input_flip, do: "absolute top-1 left-1 -z-[10]", else: "block") <> " border-0 p-[1rem] tracking-normal bg-transparent text-[1em] xl:text-[1.2em] font-[300] pr-8 placeholder:focus:text-transparent"}
                 phx-keyup="select_input_changed"
                 phx-target={@myself}
               />
             </div>
 
-            <span class={"absolute #{if @suggested_element, do: "opacity-60", else: "opacity-0" } top-1/2 -translate-y-1/2 pl-[1rem] tracking-normal text-[1.2em] font-[300] text-[#a3a3a3]"} >
+            <span class={"absolute " <> if(@suggested_element, do: "opacity-60", else: "opacity-0") <> " top-1/2 -translate-y-1/2 pl-[1rem] tracking-normal text-[1em] xl:text-[1.2em] font-[300] text-[#a3a3a3]"} >
               <%= @suggested_element %>
             </span>
 
