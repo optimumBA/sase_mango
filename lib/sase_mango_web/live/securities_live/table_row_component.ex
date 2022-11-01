@@ -5,21 +5,23 @@ defmodule SaseMangoWeb.SecuritiesLive.TableRowComponent do
 
   use SaseMangoWeb, :component
 
-  def table_row(assigns) do
+  def table_row(%{security: security} = assigns) do
+    class =
+      cond do
+        security[:newest] ->
+          "bg-[#E3F2FF]"
+
+        security[:new] ->
+          "bg-[#F8F9FA]"
+
+        true ->
+          ""
+      end
+
     ~H"""
-      <%= case @live_action do %>
-        <% :bargains -> %>
-          <tr
-              id={"security-#{@security.symbol}"}
-              class={"#{if @security.newest, do: " bg-[#E3F2FF]", else: if(@security.new, do: " bg-[#F8F9FA]", else: "") }"}
-            >
-            <%= render_slot(@inner_block) %>
-          </tr>
-        <% :securities -> %>
-          <tr id={"security-#{@security.symbol}"}>
-            <%= render_slot(@inner_block) %>
-          </tr>
-      <% end %>
+    <tr class={class} id={"security-" <> @security.symbol}>
+      <%= render_slot(@inner_block) %>
+    </tr>
     """
   end
 end
