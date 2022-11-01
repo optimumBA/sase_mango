@@ -69,7 +69,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
     {:noreply, assign(socket, :input_flip, !socket.assigns.input_flip)}
   end
 
-  def handle_event("custom_select", %{"symbol" => symbol} = _params, socket) do
+  def handle_event("select_item", %{"symbol" => symbol} = _params, socket) do
     selected_item = Enum.find(socket.assigns.select_list, &(&1.symbol == symbol))
 
     changeset_from_socket = socket.assigns.changeset

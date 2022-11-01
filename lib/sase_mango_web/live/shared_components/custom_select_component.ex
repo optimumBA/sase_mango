@@ -104,7 +104,7 @@ defmodule SaseMangoWeb.SharedComponents.CustomSelectComponent do
         </div>
         <%= if @open do %>
           <ul
-              class={"absolute z-[10] sm:min-w-[380px] py-1 mt-2 overflow-y-auto text-[1em] font-[300] max-h-[34rem] bg-white drop-shadow-lg rounded-lg ring-2 ring-black ring-opacity-5 focus:outline-none"}
+              class="absolute z-[10] sm:min-w-[380px] py-1 mt-2 overflow-y-auto text-[1em] font-[300] max-h-[34rem] bg-white drop-shadow-lg rounded-lg ring-2 ring-black ring-opacity-5 focus:outline-none"
               role="selectable-options"
             >
             <%= for option <- @suggestions do %>
@@ -113,7 +113,7 @@ defmodule SaseMangoWeb.SharedComponents.CustomSelectComponent do
                 role="option"
               >
                 <div class="w-full flex flex-col gap-2 py-2 pl-3 pr-9 border-b border-gray-100 cursor-pointer hover:bg-sky-100"
-                  phx-click="custom_select"
+                  phx-click="select_item"
                   phx-value-symbol={option.symbol}
                 >
                   <span class="block ml-3 font-normal text-[#5B92D7]">
