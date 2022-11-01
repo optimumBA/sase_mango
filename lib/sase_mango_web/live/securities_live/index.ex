@@ -19,19 +19,18 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
       Endpoint.subscribe("securities")
     end
 
-    {:ok,
-     socket
-     |> assign(:active_tab, socket.assigns.live_action)
-     |> assign_list_securities(socket.assigns.live_action)}
+    {:ok, assign_securities_lists(socket)}
   end
 
   @impl true
   def handle_params(params, _url, socket) do
     socket =
-      if socket.assigns.live_action != socket.assigns.active_tab do
-        assign_list_securities(socket, socket.assigns.live_action)
-      else
-        socket
+      case socket.assigns.live_action do
+        :securities ->
+          assign_list_of_securities(socket)
+
+        :bargains ->
+          assign_list_of_bargains(socket)
       end
 
     {:noreply,
@@ -40,6 +39,32 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
      |> assign_sort_options(params)
      |> apply_action(socket.assigns.live_action, params)}
   end
+
+  defp apply_action(socket, :securities, _params) do
+    socket
+    |> assign(:page_title, "List of securities")
+    |> assign(:active_tab, :securities)
+    |> maybe_filter_securities(:securities)
+  end
+
+  defp apply_action(socket, :bargains, _params) do
+    socket
+    |> assign(:page_title, "Bargain securities")
+    |> assign(:active_tab, :bargains)
+    |> maybe_filter_securities(:bargains)
+  end
+
+  defp assign_securities_lists(socket) do
+    socket
+    |> assign(:securities_list, SecuritiesCache.get_securities())
+    |> assign(:bargains_list, BargainsCache.get_bargains())
+  end
+
+  defp assign_list_of_securities(socket),
+    do: assign(socket, :securities, socket.assigns.securities_list)
+
+  defp assign_list_of_bargains(socket),
+    do: assign(socket, :securities, socket.assigns.bargains_list)
 
   defp assign_sort_options(socket, params) do
     new_sort_by = params["sort_by"] || "eps_roi"
@@ -67,13 +92,13 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
 
   defp update_securities(socket, :securities) do
     socket
-    |> assign_list_securities(:securities)
+    |> assign(:securities_list, SecuritiesCache.get_securities())
     |> maybe_filter_securities(:securities)
   end
 
   defp update_securities(socket, :bargains) do
     socket
-    |> assign_list_securities(:bargains)
+    |> assign(:bargains_list, BargainsCache.get_bargains())
     |> maybe_filter_securities(:bargains)
   end
 
@@ -97,20 +122,6 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     {:noreply, push_patch(socket, to: path, replace: true)}
   end
 
-  defp apply_action(socket, :securities, _params) do
-    socket
-    |> assign(:page_title, "List of securities")
-    |> assign(:active_tab, :securities)
-    |> maybe_filter_securities(:securities)
-  end
-
-  defp apply_action(socket, :bargains, _params) do
-    socket
-    |> assign(:page_title, "Bargain securities")
-    |> assign(:active_tab, :bargains)
-    |> maybe_filter_securities(:bargains)
-  end
-
   defp merge_url_params(socket, options) do
     %{sort_options: sort_options, filter_options: filter_options} = socket.assigns
 
@@ -125,38 +136,35 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     url_params
   end
 
-  defp assign_list_securities(socket, :securities) do
-    securities = SecuritiesCache.get_securities()
-
-    socket
-    |> assign(:securities, securities)
-    |> assign(:reserve_list, securities)
-  end
-
-  defp assign_list_securities(socket, :bargains) do
-    securities = BargainsCache.get_bargains()
-
-    socket
-    |> assign(:securities, securities)
-    |> assign(:reserve_list, securities)
-  end
-
-  defp maybe_filter_securities(%{assigns: %{filter_options: %{q: search_value}}} = socket, action)
+  defp maybe_filter_securities(
+         %{assigns: %{filter_options: %{q: search_value}}} = socket,
+         action_type
+       )
        when is_binary(search_value) do
+    search_value = String.downcase(search_value)
+
     filtered_securities_list =
-      case action do
+      case action_type do
         :securities ->
-          SecuritiesCache.filter_securities(%{q: search_value})
+          filter_function(socket.assigns.securities_list, search_value)
 
         :bargains ->
-          BargainsCache.filter_bargains(%{q: search_value})
+          filter_function(socket.assigns.bargains_list, search_value)
       end
 
     sort_securities(socket, filtered_securities_list)
   end
 
   defp maybe_filter_securities(socket, _action),
-    do: sort_securities(socket, socket.assigns.reserve_list)
+    do: sort_securities(socket, socket.assigns.securities)
+
+  defp filter_function(list, search_value) do
+    Enum.filter(
+      list,
+      &(String.starts_with?(String.downcase(&1.symbol), search_value) ||
+          String.starts_with?(String.downcase(&1.name), search_value))
+    )
+  end
 
   defp sort_securities(
          %{assigns: %{sort_options: %{sort_by: field, sort_order: sort_order}}} = socket,
