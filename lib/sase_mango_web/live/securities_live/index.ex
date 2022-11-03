@@ -24,15 +24,6 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    socket =
-      case socket.assigns.live_action do
-        :securities ->
-          assign_list_of_securities(socket)
-
-        :bargains ->
-          assign_list_of_bargains(socket)
-      end
-
     {:noreply,
      socket
      |> assign_filter_options(params)
@@ -44,6 +35,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     socket
     |> assign(:page_title, "List of securities")
     |> assign(:active_tab, :securities)
+    |> assign_list_of_securities()
     |> maybe_filter_securities(:securities)
   end
 
@@ -51,6 +43,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     socket
     |> assign(:page_title, "Bargain securities")
     |> assign(:active_tab, :bargains)
+    |> assign_list_of_bargains()
     |> maybe_filter_securities(:bargains)
   end
 
@@ -146,10 +139,10 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     filtered_securities_list =
       case action_type do
         :securities ->
-          filter_function(socket.assigns.securities_list, search_value)
+          filter(socket.assigns.securities_list, search_value)
 
         :bargains ->
-          filter_function(socket.assigns.bargains_list, search_value)
+          filter(socket.assigns.bargains_list, search_value)
       end
 
     sort_securities(socket, filtered_securities_list)
@@ -158,7 +151,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   defp maybe_filter_securities(socket, _action),
     do: sort_securities(socket, socket.assigns.securities)
 
-  defp filter_function(list, search_value) do
+  defp filter(list, search_value) do
     Enum.filter(
       list,
       &(String.starts_with?(String.downcase(&1.symbol), search_value) ||
