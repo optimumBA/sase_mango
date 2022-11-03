@@ -28,9 +28,10 @@ defmodule SaseMango.Calculator do
   def maybe_add_item(securities, results, input) when length(results.securities) > 0 do
     result = run(securities, input)
 
-    case Enum.any?(results.securities, &(&1.symbol == result.symbol)) do
-      true -> update_item(results, result)
-      false -> add_new_item(results, result)
+    if Enum.any?(results.securities, &(&1.symbol == result.symbol)) do
+      update_item(results, result)
+    else
+      add_new_item(results, result)
     end
   end
 
