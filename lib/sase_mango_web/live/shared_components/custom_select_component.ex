@@ -32,17 +32,22 @@ defmodule SaseMangoWeb.SharedComponents.CustomSelectComponent do
 
       _other ->
         filtered_options =
-          Enum.filter(options_from_socket, fn opt ->
-            String.starts_with?(String.downcase(opt.symbol), search_value) || String.starts_with?(String.downcase(opt.name), search_value)
+          Enum.filter(options_from_socket, fn option ->
+            String.starts_with?(String.downcase(option.symbol), search_value) ||
+              String.starts_with?(String.downcase(option.name), search_value)
           end)
 
         suggested_element =
           if length(filtered_options) > 0 do
-            f_element = List.first(filtered_options)
+            first_issuer = List.first(filtered_options)
 
-            is_suggested_by_symbol? = String.starts_with?(String.downcase(f_element.symbol), search_value)
+            is_suggested_by_symbol? =
+              String.starts_with?(String.downcase(first_issuer.symbol), search_value)
 
-            if is_suggested_by_symbol?, do: f_element.symbol, else: f_element.name
+            case is_suggested_by_symbol? do
+              false -> first_issuer.name
+              true -> first_issuer.symbol
+            end
           end
 
         if String.length(value) > 0, do: send(self(), :update_state)
@@ -76,7 +81,7 @@ defmodule SaseMangoWeb.SharedComponents.CustomSelectComponent do
                 <span class="block truncate text-[#1E1E1E]"><%= @selected_item.name %></span>
               </div>
             <% end %>
-            <div class={if(!@input_flip, do: "relative", else: "")}>
+            <div class={if(@input_flip, do: "", else: "relative")}>
               <input
                 autocomplete="off"
                 id="select-field"
