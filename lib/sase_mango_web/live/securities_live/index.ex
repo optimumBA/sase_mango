@@ -19,7 +19,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
       Endpoint.subscribe("securities")
     end
 
-    {:ok, assign_securities_lists(socket)}
+    {:ok, socket}
   end
 
   @impl true
@@ -47,17 +47,11 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     |> maybe_filter_securities(:bargains)
   end
 
-  defp assign_securities_lists(socket) do
-    socket
-    |> assign(:securities_list, SecuritiesCache.get_securities())
-    |> assign(:bargains_list, BargainsCache.get_bargains())
-  end
-
   defp assign_list_of_securities(socket),
-    do: assign(socket, :securities, socket.assigns.securities_list)
+    do: assign(socket, :securities, SecuritiesCache.get_securities())
 
   defp assign_list_of_bargains(socket),
-    do: assign(socket, :securities, socket.assigns.bargains_list)
+    do: assign(socket, :securities, BargainsCache.get_bargains())
 
   defp assign_sort_options(socket, params) do
     new_sort_by = params["sort_by"] || "eps_roi"
@@ -85,13 +79,13 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
 
   defp update_securities(socket, :securities) do
     socket
-    |> assign(:securities_list, SecuritiesCache.get_securities())
+    |> assign_list_of_securities()
     |> maybe_filter_securities(:securities)
   end
 
   defp update_securities(socket, :bargains) do
     socket
-    |> assign(:bargains_list, BargainsCache.get_bargains())
+    |> assign_list_of_bargains()
     |> maybe_filter_securities(:bargains)
   end
 
@@ -139,10 +133,10 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     filtered_securities_list =
       case action_type do
         :securities ->
-          filter(socket.assigns.securities_list, search_value)
+          filter(SecuritiesCache.get_securities(), search_value)
 
         :bargains ->
-          filter(socket.assigns.bargains_list, search_value)
+          filter(SecuritiesCache.get_securities(), search_value)
       end
 
     sort_securities(socket, filtered_securities_list)
@@ -167,7 +161,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     assign(socket, :securities, HandleTable.sort_table(list, field, sort_order))
   end
 
-  defp sort_securities(socket, list), do: assign(socket, :securities, list)
+  defp sort_securities(socket, _list), do: socket
 
   defp set_sort_order("asc"), do: :asc
   defp set_sort_order("desc"), do: :desc
