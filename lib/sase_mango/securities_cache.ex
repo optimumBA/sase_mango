@@ -4,7 +4,8 @@ defmodule SaseMango.SecuritiesCache do
   alias SaseMango.Securities
   alias SaseMangoWeb.Endpoint
 
-  defstruct securities_list: []
+  @table :securities
+  @key :list
 
   # Client side API
 
@@ -19,7 +20,13 @@ defmodule SaseMango.SecuritiesCache do
   end
 
   def get_securities() do
-    GenServer.call(__MODULE__, :get_securities)
+    case :ets.lookup(@table, @key) do
+      [{_key, securities}] ->
+        securities
+
+      _ ->
+        []
+    end
   end
 
   def update_securities() do
@@ -30,20 +37,20 @@ defmodule SaseMango.SecuritiesCache do
 
   @impl true
   def init(_opts) do
-    {:ok, %__MODULE__{}}
+    :ets.new(@table, [:named_table, :set, read_concurrency: true])
+
+    {:ok, []}
   end
 
   @impl true
-  def handle_call(:get_securities, _from, %__MODULE__{securities_list: list} = state) do
-    {:reply, list, state, :hibernate}
-  end
+  def handle_cast(:update_securities, _state) do
+    securities = Securities.list_securities(:securities)
 
-  @impl true
-  def handle_cast(:update_securities, %__MODULE__{} = state) do
-    state = Map.put(state, :securities_list, Securities.list_securities(:securities))
+    :ets.delete(@table, @key)
+    :ets.insert(@table, {@key, securities})
 
     Endpoint.broadcast("securities", "securities_update", %{})
 
-    {:noreply, state, :hibernate}
+    {:noreply, []}
   end
 end

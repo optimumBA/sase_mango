@@ -29,6 +29,7 @@ defmodule SaseMango.BargainsCache do
   end
 
   # Server side callbacks
+
   @impl true
   def init(_opts) do
     {:ok, %__MODULE__{}}
@@ -36,7 +37,7 @@ defmodule SaseMango.BargainsCache do
 
   @impl true
   def handle_call(:get_bargains, _from, %__MODULE__{today_bargains: bargains_list} = state) do
-    {:reply, bargains_list, state, :hibernate}
+    {:reply, bargains_list, state}
   end
 
   @impl true
@@ -70,7 +71,7 @@ defmodule SaseMango.BargainsCache do
 
     Endpoint.broadcast("securities", "securities_update", %{})
 
-    {:noreply, state, :hibernate}
+    {:noreply, state}
   end
 
   defp maybe_move_to_yesterday_list(state) do

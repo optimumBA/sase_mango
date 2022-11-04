@@ -31,27 +31,8 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
      |> apply_action(socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :securities, _params) do
-    socket
-    |> assign(:page_title, "List of securities")
-    |> assign(:active_tab, :securities)
-    |> assign_list_of_securities()
-    |> maybe_filter_securities(:securities)
-  end
-
-  defp apply_action(socket, :bargains, _params) do
-    socket
-    |> assign(:page_title, "Bargain securities")
-    |> assign(:active_tab, :bargains)
-    |> assign_list_of_bargains()
-    |> maybe_filter_securities(:bargains)
-  end
-
-  defp assign_list_of_securities(socket),
-    do: assign(socket, :securities, SecuritiesCache.get_securities())
-
-  defp assign_list_of_bargains(socket),
-    do: assign(socket, :securities, BargainsCache.get_bargains())
+  defp assign_filter_options(socket, params),
+    do: assign(socket, :filter_options, %SearchFilter{q: params["q"] || nil})
 
   defp assign_sort_options(socket, params) do
     new_sort_by = params["sort_by"] || "eps_roi"
@@ -61,11 +42,29 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     assign(socket, :sort_options, sort_options)
   end
 
-  defp assign_filter_options(socket, params) do
-    assign(socket, :filter_options, %SearchFilter{q: params["q"] || nil})
+  defp apply_action(socket, :securities, _params) do
+    socket
+    |> assign(:active_tab, :securities)
+    |> assign(:page_title, "List of securities")
+    |> assign_list_of_securities()
+    |> maybe_filter_securities()
   end
 
-  @impl true
+  defp apply_action(socket, :bargains, _params) do
+    socket
+    |> assign(:active_tab, :bargains)
+    |> assign(:page_title, "Bargain securities")
+    |> assign_list_of_bargains()
+    |> maybe_filter_securities()
+  end
+
+  defp assign_list_of_securities(socket),
+    do: assign(socket, :securities, SecuritiesCache.get_securities())
+
+  defp assign_list_of_bargains(socket),
+    do: assign(socket, :securities, BargainsCache.get_bargains())
+
+  @impl Phoenix.LiveView
   def handle_info(%Broadcast{event: "securities_update"}, socket) do
     {:noreply, update_securities(socket, socket.assigns.live_action)}
   end
@@ -80,13 +79,13 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   defp update_securities(socket, :securities) do
     socket
     |> assign_list_of_securities()
-    |> maybe_filter_securities(:securities)
+    |> maybe_filter_securities()
   end
 
   defp update_securities(socket, :bargains) do
     socket
     |> assign_list_of_bargains()
-    |> maybe_filter_securities(:bargains)
+    |> maybe_filter_securities()
   end
 
   @impl true
@@ -123,33 +122,19 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     url_params
   end
 
-  defp maybe_filter_securities(
-         %{assigns: %{filter_options: %{q: search_value}}} = socket,
-         action_type
-       )
-       when is_binary(search_value) do
-    search_value = String.downcase(search_value)
+  defp maybe_filter_securities(%{assigns: %{filter_options: %{q: query}}} = socket)
+       when is_binary(query),
+       do: sort_securities(socket, filter(socket.assigns.securities, query))
 
-    filtered_securities_list =
-      case action_type do
-        :securities ->
-          filter(SecuritiesCache.get_securities(), search_value)
+  defp maybe_filter_securities(socket), do: sort_securities(socket, socket.assigns.securities)
 
-        :bargains ->
-          filter(SecuritiesCache.get_securities(), search_value)
-      end
+  defp filter(list, query) do
+    term = String.downcase(query)
 
-    sort_securities(socket, filtered_securities_list)
-  end
-
-  defp maybe_filter_securities(socket, _action),
-    do: sort_securities(socket, socket.assigns.securities)
-
-  defp filter(list, search_value) do
     Enum.filter(
       list,
-      &(String.starts_with?(String.downcase(&1.symbol), search_value) ||
-          String.starts_with?(String.downcase(&1.name), search_value))
+      &(String.contains?(String.downcase(&1.symbol), term) ||
+          String.contains?(String.downcase(&1.name), term))
     )
   end
 
