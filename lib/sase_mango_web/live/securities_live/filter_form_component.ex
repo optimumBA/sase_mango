@@ -16,7 +16,6 @@ defmodule SaseMangoWeb.SecuritiesLive.FilterFormComponent do
   end
 
   def handle_event("validate_filter", %{"filter" => %{"q" => filter_value}}, socket) do
-    :timer.sleep(500)
 
     changeset =
       %SearchFilter{}
