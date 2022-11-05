@@ -59,10 +59,10 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   end
 
   defp assign_list_of_securities(socket),
-    do: assign(socket, :securities, SecuritiesCache.get_securities())
+    do: assign(socket, :securities, SecuritiesCache.get())
 
   defp assign_list_of_bargains(socket),
-    do: assign(socket, :securities, BargainsCache.get_bargains())
+    do: assign(socket, :securities, BargainsCache.get())
 
   @impl Phoenix.LiveView
   def handle_info(%Broadcast{event: "securities_update"}, socket) do

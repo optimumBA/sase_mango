@@ -44,8 +44,8 @@ defmodule SaseMango.SecuritiesUpdater do
           end
         end)
 
-        SecuritiesCache.update_securities()
-        BargainsCache.update_bargains()
+        SecuritiesCache.update()
+        BargainsCache.update()
 
       _ ->
         nil

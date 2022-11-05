@@ -20,28 +20,41 @@ defmodule SaseMango.BargainsCache do
     end
   end
 
-  def get_bargains() do
-    GenServer.call(__MODULE__, :get_bargains)
+  def get() do
+    GenServer.call(__MODULE__, :get)
   end
 
-  def update_bargains() do
-    GenServer.cast(__MODULE__, :update_bargains)
+  def update() do
+    GenServer.cast(__MODULE__, :update)
   end
 
   # Server side callbacks
 
-  @impl true
+  @impl GenServer
   def init(_opts) do
-    {:ok, %__MODULE__{}}
+    {:ok, %__MODULE__{}, {:continue, :init_cache}}
   end
 
-  @impl true
-  def handle_call(:get_bargains, _from, %__MODULE__{today_bargains: bargains_list} = state) do
+  @impl GenServer
+  def handle_continue(:init_cache, %__MODULE__{} = state) do
+    {:noreply, fetch_bargains(state)}
+  end
+
+  @impl GenServer
+  def handle_call(:get, _from, %__MODULE__{today_bargains: bargains_list} = state) do
     {:reply, bargains_list, state}
   end
 
-  @impl true
-  def handle_cast(:update_bargains, %__MODULE__{} = state) do
+  @impl GenServer
+  def handle_cast(:update, %__MODULE__{} = state) do
+    state = fetch_bargains(state)
+
+    Endpoint.broadcast("securities", "securities_update", %{})
+
+    {:noreply, state}
+  end
+
+  defp fetch_bargains(%__MODULE__{} = state) do
     state = maybe_move_to_yesterday_list(state)
 
     new_list =
@@ -64,14 +77,9 @@ defmodule SaseMango.BargainsCache do
         [security | new_list]
       end)
 
-    state =
-      state
-      |> Map.put(:executed_at, DateTime.utc_now())
-      |> Map.put(:today_bargains, new_list)
-
-    Endpoint.broadcast("securities", "securities_update", %{})
-
-    {:noreply, state}
+    state
+    |> Map.put(:executed_at, DateTime.utc_now())
+    |> Map.put(:today_bargains, new_list)
   end
 
   defp maybe_move_to_yesterday_list(state) do

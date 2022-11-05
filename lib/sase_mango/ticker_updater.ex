@@ -52,7 +52,7 @@ defmodule SaseMango.TickerUpdater do
       end
     end
 
-    SecuritiesCache.update_securities()
-    BargainsCache.update_bargains()
+    SecuritiesCache.update()
+    BargainsCache.update()
   end
 end

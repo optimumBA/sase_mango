@@ -19,7 +19,7 @@ defmodule SaseMango.SecuritiesCache do
     end
   end
 
-  def get_securities() do
+  def get() do
     case :ets.lookup(@table, @key) do
       [{_key, securities}] ->
         securities
@@ -29,28 +29,41 @@ defmodule SaseMango.SecuritiesCache do
     end
   end
 
-  def update_securities() do
-    GenServer.cast(__MODULE__, :update_securities)
+  def update() do
+    GenServer.cast(__MODULE__, :update)
   end
 
   # Server side callbacks
 
-  @impl true
+  @impl GenServer
   def init(_opts) do
-    :ets.new(@table, [:named_table, :set, read_concurrency: true])
-
-    {:ok, []}
+    {:ok, [], {:continue, :init_cache}}
   end
 
-  @impl true
-  def handle_cast(:update_securities, _state) do
-    securities = Securities.list_securities(:securities)
+  @impl GenServer
+  def handle_continue(:init_cache, _state) do
+    :ets.new(@table, [:named_table, :set, read_concurrency: true])
+    update_cache()
 
-    :ets.delete(@table, @key)
-    :ets.insert(@table, {@key, securities})
+    {:noreply, []}
+  end
+
+  @impl GenServer
+  def handle_cast(:update, _state) do
+    update_cache()
 
     Endpoint.broadcast("securities", "securities_update", %{})
 
     {:noreply, []}
+  end
+
+  defp update_cache() do
+    securities =
+      :securities
+      |> Securities.list_securities()
+      |> Enum.to_list()
+
+    :ets.delete(@table, @key)
+    :ets.insert(@table, {@key, securities})
   end
 end
