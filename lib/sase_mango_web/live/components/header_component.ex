@@ -1,5 +1,5 @@
 defmodule SaseMangoWeb.Components.HeaderComponent do
-  use Phoenix.Component
+  use SaseMangoWeb, :component
 
   alias SaseMangoWeb.Router.Helpers, as: Routes
 
@@ -36,24 +36,15 @@ defmodule SaseMangoWeb.Components.HeaderComponent do
       <div class="w-full mt-8 flex items-end justify-start border-b border-[#D9D9D9]">
         <div class="flex gap-6 flex-col items-center w-full md:flex-row">
           <div class={"page-tab #{if @active_tab == :securities, do: "securities"}"}>
-            <%= live_patch("List of securities",
-              to: Routes.securities_index_path(@socket, :securities),
-              class: "page-link"
-            ) %>
+            <.link patch={~p"/"} class="page-link">List of securities</.link>
             <div class="tab-line"></div>
           </div>
           <div class={"page-tab #{if @active_tab == :bargains, do: "bargains"}"}>
-            <%= live_patch("Bargain securities",
-              to: Routes.securities_index_path(@socket, :bargains),
-              class: "page-link"
-            ) %>
+            <.link patch={~p"/bargains"} class="page-link">Bargain securities</.link>
             <div class="tab-line"></div>
           </div>
           <div class={"page-tab #{if @active_tab == :calculator, do: "calculator"}"}>
-            <%= live_redirect("Calculator",
-              to: Routes.calculator_index_path(@socket, :index),
-              class: "page-link"
-            ) %>
+            <.link navigate={~p"/calculator"} class="page-link">Calculator</.link>
             <div class="tab-line"></div>
           </div>
         </div>
