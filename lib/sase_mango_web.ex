@@ -17,6 +17,17 @@ defmodule SaseMangoWeb do
   and import those modules here.
   """
 
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: SaseMangoWeb.Endpoint,
+        router: SaseMangoWeb.Router,
+        statics: SaseMangoWeb.static_paths()
+    end
+  end
+
   def controller do
     quote do
       use Phoenix.Controller, namespace: SaseMangoWeb
@@ -24,6 +35,8 @@ defmodule SaseMangoWeb do
       import Plug.Conn
       import SaseMangoWeb.Gettext
       alias SaseMangoWeb.Router.Helpers, as: Routes
+
+      unquote(verified_routes())
     end
   end
 
@@ -98,6 +111,8 @@ defmodule SaseMangoWeb do
       import SaseMangoWeb.ErrorHelpers
       import SaseMangoWeb.Gettext
       alias SaseMangoWeb.Router.Helpers, as: Routes
+
+      unquote(verified_routes())
     end
   end
 

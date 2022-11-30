@@ -28,6 +28,8 @@ defmodule SaseMangoWeb.ConnCase do
 
       # The default endpoint for testing
       @endpoint SaseMangoWeb.Endpoint
+
+      use SaseMangoWeb, :verified_routes
     end
   end
 
