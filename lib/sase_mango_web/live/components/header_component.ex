@@ -1,8 +1,6 @@
 defmodule SaseMangoWeb.Components.HeaderComponent do
   use SaseMangoWeb, :component
 
-  alias SaseMangoWeb.Router.Helpers, as: Routes
-
   def header(assigns) do
     ~H"""
     <div class="mt-[120px] mb-[2rem] text-[1.2em] py-4">
