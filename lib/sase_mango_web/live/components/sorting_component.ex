@@ -5,24 +5,20 @@ defmodule SaseMangoWeb.Components.SortingComponent do
 
   def sort_link(assigns) do
     ~H"""
-      <div
-        phx-click="sort_column"
-        phx-value-key={@key}
-        class="sortable-column"
-      >
-        <span><%= @col_text %></span>
+    <div phx-click="sort_column" phx-value-key={@key} class="sortable-column">
+      <span><%= @col_text %></span>
 
-        <div class={"
+      <div class={"
             #{get_icon_color(@sort_options, @key)}
             #{get_icon_direction(@col_type, @sort_options, @key)}
           "}>
-          <TableIconsComponent.sort_icon
-            col_type={@col_type}
-            sort_options={@sort_options.sort_order}
-            key={@key}
-           />
-        </div>
+        <TableIconsComponent.sort_icon
+          col_type={@col_type}
+          sort_options={@sort_options.sort_order}
+          key={@key}
+        />
       </div>
+    </div>
     """
   end
 

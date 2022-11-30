@@ -1,259 +1,270 @@
-
 <section class="px-[64px]">
+  <HeaderComponent.header socket={@socket} active_tab={@active_tab} />
 
-  <HeaderComponent.header
-    socket={@socket}
-    active_tab={@active_tab}
-   />     
+  <div class="relative">
+    <div class="md:absolute md:right-2 md:-top-14 md:-translate-y-[100%]">
+      <.live_component module={FilterFormComponent} id="filter_form" filter={@filter_options} />
+    </div>
 
-<div class="relative">
-
-  <div class="md:absolute md:right-2 md:-top-14 md:-translate-y-[100%]">
-    <.live_component
-      module={FilterFormComponent}
-      id="filter_form"
-      filter={@filter_options}
-    /> 
-  </div>
-
-  <div class="table-wrapper">
-    <table class="securities-table font-montserrat">
-      <thead>
-        <tr>
-          <th class="">
-            <div class="flex justify-center items-center gap-2">
-              <SortingComponent.sort_link
-                id={"sort-symbol"}
-                col_text={"Symbol"}
-                col_type={:text}
-                key={"symbol"}
-                sort_options={@sort_options} 
-              />
-            </div>
-          </th>
-          <th class="">
-            <div class="flex justify-center items-center gap-2">
-              <SortingComponent.sort_link
-                id={"sort-issuer"}
-                col_text={"Issuer"}
-                col_type={:text}
-                key={"name"}
-                sort_options={@sort_options} 
-              />
-            </div>
-          </th>
-          <th class="" >
-            <div class="flex justify-center items-center gap-2">
-              <SortingComponent.sort_link
-                id={"sort-price"}
-                col_text={"Price"}
-                col_type={:number}
-                key={"price"}
-                sort_options={@sort_options} 
-              />
-            </div>
-          </th>
-          <th class="" >
-            <div class="flex justify-center items-center gap-2">
-              <SortingComponent.sort_link
-                id={"sort-nominal-price"}
-                col_text={"Nominal price"}
-                col_type={:number}
-                key={"nominal_price"}
-                sort_options={@sort_options} 
-              />
-            </div>
-          </th>
-          <th class="" >
-            <div class="flex justify-center items-center gap-2">
-              <SortingComponent.sort_link
-                id={"sort-ask"}
-                col_text={"Ask"}
-                col_type={:number}
-                key={"ask_price"}
-                sort_options={@sort_options} 
-              />
-            </div>
-          </th>
-          <th class="">
-            <div class="flex justify-center items-center gap-2">
-              <SortingComponent.sort_link
-                id={"sort-bid"}
-                col_text={"Bid"}
-                col_type={:number}
-                key={"bid_price"}
-                sort_options={@sort_options} 
-              />
-            </div>
-          </th>
-          <th class="" >
-            <div class="flex justify-center items-center gap-2">
-              <SortingComponent.sort_link
-                id={"sort-dividend-roi"}
-                col_text={"Dividend ROI (%)"}
-                col_type={:number}
-                key={"dividend_roi"}
-                sort_options={@sort_options} 
-              />
-            </div> 
-          </th>
-          <th class="">
-            <div class="flex justify-center items-center gap-2">
-              <SortingComponent.sort_link
-                id={"sort-eps-roi"}
-                col_text={"EPS ROI (%)"}
-                col_type={:number}
-                key={"eps_roi"}
-                sort_options={@sort_options} 
-              />
-            </div>
-          </th>
-          <th class="">
-            <div class="flex justify-center items-center gap-2">
-              <SortingComponent.sort_link
-                id={"sort-pe"}
-                col_text={" P/E"}
-                col_type={:number}
-                key={"pe"}
-                sort_options={@sort_options} 
-              />
-            </div>
-          </th>
-          <th class="">
-            <div class="flex justify-center items-center gap-2">
-              <SortingComponent.sort_link
-                id={"sort-pb"}
-                col_text={"P/B"}
-                col_type={:number}
-                key={"pb"}
-                sort_options={@sort_options} 
-              />
-            </div>
-          </th>
-          <th class="" >
-            <div class="flex justify-center items-center gap-2">
-
-              <SortingComponent.sort_link
-                id={"sort-market-value"}
-                col_text={"Market Value"}
-                col_type={:number}
-                key={"market_value"}
-                sort_options={@sort_options} 
-              />
-            </div>
-          </th>
-          <th class="" >
-            <div class="flex justify-center items-center gap-2">
-              <SortingComponent.sort_link
-                id={"sort-book-value"}
-                col_text={"Book Value"}
-                col_type={:number}
-                key={"book_value"}
-                sort_options={@sort_options} 
-              />
-            </div>
-          </th>
-          <th class="">
-            <div class="flex justify-center items-center gap-2">
-              <SortingComponent.sort_link
-                id={"sort-bvs"}
-                col_text={"BVS"}
-                col_type={:number}
-                key={"bvs"}
-                sort_options={@sort_options} 
-              />
-            </div>
-          </th>
-          <th class="">
-            <div class="flex justify-center items-center gap-2">
-              <SortingComponent.sort_link
-                id={"sort-profit-margin"}
-                col_text={"Profit margin"}
-                col_type={:number}
-                key={"profit_margin"}
-                sort_options={@sort_options} 
-              />
-            </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody id="securities">
-        <%= for security <- @securities do %>
-          <tr id={"security-#{security.symbol}"}>
-            <td class=" p-2 2xl:px-4 2xl:py-2">
-              <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{security.symbol}"} target="_blank" 
-                class=" text-blue-400"
-              >
-                <%= security.symbol %>
-              </a>
-            </td>
-            <td class=" p-2 2xl:px-4 2xl:py-2">          
-              <span class=""><%= security.name %></span><br />
-              <span class=""><%= Securities.segment(security.segment) %></span>
-            </td>
-            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= Decimal.round(security.price, 2) %></td>
-            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= Decimal.round(security.nominal_price, 2) %></td>
-            <td class="p-2 2xl:px-4 2xl:py-2">
-                <div class="flex flex-col gap-4">
-                    <span class=""><%= Decimal.round(security.ask_price, 2) %></span>
-                    <span class=""><%= security.ask_volume %></span>
-                </div>            
-            </td>
-            <td class="p-2 2xl:px-4 2xl:py-2" >
-                <div class="flex flex-col gap-4">
-                    <span class=""><%= Decimal.round(security.bid_price, 2) %></span>
-                    <span class=""><%= security.bid_volume %></span>
-                </div>
-            </td>
-            <td class="p-2 2xl:px-4 2xl:py-2 ">
-                <div class="flex flex-col gap-4">
-                    <span class=""><%= Decimal.round(Decimal.mult(security.dividend_roi, 100), 2) %>%</span>
-                    <span class=""><%= Decimal.round(Decimal.mult(security.previous_dividend_roi, 100), 2) %>%</span>
-                </div>
-            </td>
-            <td class="p-2 2xl:px-4 2xl:py-2 " >
-                <div class="flex flex-col gap-4">
-                    <span class=""><%= Decimal.round(Decimal.mult(security.eps_roi, 100), 2) %>%</span>
-                    <span class=""><%= Decimal.round(Decimal.mult(security.previous_eps_roi, 100), 2) %>%</span>
-                </div>
-            </td>
-            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 " ><%= Decimal.round(security.pe, 2) %></td>
-            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 " ><%= Decimal.round(security.pb, 2) %></td>
-            <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 " ><%= Decimal.round(security.market_value, 0) %></td>
-            <td class="p-2 2xl:px-4 2xl:py-2 " >
-                <div class="flex flex-col gap-4">
-                    <span class=""><%= Decimal.round(security.book_value, 0) %></span>
-                    <span class=""><%= Decimal.round(security.previous_book_value, 0) %></span>
-                </div>
-            </td>
-            <td class="p-2 2xl:px-4 2xl:py-2" >
-                <div class="flex flex-col gap-4">
-                    <span class=""><%= Decimal.round(security.bvs, 2) %></span>
-                    <span class=""><%= Decimal.round(security.previous_bvs, 2) %></span>
-                </div>
-            </td>
-            <td class="p-2 2xl:px-4 2xl:py-2 " >
-                <div class="flex flex-col gap-4">
-                    <span class=""><%= Decimal.round(Decimal.mult(security.profit_margin, 100), 2) %>%</span>
-                    <span class=""><%= Decimal.round(Decimal.mult(security.previous_profit_margin, 100), 2) %>%</span>
-                </div>
-            </td>
+    <div class="table-wrapper">
+      <table class="securities-table font-montserrat">
+        <thead>
+          <tr>
+            <th class="">
+              <div class="flex justify-center items-center gap-2">
+                <SortingComponent.sort_link
+                  id="sort-symbol"
+                  col_text="Symbol"
+                  col_type={:text}
+                  key="symbol"
+                  sort_options={@sort_options}
+                />
+              </div>
+            </th>
+            <th class="">
+              <div class="flex justify-center items-center gap-2">
+                <SortingComponent.sort_link
+                  id="sort-issuer"
+                  col_text="Issuer"
+                  col_type={:text}
+                  key="name"
+                  sort_options={@sort_options}
+                />
+              </div>
+            </th>
+            <th class="">
+              <div class="flex justify-center items-center gap-2">
+                <SortingComponent.sort_link
+                  id="sort-price"
+                  col_text="Price"
+                  col_type={:number}
+                  key="price"
+                  sort_options={@sort_options}
+                />
+              </div>
+            </th>
+            <th class="">
+              <div class="flex justify-center items-center gap-2">
+                <SortingComponent.sort_link
+                  id="sort-nominal-price"
+                  col_text="Nominal price"
+                  col_type={:number}
+                  key="nominal_price"
+                  sort_options={@sort_options}
+                />
+              </div>
+            </th>
+            <th class="">
+              <div class="flex justify-center items-center gap-2">
+                <SortingComponent.sort_link
+                  id="sort-ask"
+                  col_text="Ask"
+                  col_type={:number}
+                  key="ask_price"
+                  sort_options={@sort_options}
+                />
+              </div>
+            </th>
+            <th class="">
+              <div class="flex justify-center items-center gap-2">
+                <SortingComponent.sort_link
+                  id="sort-bid"
+                  col_text="Bid"
+                  col_type={:number}
+                  key="bid_price"
+                  sort_options={@sort_options}
+                />
+              </div>
+            </th>
+            <th class="">
+              <div class="flex justify-center items-center gap-2">
+                <SortingComponent.sort_link
+                  id="sort-dividend-roi"
+                  col_text="Dividend ROI (%)"
+                  col_type={:number}
+                  key="dividend_roi"
+                  sort_options={@sort_options}
+                />
+              </div>
+            </th>
+            <th class="">
+              <div class="flex justify-center items-center gap-2">
+                <SortingComponent.sort_link
+                  id="sort-eps-roi"
+                  col_text="EPS ROI (%)"
+                  col_type={:number}
+                  key="eps_roi"
+                  sort_options={@sort_options}
+                />
+              </div>
+            </th>
+            <th class="">
+              <div class="flex justify-center items-center gap-2">
+                <SortingComponent.sort_link
+                  id="sort-pe"
+                  col_text=" P/E"
+                  col_type={:number}
+                  key="pe"
+                  sort_options={@sort_options}
+                />
+              </div>
+            </th>
+            <th class="">
+              <div class="flex justify-center items-center gap-2">
+                <SortingComponent.sort_link
+                  id="sort-pb"
+                  col_text="P/B"
+                  col_type={:number}
+                  key="pb"
+                  sort_options={@sort_options}
+                />
+              </div>
+            </th>
+            <th class="">
+              <div class="flex justify-center items-center gap-2">
+                <SortingComponent.sort_link
+                  id="sort-market-value"
+                  col_text="Market Value"
+                  col_type={:number}
+                  key="market_value"
+                  sort_options={@sort_options}
+                />
+              </div>
+            </th>
+            <th class="">
+              <div class="flex justify-center items-center gap-2">
+                <SortingComponent.sort_link
+                  id="sort-book-value"
+                  col_text="Book Value"
+                  col_type={:number}
+                  key="book_value"
+                  sort_options={@sort_options}
+                />
+              </div>
+            </th>
+            <th class="">
+              <div class="flex justify-center items-center gap-2">
+                <SortingComponent.sort_link
+                  id="sort-bvs"
+                  col_text="BVS"
+                  col_type={:number}
+                  key="bvs"
+                  sort_options={@sort_options}
+                />
+              </div>
+            </th>
+            <th class="">
+              <div class="flex justify-center items-center gap-2">
+                <SortingComponent.sort_link
+                  id="sort-profit-margin"
+                  col_text="Profit margin"
+                  col_type={:number}
+                  key="profit_margin"
+                  sort_options={@sort_options}
+                />
+              </div>
+            </th>
           </tr>
-        <% end %>
-      </tbody>
+        </thead>
+        <tbody id="securities">
+          <%= for security <- @securities do %>
+            <tr id={"security-#{security.symbol}"}>
+              <td class=" p-2 2xl:px-4 2xl:py-2">
+                <a
+                  href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{security.symbol}"}
+                  target="_blank"
+                  class=" text-blue-400"
+                >
+                  <%= security.symbol %>
+                </a>
+              </td>
+              <td class=" p-2 2xl:px-4 2xl:py-2">
+                <span class=""><%= security.name %></span> <br />
+                <span class=""><%= Securities.segment(security.segment) %></span>
+              </td>
+              <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2">
+                <%= Decimal.round(security.price, 2) %>
+              </td>
+              <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2">
+                <%= Decimal.round(security.nominal_price, 2) %>
+              </td>
+              <td class="p-2 2xl:px-4 2xl:py-2">
+                <div class="flex flex-col gap-4">
+                  <span class=""><%= Decimal.round(security.ask_price, 2) %></span>
+                  <span class=""><%= security.ask_volume %></span>
+                </div>
+              </td>
+              <td class="p-2 2xl:px-4 2xl:py-2">
+                <div class="flex flex-col gap-4">
+                  <span class=""><%= Decimal.round(security.bid_price, 2) %></span>
+                  <span class=""><%= security.bid_volume %></span>
+                </div>
+              </td>
+              <td class="p-2 2xl:px-4 2xl:py-2 ">
+                <div class="flex flex-col gap-4">
+                  <span class="">
+                    <%= Decimal.round(Decimal.mult(security.dividend_roi, 100), 2) %>%
+                  </span>
+                  <span class="">
+                    <%= Decimal.round(Decimal.mult(security.previous_dividend_roi, 100), 2) %>%
+                  </span>
+                </div>
+              </td>
+              <td class="p-2 2xl:px-4 2xl:py-2 ">
+                <div class="flex flex-col gap-4">
+                  <span class="">
+                    <%= Decimal.round(Decimal.mult(security.eps_roi, 100), 2) %>%
+                  </span>
+                  <span class="">
+                    <%= Decimal.round(Decimal.mult(security.previous_eps_roi, 100), 2) %>%
+                  </span>
+                </div>
+              </td>
+              <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 ">
+                <%= Decimal.round(security.pe, 2) %>
+              </td>
+              <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 ">
+                <%= Decimal.round(security.pb, 2) %>
+              </td>
+              <td class=" 2xl:text-xl p-2 2xl:px-4 2xl:py-2 ">
+                <%= Decimal.round(security.market_value, 0) %>
+              </td>
+              <td class="p-2 2xl:px-4 2xl:py-2 ">
+                <div class="flex flex-col gap-4">
+                  <span class=""><%= Decimal.round(security.book_value, 0) %></span>
+                  <span class=""><%= Decimal.round(security.previous_book_value, 0) %></span>
+                </div>
+              </td>
+              <td class="p-2 2xl:px-4 2xl:py-2">
+                <div class="flex flex-col gap-4">
+                  <span class=""><%= Decimal.round(security.bvs, 2) %></span>
+                  <span class=""><%= Decimal.round(security.previous_bvs, 2) %></span>
+                </div>
+              </td>
+              <td class="p-2 2xl:px-4 2xl:py-2 ">
+                <div class="flex flex-col gap-4">
+                  <span class="">
+                    <%= Decimal.round(Decimal.mult(security.profit_margin, 100), 2) %>%
+                  </span>
+                  <span class="">
+                    <%= Decimal.round(Decimal.mult(security.previous_profit_margin, 100), 2) %>%
+                  </span>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
 
-      <tfoot></tfoot>
+        <tfoot></tfoot>
+      </table>
+    </div>
 
-    </table>
+    <%= if Enum.empty?(@securities) do %>
+      <tr>
+        <p class="w-max m-auto my-[4rem] text-[1.2em] alert alert-info">
+          No results found!
+        </p>
+      </tr>
+    <% end %>
   </div>
-
-  <%= if Enum.empty?(@securities) do %>
-    <tr>
-      <p class="w-max m-auto my-[4rem] text-[1.2em] alert alert-info"> 
-      No results found!
-      </p>
-    </tr>
-  <% end %>
-</div>
-
 </section>

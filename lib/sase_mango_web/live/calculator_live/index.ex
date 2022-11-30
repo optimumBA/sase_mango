@@ -122,7 +122,10 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
   end
 
   def enable_form_submit?(changeset), do: changeset.valid?
-  def enable_forms_fields?(select_item) when is_binary(select_item.key), do: String.length(select_item.key) > 0
+
+  def enable_forms_fields?(select_item) when is_binary(select_item.key),
+    do: String.length(select_item.key) > 0
+
   def enable_forms_fields?(_select_item), do: false
 
   defp calculate(socket) do
