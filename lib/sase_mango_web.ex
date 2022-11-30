@@ -45,7 +45,7 @@ defmodule SaseMangoWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {SaseMangoWeb.LayoutView, "live.html"}
+        layout: {SaseMangoWeb.LayoutView, :live}
 
       unquote(view_helpers())
     end
@@ -90,7 +90,7 @@ defmodule SaseMangoWeb do
       use Phoenix.HTML
 
       # Import LiveView and .heex helpers (live_render, live_patch, <.form>, etc)
-      import Phoenix.LiveView.Helpers
+      import Phoenix.Component
 
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View
