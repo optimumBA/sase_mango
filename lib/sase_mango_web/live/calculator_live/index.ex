@@ -22,6 +22,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
       |> assign(:active_tab, :calculator)
       |> assign(:selected_issuer, %{symbol: nil, name: nil})
       |> assign(:issuer_input_cover, false)
+      |> assign(:page_title, "Calculator")
       |> assign_select_list()
 
     if connected?(socket) do
