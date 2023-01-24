@@ -349,7 +349,7 @@ th:last-child {
 /* Calculator table */
 
 .data-table > thead > tr > th {
-  @apply px-8 py-4 text-[#1E1E1E] bg-[#D9D9D9] text-center font-[400] text-[0.95em];
+  @apply px-8 py-4 text-[#1E1E1E] bg-gray-200 text-center font-[400] text-[0.95em];
 }
 
 .data-table > tbody > tr:last-child {

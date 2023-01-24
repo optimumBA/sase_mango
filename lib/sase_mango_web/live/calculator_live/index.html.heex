@@ -11,17 +11,17 @@
     phx-submit="calculate"
     phx-change="validate"
     class="mx-[48px] xl:mx-[64px] sm:px-4 my-14 mt-[5rem] border-b border-[#D9D9D9]"
+    phx-click="toggle_input"
   >
     <div class="w-full flex flex-col flex-wrap sm:flex-row items-center sm:items-end gap-8 pb-12">
 
       <div class="sm:w-max">
           <%= label f, :symbol, "Issuer or symbol", for: :symbol, class: "w-max mb-[0.5rem] text-[0.8em] xl:text-[1em] text-[#9A9A9A]" %>
-          <.live_component module={CustomSelectComponent}
+          <.live_component module={IssuerSelectComponent}
             id="issuers_select_comp"
-            input_flip={@input_flip}
+            issuer_input_cover={@issuer_input_cover}
             options={@select_list}
-            open={@select_open}
-            selected_item={@select_item}
+            selected_issuer={@selected_issuer}
           />
       </div>
 
@@ -100,7 +100,7 @@
           <%= for result <- @results.securities do %>
             <tr class="h-8">
               <td class="text-center text-blue-400 px-4" colspan="3">
-                <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{ result.symbol }"} target="_blank">
+                <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{result.symbol}"} target="_blank">
                   <%= result.symbol %>
                 </a>
               </td>
