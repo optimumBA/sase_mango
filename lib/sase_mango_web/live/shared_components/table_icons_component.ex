@@ -132,4 +132,16 @@ defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
     </div>
     """
   end
+
+  def arrow_down(assigns) do
+    ~H"""
+    <svg width="15" height="8"
+      viewBox="0 0 15 9"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M1 1L7.08696 7L13 1" stroke="#9A9A9A" stroke-width="2" stroke-linecap="round"/>
+     </svg>
+    """
+  end
 end
