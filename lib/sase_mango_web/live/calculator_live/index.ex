@@ -16,7 +16,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
       socket
       |> assign(:changeset, Calculator.change_input(%Calculator.Input{}))
       |> assign_results()
-      |> assign(:securities, SecuritiesCache.get_securities())
+      |> assign(:securities, SecuritiesCache.get())
       |> assign(:active_tab, :calculator)
       |> assign(:select_open, false)
       |> assign(:select_item, %{symbol: "", name: ""})
@@ -107,7 +107,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
 
   @impl true
   def handle_info(%Broadcast{event: "securities_update"}, socket) do
-    securities = SecuritiesCache.get_securities()
+    securities = SecuritiesCache.get()
 
     {:noreply,
      socket
