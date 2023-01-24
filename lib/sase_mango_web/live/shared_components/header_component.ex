@@ -7,7 +7,7 @@ defmodule SaseMangoWeb.SharedComponents.HeaderComponent do
 
   def header(assigns) do
     ~H"""
-    <div class="ml-[48px] xl:ml-[64px] mr-[8px] xl:mr-[64px] mt-[120px] mb-[1rem] xl:mb-[1.5rem] py-4">
+    <div class="mx-[48px] xl:mx-[64px] mt-[120px] mb-[1rem] xl:mb-[1.5rem] py-4">
       <div class="flex items-center gap-4 px-2 text-[1em] xl:text-[1.1em]">
         <span class="text-[#8C8C8C] font-[400]">Date:</span>
         <.date_icon />

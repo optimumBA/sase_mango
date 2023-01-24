@@ -3,16 +3,16 @@
   <HeaderComponent.header
     socket={@socket}
     active_tab={@active_tab}
-   />     
+   />
 
 <div class="relative">
 
-  <div class="mb-[0.4rem] md:absolute md:right-2 md:-top-10 md:-translate-y-[100%] xl:md:-top-12  xl:right-[64px]">
+  <div class="mb-[0.4rem] md:absolute md:right-[64px] md:-top-10 md:-translate-y-[100%] xl:-top-12 xl:right-[64px]">
     <.live_component
       module={FilterFormComponent}
       id="filter_form"
       filter={@filter_options}
-    /> 
+    />
   </div>
 
   <div class="table-wrapper">
@@ -26,7 +26,7 @@
                 col_text={"Symbol"}
                 col_type={:text}
                 key={"symbol"}
-                sort_options={@sort_options} 
+                sort_options={@sort_options}
               />
             </div>
           </th>
@@ -37,7 +37,7 @@
                 col_text={"Issuer"}
                 col_type={:text}
                 key={"name"}
-                sort_options={@sort_options} 
+                sort_options={@sort_options}
               />
             </div>
           </th>
@@ -48,7 +48,7 @@
                 col_text={"Price"}
                 col_type={:number}
                 key={"price"}
-                sort_options={@sort_options} 
+                sort_options={@sort_options}
               />
             </div>
           </th>
@@ -59,7 +59,7 @@
                 col_text={"Nominal price"}
                 col_type={:number}
                 key={"nominal_price"}
-                sort_options={@sort_options} 
+                sort_options={@sort_options}
               />
             </div>
           </th>
@@ -70,7 +70,7 @@
                 col_text={"Ask"}
                 col_type={:number}
                 key={"ask_price"}
-                sort_options={@sort_options} 
+                sort_options={@sort_options}
               />
             </div>
           </th>
@@ -81,7 +81,7 @@
                 col_text={"Bid"}
                 col_type={:number}
                 key={"bid_price"}
-                sort_options={@sort_options} 
+                sort_options={@sort_options}
               />
             </div>
           </th>
@@ -92,9 +92,9 @@
                 col_text={"Dividend ROI (%)"}
                 col_type={:number}
                 key={"dividend_roi"}
-                sort_options={@sort_options} 
+                sort_options={@sort_options}
               />
-            </div> 
+            </div>
           </th>
           <th class="">
             <div class="flex justify-center items-center gap-2">
@@ -103,7 +103,7 @@
                 col_text={"EPS ROI (%)"}
                 col_type={:number}
                 key={"eps_roi"}
-                sort_options={@sort_options} 
+                sort_options={@sort_options}
               />
             </div>
           </th>
@@ -114,7 +114,7 @@
                 col_text={" P/E"}
                 col_type={:number}
                 key={"pe"}
-                sort_options={@sort_options} 
+                sort_options={@sort_options}
               />
             </div>
           </th>
@@ -125,7 +125,7 @@
                 col_text={"P/B"}
                 col_type={:number}
                 key={"pb"}
-                sort_options={@sort_options} 
+                sort_options={@sort_options}
               />
             </div>
           </th>
@@ -137,7 +137,7 @@
                 col_text={"Market Value"}
                 col_type={:number}
                 key={"market_value"}
-                sort_options={@sort_options} 
+                sort_options={@sort_options}
               />
             </div>
           </th>
@@ -148,7 +148,7 @@
                 col_text={"Book Value"}
                 col_type={:number}
                 key={"book_value"}
-                sort_options={@sort_options} 
+                sort_options={@sort_options}
               />
             </div>
           </th>
@@ -159,7 +159,7 @@
                 col_text={"BVS"}
                 col_type={:number}
                 key={"bvs"}
-                sort_options={@sort_options} 
+                sort_options={@sort_options}
               />
             </div>
           </th>
@@ -170,7 +170,7 @@
                 col_text={"Profit margin"}
                 col_type={:number}
                 key={"profit_margin"}
-                sort_options={@sort_options} 
+                sort_options={@sort_options}
               />
             </div>
           </th>
@@ -179,15 +179,15 @@
       <tbody id="securities">
         <%= for security <- @securities do %>
           <TableRowComponent.table_row live_action={@active_tab} security={security} >
-          
+
             <td class="text-center p-2 2xl:px-4 2xl:py-2">
-              <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{security.symbol}"} target="_blank" 
+              <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{security.symbol}"} target="_blank"
                 class=" text-blue-400"
               >
                 <%= security.symbol %>
               </a>
             </td>
-            <td class="text-center p-2 2xl:px-4 2xl:py-2">          
+            <td class="text-center p-2 2xl:px-4 2xl:py-2">
               <span class=""><%= security.name %></span><br />
               <span class=""><%= Securities.segment(security.segment) %></span>
             </td>
@@ -197,7 +197,7 @@
                 <div class="flex flex-col gap-4 text-right">
                     <span class=""><%= Decimal.round(security.ask_price, 2) %></span>
                     <span class=""><%= security.ask_volume %></span>
-                </div>            
+                </div>
             </td>
             <td class="p-2 2xl:px-4 2xl:py-2" >
                 <div class="flex flex-col gap-4 text-right">
@@ -249,7 +249,7 @@
 
   <%= if Enum.empty?(@securities) do %>
     <tr>
-      <p class="w-max m-auto my-[4rem] text-[1.1em] alert alert-info"> 
+      <p class="w-max m-auto my-[4rem] text-[1.1em] alert alert-info">
       No results found!
       </p>
     </tr>
