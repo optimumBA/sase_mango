@@ -68,15 +68,15 @@ defmodule SaseMangoWeb.SharedComponents.IssuerSelectComponent do
     <div id={@id}>
       <div class="relative mt-1" phx-click-away={JS.hide(to: "#issuers-list")}>
         <div
-          class="relative cursor-pointer w-full sm:min-w-[380px] px-[1rem] py-0 text-left bg-white border border-[#979797] hover:border-[#565555] rounded-[0.8rem] shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 font-[300]"
+          class="relative cursor-pointer w-full sm:min-w-[380px] px-4 py-2 text-left bg-white border border-input-border-main hover:border-input-gray-border rounded-[0.6rem] shadow-sm focus:outline-none font-light"
           phx-click={JS.toggle(to: "#issuers-list")}
         >
             <%= if @issuer_input_cover do %>
-              <div id="input-cover" class="z-[10] text-[0.86em] xl:text-[1.02em] bg-white flex items-center gap-2 text-left py-[0.9rem] mr-16"
+              <div id="input-cover" class="z-10 text-base xl:text-lg bg-white flex items-center gap-2 text-left py-0 mr-16"
                 phx-hook="FieldReset"
               >
-                <span class="block truncate text-[#5B92D7]"><%= @selected_issuer.symbol %></span>
-                <span class="block truncate text-[#1E1E1E]"><%= @selected_issuer.name %></span>
+                <span class="block truncate text-select-symbol"><%= @selected_issuer.symbol %></span>
+                <span class="block truncate text-dark-text"><%= @selected_issuer.name %></span>
               </div>
             <% end %>
             <div class={if(@issuer_input_cover, do: "", else: "relative")}>
@@ -85,13 +85,13 @@ defmodule SaseMangoWeb.SharedComponents.IssuerSelectComponent do
                 id="select-field"
                 type="text"
                 placeholder="SELECT"
-                class={if(@issuer_input_cover, do: "absolute top-1 left-1 -z-[10]", else: "block") <> " border-0 p-[1rem] tracking-normal bg-transparent text-[1em] xl:text-[1.2em] font-[300] pr-8 placeholder:focus:text-transparent"}
+                class={if(@issuer_input_cover, do: "absolute top-1 left-1 -z-10", else: "block") <> " border-0 px-4 py-0 tracking-normal bg-transparent text-base xl:text-lg font-light pr-8 placeholder:focus:text-transparent"}
                 phx-keyup="select_input_changed"
                 phx-target={@myself}
               />
             </div>
 
-            <span class={"absolute " <> if(@suggested_element, do: "opacity-60", else: "opacity-0") <> " top-1/2 -translate-y-1/2 pl-[1rem] tracking-normal text-[1em] xl:text-[1.2em] font-[300] text-[#a3a3a3]"} >
+            <span class={"absolute " <> if(@suggested_element, do: "opacity-60", else: "opacity-0") <> " top-1/2 -translate-y-1/2 pl-4 tracking-normal text-base xl:text-lg font-light text-placeholder"} >
               <%= @suggested_element %>
             </span>
 
@@ -100,7 +100,7 @@ defmodule SaseMangoWeb.SharedComponents.IssuerSelectComponent do
             </span>
         </div>
           <ul id="issuers-list"
-            class="absolute hidden z-[10] w-full sm:min-w-[380px] py-1 mt-2 overflow-y-auto text-[1em] font-[300] max-h-[34rem] bg-white shadow-lg rounded-lg ring-1 ring-gray-400 ring-opacity-25 focus:outline-none"
+            class="absolute hidden z-10 w-full sm:min-w-96 py-1 mt-2 overflow-y-auto text-base font-light max-h-96 bg-white shadow-lg rounded-lg ring-1 ring-gray-400 ring-opacity-25 focus:outline-none"
             role="selectable-options"
           >
             <%= for suggestion <- @suggestions do %>
@@ -111,10 +111,10 @@ defmodule SaseMangoWeb.SharedComponents.IssuerSelectComponent do
               >
                 <div class="w-full flex flex-col gap-2 py-2 pl-3 pr-9 border-b border-gray-100 cursor-pointer hover:bg-sky-100"
                 >
-                  <span class="block ml-3 font-normal text-[#5B92D7]">
+                  <span class="block ml-3 font-normal text-select-symbol">
                     <%= suggestion.symbol %>
                   </span>
-                  <span class="w-max block ml-3 font-normal text-[#1E1E1E]">
+                  <span class="w-max block ml-3 font-normal text-dark-text">
                     <%= suggestion.name %>
                   </span>
                 </div>

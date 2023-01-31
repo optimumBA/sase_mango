@@ -7,17 +7,16 @@ defmodule SaseMangoWeb.SharedComponents.HeaderComponent do
 
   def header(assigns) do
     ~H"""
-    <div class="mx-[48px] xl:mx-[64px] mt-[120px] mb-[1rem] xl:mb-[1.5rem] py-4">
-      <div class="flex items-center gap-4 px-2 text-[1em] xl:text-[1.1em]">
-        <span class="text-[#8C8C8C] font-[400]">Date:</span>
+    <div class="mx-12 xl:mx-16 mt-30 mb-0 md:mb-2 py-4">
+      <div class="flex items-center gap-2 text-sm xl:text-base">
+        <span class="text-page-tab-link font-normal">Date:</span>
         <.date_icon />
-
-        <span class="font-[400]"><%= todays_date() %></span>
+        <span class="font-normal"><%= todays_date() %></span>
       </div>
 
-      <div class="w-full mt-8 flex items-end justify-start border-b border-[#D9D9D9]">
+      <div class="w-full mt-8 flex items-end justify-start border-b border-gray-light">
 
-        <div class="flex gap-6 items-center w-full flex-row">
+        <div class="flex items-center w-full flex-row">
           <div class={"page-tab #{if @active_tab == :securities, do: "securities"}"} >
             <%= live_patch "List of securities", to: Routes.securities_index_path(@socket, :securities),
               class: "page-link"

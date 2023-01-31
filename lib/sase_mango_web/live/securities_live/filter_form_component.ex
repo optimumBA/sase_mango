@@ -44,13 +44,18 @@ defmodule SaseMangoWeb.SecuritiesLive.FilterFormComponent do
         phx-submit="validate_filter"
         phx-change="validate_filter"
         phx-target={@myself}
-        class="table-form"
+        class="relative"
       >
         <div>
-          <%= text_input f, :q, phx_debounce: 400, placeholder: "Search...", class: "search-field" %>
-          <div class="search-icons">
+          <%= text_input f,
+            :q,
+            phx_debounce: 400,
+            placeholder: "Search...",
+            class: "text-sm 2xl:text-base placeholder-placeholder focus:border-input-light-border duration-150 ease-linear my-1 pl-4 pr-20 py-2 rounded-xl border border-gray-light"
+          %>
+          <div class="absolute w-max flex items-center gap-4 right-4 top-[50%] -translate-y-[50%]">
             <%= if !is_nil(@filter.q) && String.length(@filter.q) > 0 do %>
-              <div class="cursor-pointer text-[#ADADAD] hover:text-[#565555]" phx-click="clear_form">
+              <div class="cursor-pointer text-input-light-border hover:text-input-gray-border" phx-click="clear_form">
                 <svg
                   width="12"
                   height="12"
