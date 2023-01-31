@@ -9,8 +9,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   alias SaseMango.SecuritiesCache
   alias SaseMangoWeb.Endpoint
   alias SaseMangoWeb.SecuritiesLive.FilterFormComponent
-  alias SaseMangoWeb.SecuritiesLive.SortingComponent
-  alias SaseMangoWeb.SecuritiesLive.TableRowComponent
+  alias SaseMangoWeb.SecuritiesLive.TableComponents
   alias SaseMangoWeb.SharedComponents.HeaderComponent
 
   @impl true
