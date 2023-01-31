@@ -15,14 +15,11 @@
 
 html {
   box-sizing: border-box;
-  font-size: 62.5%;
   -webkit-appearance: none;
 }
 
 body {
   color: #000000;
-  font-size: 1.6em;
-  font-weight: 300;
   letter-spacing: 0.01em;
   line-height: 1.6;
 }
@@ -39,9 +36,6 @@ button[type='submit'],
 input[type='button'],
 input[type='reset'],
 input[type='submit'] {
-  background-color: #9db9d3;
-  border: 0.1rem solid #9db9d3;
-  color: #fff;
   cursor: pointer;
   display: inline-block;
   letter-spacing: 0.1rem;
@@ -56,8 +50,6 @@ input[type='button']:hover,
 input[type='reset']:hover,
 input[type='submit']:hover {
   transition: all 0.2s ease-in-out;
-  background-color: #7784b8;
-  border-color: #7784b8;
   color: #fff;
   outline: 0;
 }
@@ -67,8 +59,6 @@ button[disabled],
 input[type='button'][disabled],
 input[type='reset'][disabled],
 input[type='submit'][disabled] {
-  background-color: #b7c9db;
-  border: 0.1rem solid #b7c9db;
   color: #f6f6f6;
   cursor: default;
 }
@@ -349,7 +339,7 @@ th:last-child {
 /* Calculator table */
 
 .data-table > thead > tr > th {
-  @apply px-8 py-4 text-[#1E1E1E] bg-gray-200 text-center font-[400] text-[0.95em];
+  @apply px-8 py-4 text-dark-text bg-gray-200 text-center font-normal text-sm;
 }
 
 .data-table > tbody > tr:last-child {
@@ -365,7 +355,7 @@ th:last-child {
 }
 
 .data-table > tbody > tr:not(:last-child):hover {
-  @apply bg-[#ECF2F7];
+  @apply bg-datatable-hover;
 }
 
 .delete-row {
@@ -375,7 +365,6 @@ th:last-child {
 /* Securities table */
 
 .table-wrapper {
-  @apply overflow-y-auto max-h-[75vh];
   -ms-overflow-style: none; /* for Internet Explorer, Edge */
   scrollbar-width: none; /* for Firefox */
 }
@@ -389,7 +378,7 @@ th:last-child {
 }
 
 .securities-table > thead {
-  @apply sticky top-0 h-[42px];
+  @apply sticky top-0 h-11;
 }
 
 .securities-table > tfoot {
@@ -397,7 +386,7 @@ th:last-child {
 }
 
 .securities-table > thead > tr > th {
-  @apply text-white bg-[#9DB9D3] text-center font-[600] text-[12px] px-0 py-2 2xl:text-[15px] 2xl:py-6 2xl:px-4;
+  @apply text-white bg-table-head-bg text-center font-semibold text-xs px-0 py-2 2xl:text-sm 2xl:py-4 2xl:px-2;
 }
 
 .securities-table > thead > tr > th:first-child {
@@ -405,7 +394,7 @@ th:last-child {
 }
 
 .securities-table > thead > tr > th:last-child {
-  @apply px-4 2xl:px-8;
+  @apply px-4 2xl:pr-0;
 }
 
 .securities-table > tbody > tr {
@@ -414,15 +403,15 @@ th:last-child {
 
 .securities-table tbody tr td,
 .securities-table tbody tr th {
-  @apply text-[#1E1E1E] text-[12px] 2xl:text-[1em];
+  @apply text-dark-text text-xs 2xl:text-sm;
 }
 
 .securities-table tbody tr td {
-  @apply pr-2 pl-0 leading-[15px] 2xl:leading-[20px] font-normal;
+  @apply pr-2 pl-0 leading-4 2xl:leading-5 font-normal;
 }
 
 .sortable-column {
-  @apply flex justify-around items-center gap-1 2xl:justify-between 2xl:gap-4 cursor-pointer;
+  @apply flex justify-around items-center gap-1 2xl:justify-center 2xl:gap-2 cursor-pointer;
 }
 
 .sortable-column span {
@@ -441,20 +430,20 @@ th:last-child {
 
 /* Header with page links */
 
-.page-link {
-  @apply block h-full py-5 text-[#8C8C8C] text-[0.9em] xl:text-[1em] font-[400] px-8 duration-300 ease-in-out;
-}
-
 .page-tab {
   @apply relative cursor-pointer;
 }
 
+.page-link {
+  @apply block h-full py-4 text-tab-link text-sm xl:text-base font-normal px-6 duration-300 ease-in-out;
+}
+
 .page-tab:hover a {
-  @apply text-[#3b3a3a];
+  @apply text-tab-link-hover;
 }
 
 .tab-line {
-  @apply absolute -bottom-[3px] w-0 bg-[#9DB9D3] h-[2px] rounded-xl;
+  @apply absolute -bottom-0.75 w-0 bg-button-main h-0.5 rounded-xl;
 }
 
 .page-tab.securities .tab-line,
@@ -472,28 +461,6 @@ th:last-child {
     left: 0;
     width: 100%;
   }
-}
-
-/* Table search form */
-
-.table-form {
-  @apply relative;
-}
-
-.search-icons {
-  @apply absolute w-max flex items-center gap-4 right-5 top-[50%] -translate-y-[50%];
-}
-
-.search-field {
-  @apply text-[1.0em] 2xl:text-[1.2em] duration-150 ease-linear text-[#3e3e3e] my-2 pl-8 pr-28 py-3 rounded-xl border border-[#D9D9D9];
-}
-
-.search-field::placeholder {
-  @apply text-[#9A9A9A];
-}
-
-.search-field:focus {
-  @apply border-[#bababa];
 }
 
 /* Alerts and form errors used by phx.new */
@@ -529,7 +496,7 @@ th:last-child {
   display: none;
 }
 .invalid-feedback {
-  @apply text-[#B9121C] block my-4 ml-4;
+  @apply text-invalid-feedback block my-4 ml-4;
   animation: 0.2s ease-in 0s normal forwards 1 fade-in-scale-keys;
 }
 
