@@ -339,7 +339,7 @@ th:last-child {
 /* Calculator table */
 
 .data-table > thead > tr > th {
-  @apply px-8 py-4 text-dark-text bg-gray-200 text-center font-normal text-sm;
+  @apply px-8 py-4 text-gray-800 bg-gray-200 text-center font-normal text-base;
 }
 
 .data-table > tbody > tr:last-child {
@@ -355,7 +355,7 @@ th:last-child {
 }
 
 .data-table > tbody > tr:not(:last-child):hover {
-  @apply bg-datatable-hover;
+  @apply bg-blue-50;
 }
 
 .delete-row {
@@ -386,7 +386,7 @@ th:last-child {
 }
 
 .securities-table > thead > tr > th {
-  @apply text-white bg-table-head-bg text-center font-semibold text-xs px-0 py-2 2xl:text-sm 2xl:py-4 2xl:px-2;
+  @apply text-white bg-dark-blue-200 text-center font-semibold text-xs px-0 py-2 2xl:text-sm 2xl:py-4 2xl:px-2;
 }
 
 .securities-table > thead > tr > th:first-child {
@@ -403,7 +403,7 @@ th:last-child {
 
 .securities-table tbody tr td,
 .securities-table tbody tr th {
-  @apply text-dark-text text-xs 2xl:text-sm;
+  @apply text-gray-800 text-xs 2xl:text-sm;
 }
 
 .securities-table tbody tr td {
@@ -435,15 +435,15 @@ th:last-child {
 }
 
 .page-link {
-  @apply block h-full py-4 text-tab-link text-sm xl:text-base font-normal px-6 duration-300 ease-in-out;
+  @apply block h-full py-4 text-gray-450 text-sm xl:text-base font-normal px-6 duration-300 ease-in-out;
 }
 
 .page-tab:hover a {
-  @apply text-tab-link-hover;
+  @apply text-gray-750;
 }
 
 .tab-line {
-  @apply absolute -bottom-0.75 w-0 bg-button-main h-0.5 rounded-xl;
+  @apply absolute -bottom-0.75 w-0 bg-dark-blue-200 h-0.5 rounded-xl;
 }
 
 .page-tab.securities .tab-line,
@@ -496,7 +496,7 @@ th:last-child {
   display: none;
 }
 .invalid-feedback {
-  @apply text-invalid-feedback block my-4 ml-4;
+  @apply text-red-700 block my-4 ml-4;
   animation: 0.2s ease-in 0s normal forwards 1 fade-in-scale-keys;
 }
 
