@@ -9,12 +9,12 @@ defmodule SaseMangoWeb.SharedComponents.HeaderComponent do
     ~H"""
     <div class="mx-12 xl:mx-16 mt-30 mb-0 md:mb-2 py-4">
       <div class="flex items-center gap-2 text-sm xl:text-base">
-        <span class="text-page-tab-link font-normal">Date:</span>
+        <span class="text-gray-450 font-normal">Date:</span>
         <.date_icon />
         <span class="font-normal"><%= todays_date() %></span>
       </div>
 
-      <div class="w-full mt-8 flex items-end justify-start border-b border-gray-light">
+      <div class="w-full mt-8 flex items-end justify-start border-b border-gray-350">
 
         <div class="flex items-center w-full flex-row">
           <div class={"page-tab #{if @active_tab == :securities, do: "securities"}"} >

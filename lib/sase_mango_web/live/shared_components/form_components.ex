@@ -20,7 +20,7 @@ defmodule SaseMangoWeb.SharedComponents.FormComponents do
       phx-feedback-for={@phx_feedback_for}>
       <%= label @form, @field, class: if(@show_feedback,
           do: label_class(@form, @field),
-          else: "mb-[0.5rem] text-sm xl:text-base text-placeholder")
+          else: "mb-[0.5rem] text-sm xl:text-base text-gray-450")
       do %>
         <%= @label %>
       <% end %>
@@ -37,8 +37,8 @@ defmodule SaseMangoWeb.SharedComponents.FormComponents do
   def label_class(form, field),
     do:
       if(field_has_error?(form, field),
-        do: "mb-[0.5rem] text-sm xl:text-base text-invalid-feedback label-invalid",
-        else: "mb-[0.5rem] text-sm xl:text-base text-placeholder"
+        do: "mb-[0.5rem] text-sm xl:text-base text-red-700 label-invalid",
+        else: "mb-[0.5rem] text-sm xl:text-base text-gray-450"
       )
 
   @spec field_has_error?(atom | %{:errors => keyword, optional(any) => any}, atom) :: boolean

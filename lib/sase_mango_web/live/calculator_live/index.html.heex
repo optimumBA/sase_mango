@@ -10,13 +10,13 @@
     for={@changeset}
     phx-submit="calculate"
     phx-change="validate"
-    class="mx-12 xl:mx-16 sm:px-4 my-14 mt-[3rem] border-b border-gray-light"
+    class="mx-12 xl:mx-16 sm:px-4 my-14 mt-[3rem] border-b border-gray-350"
     phx-click="toggle_input"
   >
     <div class="w-full flex flex-col flex-wrap sm:flex-row items-center sm:items-end gap-8 pb-12">
 
       <div class="sm:w-max">
-          <%= label f, :symbol, "Issuer or symbol", for: :symbol, class: "w-max mb-[0.5rem] text-sm xl:text-base text-placeholder" %>
+          <%= label f, :symbol, "Issuer or symbol", for: :symbol, class: "w-max mb-[0.5rem] text-sm xl:text-base text-gray-450" %>
           <.live_component module={IssuerSelectComponent}
             id="issuers_select_comp"
             issuer_input_cover={@issuer_input_cover}
@@ -33,9 +33,9 @@
         >
           <div class="relative rounded-[0.7rem] shadow-none">
             <%= text_input f, :price, placeholder: "0.00",
-              class: "border-1 border-input-border-main focus:border-input-gray-border placeholder-placeholder rounded-[0.6rem] p-2 text-base xl:text-lg font-light text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>
+              class: "border-1 border-gray-450 focus:border-gray-600 placeholder-gray-450 rounded-[0.6rem] p-2 text-base xl:text-lg font-light text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>
             <div class="absolute inset-y-0 right-2 pr-3 xl:pr-1 flex items-center pointer-events-none">
-              <span class={if(Keyword.has_key?(@changeset.errors, :price), do: "text-placeholder", else: "text-gray-600") <> " text-base xl:text-lg"} id="price-currency"> KM </span>
+              <span class={if(Keyword.has_key?(@changeset.errors, :price), do: "text-gray-450", else: "text-gray-600") <> " text-base xl:text-lg"} id="price-currency"> KM </span>
             </div>
           </div>
         </FormComponents.input_wrapper>
@@ -49,7 +49,7 @@
         >
           <div class="relative rounded-[0.7rem] shadow-none">
             <%= text_input f, :amount, placeholder: "0",
-              class: "border-1 border-input-border-main focus:border-input-gray-border placeholder-placeholder rounded-[0.6rem] p-2 text-base xl:text-lg font-light text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>
+              class: "border-1 border-gray-450 focus:border-gray-600 placeholder-gray-450 rounded-[0.6rem] p-2 text-base xl:text-lg font-light text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>
           </div>
         </FormComponents.input_wrapper>
       </div>
@@ -62,9 +62,9 @@
         >
           <div class="relative rounded-[0.7rem] shadow-none">
             <%= text_input f, :fee, placeholder: "0", phx_debounce: "500",
-              class: "border-1 border-input-border-main focus:border-input-gray-border placeholder-placeholder rounded-[0.6rem] p-2 text-base xl:text-lg font-light text-center placeholder:focus:text-transparent", autocomplete: "off" %>
+              class: "border-1 border-gray-450 focus:border-gray-600 placeholder-gray-450 rounded-[0.6rem] p-2 text-base xl:text-lg font-light text-center placeholder:focus:text-transparent", autocomplete: "off" %>
             <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
-              <span class={if(Keyword.has_key?(@changeset.errors, :fee), do: "text-placeholder", else: "text-gray-600") <> " text-base xl:text-lg"} id="price-currency-2"> % </span>
+              <span class={if(Keyword.has_key?(@changeset.errors, :fee), do: "text-gray-450", else: "text-gray-600") <> " text-base xl:text-lg"} id="price-currency-2"> % </span>
             </div>
           </div>
         </FormComponents.input_wrapper>
@@ -73,18 +73,18 @@
       <div class="w-39">
         <FormComponents.submit_button
           changeset={@changeset}
-          class="bg-button-main border-button-main hover:bg-button-main-hover hover:border-button-main-hover disabled:bg-button-main-disabled disabled:border-button-main-disabled text-white py-2 rounded-[0.4rem] px-[2.5rem] text-base xl:font-[700] xl:text-lg"
+          class="bg-dark-blue-200 border border-dark-blue-200 hover:bg-dark-violet hover:border-dark-violet disabled:bg-dark-blue-100 disabled:border-dark-blue-100 text-white py-2 rounded-[0.4rem] px-[2.5rem] text-base xl:font-[700] xl:text-lg"
           text="Calculate"
         />
       </div>
     </div>
-    <p class="text-sm xl:text-base text-placeholder mb-2">To calculate the price, please enter your requirements.</p>
+    <p class="text-sm xl:text-base text-gray-450 mb-2">To calculate the price, please enter your requirements.</p>
   </.form>
 
   <%= if Enum.count(@results.securities) > 0 do %>
 
     <div class="mx-12 xl:mx-16">
-      <p class="text-lg xl:text-xl text-dark-text">Stock prices</p>
+      <p class="text-lg xl:text-xl text-gray-800">Stock prices</p>
 
       <table class="data-table overflow-scroll w-max h-auto my-6">
         <thead>

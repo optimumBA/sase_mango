@@ -68,15 +68,15 @@ defmodule SaseMangoWeb.SharedComponents.IssuerSelectComponent do
     <div id={@id}>
       <div class="relative mt-1" phx-click-away={JS.hide(to: "#issuers-list")}>
         <div
-          class="relative cursor-pointer w-full sm:min-w-[380px] px-4 py-2 text-left bg-white border border-input-border-main hover:border-input-gray-border rounded-[0.6rem] shadow-sm focus:outline-none font-light"
+          class="relative cursor-pointer w-full sm:min-w-[380px] px-4 py-2 text-left bg-white border border-gray-450 hover:border-gray-600 rounded-[0.6rem] shadow-sm focus:outline-none font-light"
           phx-click={JS.toggle(to: "#issuers-list")}
         >
             <%= if @issuer_input_cover do %>
               <div id="input-cover" class="z-10 text-base xl:text-lg bg-white flex items-center gap-2 text-left py-0 mr-16"
                 phx-hook="FieldReset"
               >
-                <span class="block truncate text-select-symbol"><%= @selected_issuer.symbol %></span>
-                <span class="block truncate text-dark-text"><%= @selected_issuer.name %></span>
+                <span class="block truncate text-dark-blue-500"><%= @selected_issuer.symbol %></span>
+                <span class="block truncate text-gray-800"><%= @selected_issuer.name %></span>
               </div>
             <% end %>
             <div class={if(@issuer_input_cover, do: "", else: "relative")}>
@@ -91,7 +91,7 @@ defmodule SaseMangoWeb.SharedComponents.IssuerSelectComponent do
               />
             </div>
 
-            <span class={"absolute " <> if(@suggested_element, do: "opacity-60", else: "opacity-0") <> " top-1/2 -translate-y-1/2 pl-4 tracking-normal text-base xl:text-lg font-light text-placeholder"} >
+            <span class={"absolute " <> if(@suggested_element, do: "opacity-60", else: "opacity-0") <> " top-1/2 -translate-y-1/2 pl-4 tracking-normal text-base xl:text-lg font-light text-gray-450"} >
               <%= @suggested_element %>
             </span>
 
@@ -111,10 +111,10 @@ defmodule SaseMangoWeb.SharedComponents.IssuerSelectComponent do
               >
                 <div class="w-full flex flex-col gap-2 py-2 pl-3 pr-9 border-b border-gray-100 cursor-pointer hover:bg-sky-100"
                 >
-                  <span class="block ml-3 font-normal text-select-symbol">
+                  <span class="block ml-3 font-normal text-dark-blue-500">
                     <%= suggestion.symbol %>
                   </span>
-                  <span class="w-max block ml-3 font-normal text-dark-text">
+                  <span class="w-max block ml-3 font-normal text-gray-800">
                     <%= suggestion.name %>
                   </span>
                 </div>

@@ -51,11 +51,11 @@ defmodule SaseMangoWeb.SecuritiesLive.FilterFormComponent do
             :q,
             phx_debounce: 400,
             placeholder: "Search...",
-            class: "text-sm 2xl:text-base placeholder-placeholder focus:border-input-light-border duration-150 ease-linear my-1 pl-4 pr-20 py-2 rounded-xl border border-gray-light"
+            class: "text-sm 2xl:text-base placeholder-placeholder focus:border-gray-400 duration-150 ease-linear my-1 pl-4 pr-20 py-2 rounded-xl border border-gray-350"
           %>
           <div class="absolute w-max flex items-center gap-4 right-4 top-[50%] -translate-y-[50%]">
             <%= if !is_nil(@filter.q) && String.length(@filter.q) > 0 do %>
-              <div class="cursor-pointer text-input-light-border hover:text-input-gray-border" phx-click="clear_form">
+              <div class="cursor-pointer text-gray-350 hover:text-gray-600" phx-click="clear_form">
                 <svg
                   width="12"
                   height="12"
