@@ -191,29 +191,29 @@
               <span><%= security.name %></span><br />
               <span><%= Securities.segment(security.segment) %></span>
             </td>
-            <TableComponents.one_value_number_cell value={Decimal.round(security.price, 2)} />
-            <TableComponents.one_value_number_cell value={Decimal.round(security.nominal_price, 2)} />
+            <TableComponents.one_value_number_cell value={security.price} round={2} />
+            <TableComponents.one_value_number_cell value={security.nominal_price} round={2}/>
 
-            <TableComponents.double_value_number_cell first_value={Decimal.round(security.ask_price, 2)} second_value={security.ask_volume} />
-            <TableComponents.double_value_number_cell first_value={Decimal.round(security.bid_price, 2)} second_value={security.bid_volume} />
-            <TableComponents.double_value_number_cell first_value={Decimal.round(Decimal.mult(security.dividend_roi, 100), 2)}
-              second_value={Decimal.round(Decimal.mult(security.previous_dividend_roi, 100), 2)} procent />
+            <TableComponents.double_value_number_cell first_value={security.ask_price} second_value={security.ask_volume} round_first={2}/>
+            <TableComponents.double_value_number_cell first_value={security.bid_price} second_value={security.bid_volume} round_first={2}/>
+            <TableComponents.double_value_number_cell first_value={Decimal.mult(security.dividend_roi, 100)}
+              second_value={Decimal.mult(security.previous_dividend_roi, 100)} round_first={2} round_second={2} percentage />
 
-            <TableComponents.double_value_number_cell first_value={Decimal.round(Decimal.mult(security.eps_roi, 100), 2)}
-              second_value={Decimal.round(Decimal.mult(security.previous_eps_roi, 100), 2)} procent />
+            <TableComponents.double_value_number_cell first_value={Decimal.mult(security.eps_roi, 100)}
+              second_value={Decimal.mult(security.previous_eps_roi, 100)} round_first={2} round_second={2} percentage />
 
-            <TableComponents.one_value_number_cell value={Decimal.round(security.pe, 2)} />
-            <TableComponents.one_value_number_cell value={Decimal.round(security.pb, 2)} />
-            <TableComponents.one_value_number_cell value={Number.Delimit.number_to_delimited(security.market_value, delimiter: ",", separator: ".")} />
+            <TableComponents.one_value_number_cell value={security.pe} round={2}/>
+            <TableComponents.one_value_number_cell value={security.pb} round={2}/>
+            <TableComponents.one_value_number_cell value={security.market_value} delimiter={","} separator={"."} />
 
-            <TableComponents.double_value_number_cell first_value={Number.Delimit.number_to_delimited(security.book_value, delimiter: ",", separator: ".")}
-              second_value={Number.Delimit.number_to_delimited(security.previous_book_value, delimiter: ",", separator: ".")} />
+            <TableComponents.double_value_number_cell first_value={security.book_value}
+              second_value={security.previous_book_value} delimiter={","} separator={"."} />
 
-            <TableComponents.double_value_number_cell first_value={Decimal.round(security.bvs, 2)}
-              second_value={Decimal.round(security.previous_bvs, 2)} />
+            <TableComponents.double_value_number_cell first_value={security.bvs}
+              second_value={security.previous_bvs} round_first={2} round_second={2} />
 
-            <TableComponents.double_value_number_cell first_value={Decimal.round(Decimal.mult(security.profit_margin, 100), 2)}
-              second_value={Decimal.round(Decimal.mult(security.previous_profit_margin, 100), 2)} procent />
+            <TableComponents.double_value_number_cell first_value={Decimal.mult(security.profit_margin, 100)}
+              second_value={Decimal.mult(security.previous_profit_margin, 100)} round_first={2} round_second={2} percentage />
 
           </TableComponents.table_row>
         <% end %>
