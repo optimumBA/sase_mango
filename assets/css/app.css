@@ -386,7 +386,7 @@ th:last-child {
 }
 
 .securities-table > thead > tr > th {
-  @apply text-white bg-dark-blue-200 text-center font-semibold text-xs px-0 py-2 2xl:text-sm 2xl:py-4 2xl:px-2;
+  @apply text-white bg-blue-dark-200 text-center font-semibold text-xs px-0 py-2 2xl:text-sm 2xl:py-4 2xl:px-2;
 }
 
 .securities-table > thead > tr > th:first-child {
@@ -443,7 +443,7 @@ th:last-child {
 }
 
 .tab-line {
-  @apply absolute -bottom-0.75 w-0 bg-dark-blue-200 h-0.5 rounded-xl;
+  @apply absolute -bottom-0.75 w-0 bg-blue-200 h-0.5 rounded-xl;
 }
 
 .page-tab.securities .tab-line,

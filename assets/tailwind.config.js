@@ -9,12 +9,18 @@ module.exports = {
         'show-table-rows': 'show-table-rows 0.6s ease-in-out',
       },
       colors: {
-        'dark-blue': {
-          100: "#b7c9db",
-          200: "#9DB9D3",
-          500: "#5B92D7"
+        blue: {
+          'dark': {
+            100: "#b7c9db",
+            200: "#9DB9D3",
+            500: "#5B92D7"
+          },
         },
-        'dark-violet': "#7784b8",
+        violet: {
+          'dark': {
+            350: "#7784b8"
+          }
+        },
         green: {
           350: "#15FF10"
         },
