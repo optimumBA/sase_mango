@@ -64,7 +64,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
   end
 
   def handle_event("select_issuer", %{"symbol" => symbol} = _params, socket) do
-    selected_item = Enum.find(socket.assigns.select_list, &(&1.symbol == symbol))
+    selected_item = Enum.find(socket.assigns.select_list, &(&1.symbol == symbol || &1.name == symbol))
 
     update_state_on_select_item(socket, selected_item)
   end
@@ -106,8 +106,8 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
     selected_item =
       Enum.find(
         socket.assigns.select_list,
-        &(String.starts_with?(String.downcase(&1.symbol), value) ||
-            String.starts_with?(String.downcase(&1.name), value))
+        &(String.contains?(String.downcase(&1.symbol), value) ||
+            String.contains?(String.downcase(&1.name), value))
       )
 
     case selected_item do
@@ -122,7 +122,16 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
   defp update_state_on_select_item(socket, selected_item) do
     changeset_from_socket = socket.assigns.changeset
 
-    changes_from_socket = Map.put(changeset_from_socket.changes, :symbol, selected_item.symbol)
+    changes_from_socket =
+      cond do
+        Map.has_key?(changeset_from_socket.changes, :symbol) &&
+            changeset_from_socket.changes.symbol == selected_item.symbol ->
+          changeset_from_socket.changes
+
+        Map.has_key?(changeset_from_socket.changes, :symbol) ||
+            not Map.has_key?(changeset_from_socket.changes, :symbol) ->
+          %{symbol: selected_item.symbol}
+      end
 
     changeset =
       %Calculator.Input{}
