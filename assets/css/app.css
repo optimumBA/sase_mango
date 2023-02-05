@@ -443,7 +443,7 @@ th:last-child {
 }
 
 .tab-line {
-  @apply absolute -bottom-0.75 w-0 bg-blue-200 h-0.5 rounded-xl;
+  @apply absolute -bottom-0.75 w-0 bg-blue-dark-200 h-0.5 rounded-xl;
 }
 
 .page-tab.securities .tab-line,
