@@ -35,7 +35,9 @@ module.exports = {
       },
       height: {
         0.5: '0.125rem',
-        0.75: '0.1875rem'
+        0.75: '0.1875rem',
+        95: '23.75rem',
+        94: '23.5rem',
       },
       margin: {
         30: '7.5rem'
@@ -44,13 +46,18 @@ module.exports = {
         0.75: '0.1875rem'
       },
       width: {
-        39: '9.375rem'
+        39: '9.375rem',
+        95: '23.75rem'
       },
       minWidth: {
         39: '9.375rem'
       },
       maxWidth: {
-        39: '9.375rem'
+        39: '9.375rem',
+        94: '23.5rem',
+      },
+      maxHeight: {
+        94: '23.5rem',
       },
       fontFamily: {
         montserrat: ['Montserrat', ...defaultTheme.fontFamily.sans],
