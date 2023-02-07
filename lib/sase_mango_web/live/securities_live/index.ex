@@ -88,11 +88,17 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   end
 
   @impl true
-  def handle_event("sort_column", %{"key" => key} = _params, socket) do
-    %{sort_options: %{sort_order: sort_order}} = socket.assigns
+  def handle_event("sort_column", %{"col_name" => name} = _params, socket) do
+    %{sort_options: %{sort_by: col_name, sort_order: sort_order}} = socket.assigns
 
-    sort_order = if sort_order == :asc, do: :desc, else: :asc
-    sort_options = %{sort_by: key, sort_order: sort_order}
+    maybe_update_sort_order =
+      if col_name != name do
+        :asc
+      else
+        revert_sort_order(sort_order)
+      end
+
+    sort_options = %{sort_by: name, sort_order: maybe_update_sort_order}
 
     url_params = merge_url_params(socket, sort_options)
     path = Routes.securities_index_path(socket, socket.assigns.live_action, url_params)
@@ -150,4 +156,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   defp set_sort_order("asc"), do: :asc
   defp set_sort_order("desc"), do: :desc
   defp set_sort_order(_value), do: :desc
+
+  defp revert_sort_order(:asc), do: :desc
+  defp revert_sort_order(:desc), do: :asc
 end
