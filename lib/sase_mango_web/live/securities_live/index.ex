@@ -18,7 +18,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
       Endpoint.subscribe("securities")
     end
 
-    {:ok, socket}
+    {:ok, assign_table_columns(socket)}
   end
 
   @impl true
@@ -55,6 +55,27 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     |> assign(:page_title, "Bargain securities")
     |> assign_list_of_bargains()
     |> maybe_filter_securities()
+  end
+
+  defp assign_table_columns(socket) do
+    table_columns = [
+      %{id: "sort-symbol", title: "Symbol", type: :text, name: "symbol"},
+      %{id: "sort-issuer", title: "Issuer", type: :text, name: "name"},
+      %{id: "sort-price", title: "Price", type: :number, name: "price"},
+      %{id: "sort-nominal-price", title: "Nominal price", type: :number, name: "nominal_price"},
+      %{id: "sort-ask", title: "Ask", type: :number, name: "ask_price"},
+      %{id: "sort-bid", title: "Bid", type: :number, name: "bid_price"},
+      %{id: "sort-dividend-roi", title: "Dividend ROI (%)", type: :number, name: "dividend_roi"},
+      %{id: "sort-eps-roi", title: "EPS ROI (%)", type: :number, name: "eps_roi"},
+      %{id: "sort-pe", title: "P/E", type: :number, name: "pe"},
+      %{id: "sort-pb", title: "P/B", type: :number, name: "pb"},
+      %{id: "sort-market-value", title: "Market Value", type: :number, name: "market_value"},
+      %{id: "sort-book-value", title: "Book Value", type: :number, name: "book_value"},
+      %{id: "sort-bvs", title: "BVS", type: :number, name: "bvs"},
+      %{id: "sort-profit-margin", title: "Profit margin", type: :number, name: "profit_margin"}
+    ]
+
+    assign(socket, :table_columns, table_columns)
   end
 
   defp assign_list_of_securities(socket),

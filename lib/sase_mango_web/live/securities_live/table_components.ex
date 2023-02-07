@@ -11,18 +11,18 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
     ~H"""
     <div
       phx-click="sort_column"
-      phx-value-key={@key}
+      phx-value-col_name={@column.name}
       class="sortable-column 2xl:flex-row"
     >
-      <span><%= @col_text %></span>
+      <span><%= @column.title %></span>
       <div class={"
-          #{get_icon_color(@sort_options, @key)}
-          #{get_icon_direction(@col_type, @sort_options, @key)}
+          #{get_icon_color(@sort_options, @column.name)}
+          #{get_icon_direction(@column.type, @sort_options, @column.name)}
         "}>
         <TableIconsComponent.sort_icon
-          col_type={@col_type}
-          sort_options={@sort_options.sort_order}
-          key={@key}
+          col_type={@column.type}
+          sort_options={@sort_options}
+          key={@column.name}
          />
       </div>
     </div>
