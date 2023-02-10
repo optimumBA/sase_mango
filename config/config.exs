@@ -61,6 +61,13 @@ config :tailwind,
     cd: Path.expand("../assets", __DIR__)
   ]
 
+config :sase_mango,
+  admin_auth: [
+    username: "sasemango",
+    password: "sasemango"
+  ],
+  env: config_env()
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
