@@ -37,3 +37,13 @@ npm-debug.log
 
 # Screenshots from the tests
 /screenshots/
+
+# Environment secrets
+.env
+
+# macOS temp file
+.DS_Store
+
+# Dialyzer PLT files
+/priv/plts/*.plt
+/priv/plts/*.plt.hash
