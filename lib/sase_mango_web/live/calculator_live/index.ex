@@ -64,7 +64,8 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
   end
 
   def handle_event("select_issuer", %{"symbol" => symbol} = _params, socket) do
-    selected_item = Enum.find(socket.assigns.select_list, &(&1.symbol == symbol || &1.name == symbol))
+    selected_item =
+      Enum.find(socket.assigns.select_list, &(&1.symbol == symbol || &1.name == symbol))
 
     update_state_on_select_item(socket, selected_item)
   end
@@ -93,6 +94,10 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
      socket
      |> assign(:securities, securities)
      |> calculate()}
+  end
+
+  def handle_info({:select_issuer, issuer}, socket) do
+    update_state_on_select_item(socket, issuer)
   end
 
   def handle_info(:update_state, socket) do
