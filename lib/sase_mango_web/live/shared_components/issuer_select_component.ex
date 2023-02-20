@@ -109,7 +109,6 @@ defmodule SaseMangoWeb.SharedComponents.IssuerSelectComponent do
   def render(assigns) do
     ~H"""
     <div id="issuer-select-comp">
-    <%= @idx %>
       <div class="relative mt-1" >
         <div
           class="relative cursor-pointer w-95 h-11 flex flex-col justify-center px-4 py-2 text-left bg-white border border-gray-450 hover:border-gray-600 rounded-[0.6rem] shadow-sm focus:outline-none font-light"
