@@ -37,11 +37,9 @@
           <TableComponents.table_row live_action={@active_tab} security={security} >
 
             <td class="text-center p-2 2xl:px-4 2xl:py-2">
-              <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{security.symbol}"} target="_blank"
-                class=" text-blue-400"
-              >
-                <%= security.symbol %>
-              </a>
+              <%= live_redirect to: Routes.securities_show_path(@socket, :index, security.symbol), class: "text-blue-400" do %>
+                  <%= security.symbol %>
+              <% end %>
             </td>
             <td class="text-center p-2 2xl:px-4 2xl:py-2">
               <span><%= security.name %></span><br />
