@@ -29,9 +29,12 @@ defmodule SaseMango.SecuritiesUpdater do
       {:ok, issuers} ->
         Enum.each(issuers, fn issuer ->
           with {symbol, info} <- Map.pop(issuer, "Symbol"),
-               attrs <- %{info: info, symbol: symbol},
-               {:ok, issuer} <- create_or_update_issuer(symbol, attrs) do
-            current_year = NaiveDateTime.utc_now() |> Map.fetch!(:year)
+               {:ok, company_data} <- SaseScraper.get_company_data(symbol),
+               {:ok, top_10_owners} <- SaseScraper.get_company_owners(String.slice(symbol, 0..3)),
+               issuer_attrs <-
+                 get_issuers_attrs(company_data, info, symbol, top_10_owners),
+               {:ok, issuer} <- create_or_update_issuer(symbol, issuer_attrs) do
+            current_year = Map.fetch!(NaiveDateTime.utc_now(), :year)
 
             for semi_annual <- [true, false], year <- (current_year - 3)..current_year do
               maybe_create_financial_statement(issuer, semi_annual, year)
@@ -51,6 +54,14 @@ defmodule SaseMango.SecuritiesUpdater do
         nil
     end
   end
+
+  defp get_issuers_attrs(company_data, info, symbol, top_10_owners),
+    do: %{
+      info: info,
+      symbol: symbol,
+      company_data: company_data,
+      top_10_owners: top_10_owners
+    }
 
   defp create_or_update_issuer(symbol, attrs) do
     case Securities.get_issuer(symbol) do
