@@ -1,17 +1,20 @@
 defmodule SaseMango.Securities.Issuer do
   @moduledoc """
     Issuer Ecto schema.
-
     Defines all issuer fileds and Ecto changeset function.
+
   """
   use Ecto.Schema
 
   import Ecto.Changeset
 
   schema "issuers" do
+    field :company_data, :map
     field :info, :map
+    field :symbol, :string
+    field :top_10_owners, :map
+
     has_many :financial_statements, SaseMango.Securities.FinancialStatement
-    field :symbol
 
     timestamps()
   end
@@ -20,10 +23,10 @@ defmodule SaseMango.Securities.Issuer do
     Issuer changeset for validation.
 
   """
-  def changeset(issuer, attrs \\ %{}) do
+  def changeset(%__MODULE__{} = issuer, attrs \\ %{}) do
     issuer
-    |> cast(attrs, [:info, :symbol])
-    |> validate_required([:info, :symbol])
+    |> cast(attrs, [:company_data, :info, :symbol, :top_10_owners])
+    |> validate_required([:company_data, :info, :symbol, :top_10_owners])
     |> unique_constraint(:symbol)
   end
 end
