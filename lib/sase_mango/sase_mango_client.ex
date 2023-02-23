@@ -39,11 +39,31 @@ defmodule SaseMango.SaseMangoClient do
   def get_ticker(symbol) do
     Logger.info("Fetching ticker for issuer #{symbol}")
 
+    common_request_body(4, symbol)
+  end
+
+  def get_general_data(symbol) do
+    Logger.info("Fetching company information data for issuer #{symbol}")
+
+    common_request_body(6, symbol)
+  end
+
+  def get_top_10_owners(symbol) do
     send_request(%{
-      "Months" => 1,
+      "id" => 0,
       "lng" => 1,
       "symbol" => symbol,
-      "type" => 4
+      "type" => 18,
+      "Months" => 0
+    })
+  end
+
+  defp common_request_body(type, symbol) do
+    send_request(%{
+      "type" => type,
+      "symbol" => symbol,
+      "lng" => 1,
+      "Months" => 1
     })
   end
 
