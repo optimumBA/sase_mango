@@ -33,7 +33,7 @@ defmodule SaseMango.TickerUpdater do
               end
             end)
 
-          info =
+          maybe_add_best_ask_volume_to_info =
             if Map.has_key?(pr_issuer_details, "BestAskVolume") do
               value =
                 pr_issuer_details
@@ -45,7 +45,14 @@ defmodule SaseMango.TickerUpdater do
               info
             end
 
-          Securities.update_issuer(issuer, %{info: info})
+          maybe_add_isin_to_info =
+            if Map.has_key?(maybe_add_best_ask_volume_to_info, "ISIN") do
+              maybe_add_best_ask_volume_to_info
+            else
+              Map.put(maybe_add_best_ask_volume_to_info, "ISIN", pr_issuer_details["ISIN"])
+            end
+
+          Securities.update_issuer(issuer, %{info: maybe_add_isin_to_info})
 
         _ ->
           nil
