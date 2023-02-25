@@ -1,8 +1,7 @@
 defmodule SaseMango.SecuritiesHelper do
   @moduledoc """
-    Securities list helper module.
-
-    Implements functions for managing lists of securities.
+  Securities list helper module.
+  Implements functions for managing lists of securities.
   """
 
   import Ecto.Query
@@ -12,10 +11,8 @@ defmodule SaseMango.SecuritiesHelper do
   alias SaseMango.Repo
 
   @doc """
-    Returns the list of securities
-
-    List is calculated depending on the type(regular or bargains list)
-    by either regular or ask price.
+  Returns the list of securities.
+  List is calculated depending on the type(regular or bargains list) by either regular or ask price.
 
   """
   def list_securities(list_type, params \\ %{}) do

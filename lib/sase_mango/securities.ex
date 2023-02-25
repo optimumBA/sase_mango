@@ -1,10 +1,7 @@
 defmodule SaseMango.Securities do
   @moduledoc """
-    Securities context module.
-
-    Implements functions related to work with issuers, financial statements
-    and lists fo securities.
-
+  Securities context module.
+  Implements functions related to work with issuers, financial statements and lists for securities.
   """
 
   import Ecto.Query, warn: false
@@ -15,28 +12,26 @@ defmodule SaseMango.Securities do
   alias SaseMango.Repo
 
   @doc """
-    Returns the list of issuers.
+  Returns the list of issuers.
 
-    ## Examples
+  ## Examples
 
-        iex> list_issuers()
-        [%Issuer{}, ...]
+      iex> list_issuers()
+      [%Issuer{}, ...]
 
   """
   def list_issuers(), do: Repo.all(Issuer)
 
   @doc """
-    Gets single issuer from db
-
-    Returns the issuer if exists, nil otherwise
+  Gets single issuer from db.
+  Returns the issuer if exists, nil otherwise.
 
   """
   def get_issuer(symbol), do: Repo.get_by(Issuer, symbol: symbol)
 
   @doc """
-    Gets company data for issuer
-
-    Returns all relevant company information and facts owned by the Issuer
+  Gets company data for issuer.
+  Returns all relevant company information and facts owned by the Issuer.
 
   """
   def get_company_data(symbol) do
@@ -141,15 +136,15 @@ defmodule SaseMango.Securities do
   end
 
   @doc """
-    Creates the issuer.
+  Creates the issuer.
 
-    ## Examples
+  ## Examples
 
-        iex> create_issuer(%{field: value})
-        {:ok, %Issuer{}}
+      iex> create_issuer(%{field: value})
+      {:ok, %Issuer{}}
 
-        iex> create_issuer(%{field: bad_value})
-        {:error, %Ecto.Changeset{}}
+      iex> create_issuer(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
 
   """
   def create_issuer(attrs) do
@@ -159,15 +154,15 @@ defmodule SaseMango.Securities do
   end
 
   @doc """
-    Updates the issuer.
+  Updates the issuer.
 
-    ## Examples
+  ## Examples
 
-        iex> update_issuer(issuer, %{field: new_value})
-        {:ok, %Issuer{}}
+      iex> update_issuer(issuer, %{field: new_value})
+      {:ok, %Issuer{}}
 
-        iex> update_issuer(issuer, %{field: bad_value})
-        {:error, %Ecto.Changeset{}}
+      iex> update_issuer(issuer, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
 
   """
   def update_issuer(issuer, attrs) do
@@ -177,14 +172,14 @@ defmodule SaseMango.Securities do
   end
 
   @doc """
-    Gets the financial statement for issuer by semiannual status and year
+    Gets the financial statement for issuer by semiannual status and year.
   """
   def get_financial_statement(%Issuer{} = issuer, semi_annual, year) do
     Repo.get_by(FinancialStatement, issuer_id: issuer.id, semi_annual: semi_annual, year: year)
   end
 
   @doc """
-    Creates the financial statement for current issuer
+  Creates the financial statement for current issuer.
   """
   def create_financial_statement(issuer, attrs) do
     %FinancialStatement{}
@@ -197,7 +192,7 @@ defmodule SaseMango.Securities do
   end
 
   @doc """
-    Helper function that returns market segment for specific security.
+  Helper function that returns market segment for specific security.
   """
   def segment("Free market - Subsegment 1"), do: "ST1"
   def segment("Free market - Subsegment 2"), do: "ST2"

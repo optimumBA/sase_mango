@@ -1,7 +1,6 @@
 defmodule SaseMango.SecuritiesUpdater do
   @moduledoc """
-    Module responsible for updating issuer and financial statement tables.
-
+  Module responsible for updating issuer and financial statement tables.
   """
 
   require Logger
@@ -12,11 +11,10 @@ defmodule SaseMango.SecuritiesUpdater do
   alias SaseMango.SecuritiesCache
 
   @doc """
-    Updates existing or create new issuer.
+  Updates existing or creates new issuer.
+  It also creates financial statement for each issuer if necessary.
+  Function takes a date string as argument or creates a current one in the format dd.mm.yyyy".
 
-    Creates financial statement for each issuer is necessary.
-
-    Function takes a date string as argument or creates a current one in the format dd.mm.yyyy".
   """
   def update() do
     {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()

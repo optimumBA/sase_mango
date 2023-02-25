@@ -1,8 +1,6 @@
 defmodule SaseMango.Securities.Issuer do
   @moduledoc """
-    Issuer Ecto schema.
-    Defines all issuer fileds and Ecto changeset function.
-
+  Issuer Ecto schema. Defines all issuer fields and Ecto changeset function.
   """
   use Ecto.Schema
 
@@ -20,7 +18,7 @@ defmodule SaseMango.Securities.Issuer do
   end
 
   @doc """
-    Issuer changeset for validation.
+  Issuer changeset for validation.
 
   """
   def changeset(%__MODULE__{} = issuer, attrs \\ %{}) do

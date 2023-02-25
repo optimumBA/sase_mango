@@ -1,6 +1,6 @@
 defmodule SaseMango.TickerUpdater do
   @moduledoc """
-    Module responsible for updating each issuer table.
+  Module responsible for updating each issuer table.
   """
 
   alias SaseMango.BargainsCache
@@ -9,7 +9,7 @@ defmodule SaseMango.TickerUpdater do
   alias SaseMango.SecuritiesCache
 
   @doc """
-    Updates each issuer in db.
+  Updates all issuers in db.
 
   """
   def update() do

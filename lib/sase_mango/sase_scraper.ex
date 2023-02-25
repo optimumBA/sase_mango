@@ -49,7 +49,7 @@ defmodule SaseMango.SaseScraper do
       {:ok, symbol_info_data["GENERALINFO"]}
     else
       {:ok, %Finch.Response{body: body, status: status}} ->
-        # Some eminents don't have company info data
+        # Some issuers don't have company info data
         {:ok, %{}}
     end
   end
