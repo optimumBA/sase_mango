@@ -48,7 +48,7 @@ defmodule SaseMango.SaseScraper do
          %{^key => symbol_info_data} <- data do
       {:ok, symbol_info_data["GENERALINFO"]}
     else
-      {:ok, %Finch.Response{body: body, status: status}} ->
+      {:ok, %Finch.Response{body: _body, status: _status}} ->
         # Some issuers don't have company info data
         {:ok, %{}}
     end

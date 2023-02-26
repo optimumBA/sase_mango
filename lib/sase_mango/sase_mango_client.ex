@@ -26,45 +26,45 @@ defmodule SaseMango.SaseMangoClient do
       "Fetching #{year} (#{if(semi_annual, do: "semi-", else: "")}annual) financial statement for issuer #{symbol}"
     )
 
-    send_request(%{
+    common_request_params()
+    |> Map.merge(%{
       "Months" => year,
       "id" => if(semi_annual, do: 1, else: 0),
-      "lng" => 1,
       "start" => 1,
       "symbol" => symbol,
       "type" => 6
     })
+    |> send_request()
   end
 
   def get_ticker(symbol) do
     Logger.info("Fetching ticker for issuer #{symbol}")
 
-    common_request_body(4, symbol)
+    common_request_params()
+    |> Map.merge(%{"symbol" => symbol, "type" => 4, "Months" => 1})
+    |> send_request()
   end
 
   def get_general_data(symbol) do
     Logger.info("Fetching company information data for issuer #{symbol}")
 
-    common_request_body(6, symbol)
+    common_request_params()
+    |> Map.merge(%{"symbol" => symbol, "type" => 6})
+    |> send_request()
   end
 
   def get_top_10_owners(symbol) do
-    send_request(%{
-      "id" => 0,
-      "lng" => 1,
-      "symbol" => symbol,
-      "type" => 18,
-      "Months" => 0
-    })
+    common_request_params()
+    |> Map.merge(%{"symbol" => symbol, "type" => 18, "Months" => 0})
+    |> send_request()
   end
 
-  defp common_request_body(type, symbol) do
-    send_request(%{
-      "type" => type,
-      "symbol" => symbol,
+  defp common_request_params() do
+    %{
+      "id" => 0,
       "lng" => 1,
       "Months" => 1
-    })
+    }
   end
 
   defp send_request(params) do
