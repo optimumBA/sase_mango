@@ -45,46 +45,68 @@ defmodule SaseMango.Securities do
       top_10_owners: is.top_10_owners["top_10"]
     })
     |> Repo.one()
-    |> convert_company_data()
+    |> format_company_data()
   end
 
-  defp convert_company_data(data) do
+  defp format_company_data(nil), do: nil
+
+  defp format_company_data(data) do
+    # For some issuers we get useless map instead of string
+    maybe_audit_committee =
+      if(is_binary(data.symbol_data["AuditCommittee"]),
+        do: data.symbol_data["AuditCommittee"],
+        else: nil
+      )
+
     symbol_data = %{
       isin: data.info["ISIN"],
       short_name: data.symbol_data["RegistrationNumber"],
-      company: data.info["SymbolDescription"],
+      company: data.symbol_data["Company"],
       address: data.symbol_data["Address"],
       contact: data.symbol_data["Contact"],
       email: data.symbol_data["Email"],
       web_page: data.symbol_data["WebPage"],
       activity: data.symbol_data["Activity"],
       external_auditor: data.symbol_data["ExternalAuditor"],
-      audit_committee: data.symbol_data["AuditCommittee"],
+      audit_committee: maybe_audit_committee,
       number_of_employees: data.symbol_data["NumberOfEmployees"],
       number_of_bussines_units: data.symbol_data["NumberOfBussinesUnits"]
     }
 
     supervisory_board =
-      filter_management_and_supervisory_board(data.symbol_data["SupervisoryBoard"])
+      SecuritiesHelper.filter_management_and_supervisory_data(
+        data.symbol_data["SupervisoryBoard"]
+      )
 
     management_board =
-      filter_management_and_supervisory_board(data.symbol_data["ManagementBoard"])
+      SecuritiesHelper.filter_management_and_supervisory_data(data.symbol_data["ManagementBoard"])
 
-    number_of_shares_nominal_price =
-      data.symbol_data["NumberOfSharesNominalPrice"]
-      |> String.split(~r/<\/a>/)
-      |> List.last()
+    separate_number_of_shares_nominal_price =
+      if data.symbol_data["NumberOfSharesNominalPrice"] do
+        data.symbol_data["NumberOfSharesNominalPrice"]
+        |> String.split(~r/<\/a>/)
+        |> List.last()
+      end
 
     securities_and_shareholders_data = %{
       total_number_of_shareholders: data.symbol_data["TotalNumberOfShareholders"],
-      number_of_shares_nominal_price: number_of_shares_nominal_price,
+      number_of_shares_nominal_price: separate_number_of_shares_nominal_price,
       sase_url: "http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{data.symbol}"
     }
 
     top_10_owners =
-      if is_list(data.top_10_owners),
-        do: data.top_10_owners,
-        else: [data.top_10_owners]
+      cond do
+        data.top_10_owners && is_list(data.top_10_owners) -> data.top_10_owners
+        data.top_10_owners && is_map(data.top_10_owners) -> [data.top_10_owners]
+        true -> []
+      end
+
+    maybe_management_shares =
+      if is_binary(data.symbol_data["ManagementShares"]) do
+        data.symbol_data["ManagementShares"]
+      else
+        nil
+      end
 
     %{}
     |> Map.merge(%{symbol: data.symbol, name: data.name})
@@ -92,47 +114,9 @@ defmodule SaseMango.Securities do
     |> Map.merge(%{top_10_owners: top_10_owners})
     |> Map.merge(%{supervisory_board: supervisory_board})
     |> Map.merge(%{management_board: management_board})
-    |> Map.merge(%{management_shares: data.symbol_data["ManagementShares"]})
+    |> Map.merge(%{management_shares: maybe_management_shares})
     |> Map.merge(%{securities_and_shareholders_data: securities_and_shareholders_data})
     |> Map.new()
-  end
-
-  defp filter_management_and_supervisory_board(data) do
-    board_data_list = String.split(data, ~r/(\s)*(,|-)(\s)*/, trim: true)
-
-    positions = ["predsj", "direktor", "član", "v.d."]
-
-    if rem(Enum.count(board_data_list), 2) == 1 do
-      board_data_list_with_index = Enum.with_index(board_data_list)
-
-      board_data_list_with_index
-      |> Stream.map(fn {item, i} ->
-        next_el = Enum.find(board_data_list_with_index, fn {_item, ei} -> ei == i + 1 end)
-
-        is_name? = !String.contains?(String.downcase(item), positions)
-
-        has_position? =
-          next_el &&
-            String.contains?(String.downcase(elem(next_el, 0)), positions)
-
-        cond do
-          is_name? && has_position? ->
-            {item, elem(next_el, 0)}
-
-          is_name? ->
-            {item, ""}
-
-          true ->
-            nil
-        end
-      end)
-      |> Stream.reject(&is_nil/1)
-      |> Enum.map(& &1)
-    else
-      board_data_list
-      |> Enum.chunk_every(2)
-      |> Enum.map(fn [k, v] -> {k, v} end)
-    end
   end
 
   @doc """
