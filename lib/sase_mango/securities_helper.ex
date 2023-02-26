@@ -11,6 +11,75 @@ defmodule SaseMango.SecuritiesHelper do
   alias SaseMango.Repo
 
   @doc """
+  Returns today's or the given date in the following format (dd.mm.yyyy).
+
+  """
+  def format_date do
+    [year, month, day] =
+      DateTime.now!("Europe/Sarajevo")
+      |> DateTime.to_date()
+      |> Date.to_string()
+      |> String.split("-")
+
+    "#{day}.#{month}.#{year}"
+  end
+
+  def format_date(date) do
+    {:ok, date_format} = NaiveDateTime.from_iso8601(date)
+
+    [year, month, day] =
+      date_format
+      |> NaiveDateTime.to_date()
+      |> Date.to_string()
+      |> String.split("-")
+
+    "#{day}.#{month}.#{year}"
+  end
+
+  @doc """
+  Parse the data text and returns a data list in the form {person, job_title}.
+  Returns a list of tuples or an empty list.
+
+  """
+  def filter_management_and_supervisory_data(data) do
+    board_data_list = String.split(data, ~r/(\s)*(,|-)(\s)*/, trim: true)
+
+    positions = ["predsj", "direktor", "član", "v.d."]
+
+    if rem(Enum.count(board_data_list), 2) == 1 do
+      board_data_list_with_index = Enum.with_index(board_data_list)
+
+      board_data_list_with_index
+      |> Stream.map(fn {item, i} ->
+        next_el = Enum.find(board_data_list_with_index, fn {_item, ei} -> ei == i + 1 end)
+
+        is_name? = !String.contains?(String.downcase(item), positions)
+
+        has_position? =
+          next_el &&
+            String.contains?(String.downcase(elem(next_el, 0)), positions)
+
+        cond do
+          is_name? && has_position? ->
+            {item, elem(next_el, 0)}
+
+          is_name? ->
+            {item, ""}
+
+          true ->
+            nil
+        end
+      end)
+      |> Stream.reject(&is_nil/1)
+      |> Enum.map(& &1)
+    else
+      board_data_list
+      |> Enum.chunk_every(2)
+      |> Enum.map(fn [k, v] -> {k, v} end)
+    end
+  end
+
+  @doc """
   Returns the list of securities.
   List is calculated depending on the type(regular or bargains list) by either regular or ask price.
 
