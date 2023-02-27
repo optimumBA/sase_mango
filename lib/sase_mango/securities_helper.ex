@@ -12,7 +12,6 @@ defmodule SaseMango.SecuritiesHelper do
 
   @doc """
   Returns today's or the given date in the following format (dd.mm.yyyy).
-
   """
   def format_date do
     [year, month, day] =
@@ -39,7 +38,6 @@ defmodule SaseMango.SecuritiesHelper do
   @doc """
   Parse the data text and returns a data list in the form {person, job_title}.
   Returns a list of tuples or an empty list.
-
   """
   def filter_management_and_supervisory_data(data) do
     board_data_list = String.split(data, ~r/(\s)*(,|-)(\s)*/, trim: true)
@@ -82,7 +80,6 @@ defmodule SaseMango.SecuritiesHelper do
   @doc """
   Returns the list of securities.
   List is calculated depending on the type(regular or bargains list) by either regular or ask price.
-
   """
   def list_securities(list_type, params \\ %{}) do
     current_financial_statement = current_financial_statement()

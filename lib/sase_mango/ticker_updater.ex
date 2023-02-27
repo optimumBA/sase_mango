@@ -10,7 +10,6 @@ defmodule SaseMango.TickerUpdater do
 
   @doc """
   Updates all issuers in db.
-
   """
   def update() do
     issuers = Securities.list_issuers()

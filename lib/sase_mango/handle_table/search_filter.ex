@@ -10,7 +10,6 @@ defmodule SaseMango.HandleTable.SearchFilter do
 
   @doc """
   SearchFilter changeset for validation.
-
   """
   def changeset(%__MODULE__{} = search_filter, attrs \\ %{}) do
     cast({search_filter, @types}, attrs, [:q])

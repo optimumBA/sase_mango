@@ -24,7 +24,6 @@ defmodule SaseMango.HandleTable do
 
   @doc """
   Returns a changeset for a `FilterForm.SearchFilter`.
-
   """
   def change_table_filter(%SearchFilter{} = filter, attrs \\ %{}) do
     SearchFilter.changeset(filter, attrs)
@@ -42,7 +41,6 @@ defmodule SaseMango.HandleTable do
 
   @doc """
   Sorts the list of securities by field type in ascending/descending order.
-
   """
   def sort_table(securities, field, sort_order) do
     case get_sort_params(field, sort_order) do

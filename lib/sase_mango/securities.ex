@@ -25,14 +25,12 @@ defmodule SaseMango.Securities do
   @doc """
   Gets single issuer from db.
   Returns the issuer if exists, nil otherwise.
-
   """
   def get_issuer(symbol), do: Repo.get_by(Issuer, symbol: symbol)
 
   @doc """
   Gets company data for issuer.
   Returns all relevant company information and facts owned by the Issuer.
-
   """
   def get_company_data(symbol) do
     Issuer

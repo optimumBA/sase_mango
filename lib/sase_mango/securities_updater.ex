@@ -14,7 +14,6 @@ defmodule SaseMango.SecuritiesUpdater do
   Updates existing or creates new issuer.
   It also creates financial statement for each issuer if necessary.
   Function takes a date string as argument or creates a current one in the format dd.mm.yyyy".
-
   """
   def update() do
     {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()

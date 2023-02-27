@@ -16,7 +16,6 @@ defmodule SaseMango.Calculator.Input do
 
   @doc """
   CalculatorInput changeset for validation.
-
   """
   def changeset(input, attrs \\ %{}) do
     {input, @types}
