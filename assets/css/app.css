@@ -410,6 +410,14 @@ th {
   @apply w-fit;
 }
 
+#table-top-10-owners tbody tr:last-child > td {
+  @apply border-b;
+}
+
+#table-general-info tbody tr:last-child > td {
+  @apply border-b;
+}
+
 .rotate-up svg {
   transform: rotateX(180deg);
   @apply duration-[200ms] ease-linear;
