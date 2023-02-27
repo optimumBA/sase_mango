@@ -3,6 +3,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
 
   alias SaseMango.Securities
   alias SaseMango.SecuritiesHelper
+  alias SaseMangoWeb.SharedComponents.TableIconsComponent
 
   use SaseMangoWeb, :live_view
 
@@ -24,177 +25,112 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
   def render(assigns) do
     ~H"""
       <section class="w-full min-h-screen bg-gray-50">
-        <header class="relative flex items-center justify-between flex-col md:flex-row p-4 md:px-10 border-b shadow-md mb-4">
-          <h2 class="text-2xl md:text-3xl xl:text-4xl"> Issuer profile </h2>
-
-          <div class="flex flex-col items-center md:items-end">
-            <h5 class="font-light text-xl md:text-2xl"> Company information </h5>
-
-            <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{@company_data.symbol}"} target="_blank"
-              class="text-gray-800 hover:text-blue-dark-500"
-            >
-              <p class="font-semibold text-lg md:text-xl uppercase mx-auto"> <%= @company_data.name %> </p>
-            </a>
+        <header class="p-4 border-b shadow-md mb-4">
+          <div class="w-full md:w-5/6 xl:w-3/4 mx-auto px-2 md:px-0 py-2 mt-8">
+            <div class="relative ml-6 dm:ml-0">
+              <h2 class="text-blue-dark-200 text-lg font-semibold md:text-2xl mb-2 tracking-wide">
+                <%= @company_data.name %>
+              </h2>
+              <%= live_redirect to: Routes.securities_index_path(@socket, :securities), class: "absolute top-1/2 left-0 -translate-x-8 -translate-y-1/2" do %>
+                <TableIconsComponent.icon_back />
+              <% end %>
+            </div>
+            <p class="font-light text-gray-450 text-sm ml-6 dm:ml-0">Company information</p>
           </div>
         </header>
 
-        <div class="md:w-5/6 xl:w-3/4 p-4 mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="md:w-11/12 xl:w-3/4 2xl:w- py-4 mx-auto px-2 md:px-0 grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-            <table id="table-general-info" class="table-auto mx-auto w-full h-max row-span-3">
-              <thead class="p-2 bg-blue-dark-200">
+            <table id="table-general-info" class="table-auto border-separate mx-auto w-full h-max">
+              <thead class="p-2">
                 <tr>
-                  <th colspan="2" class="px-6 py-3 rounded-lg text-white uppercase text-sm">Symbol data</th>
+                  <th colspan="2" class="px-6 py-3 bg-blue-dark-200 rounded-tl-xl rounded-tr-xl text-white text-left uppercase text-xs md:text-sm">
+                    Symbol data
+                  </th>
                 </tr>
               </thead>
-              <tbody class="bg-gray-100 text-xs md:text-sm">
+              <tbody class="bg-gray-100 text-xs md:text-sm border border-t-0">
                 <tr>
-                  <td class="px-2 py-3 text-left"><b>ISIN</b></td>
-                  <td class="px-2 py-3 text-left"><%= @company_data.symbol_data.isin %></td>
+                  <td class="py-3 text-left border-l"><b>ISIN</b></td>
+                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.isin %></td>
                 </tr>
                 <tr>
-                  <td class="px-2 py-3 text-left"><b>Short name</b></td>
-                  <td class="px-2 py-3 text-left"><%= @company_data.symbol_data.short_name %></td>
+                  <td class="py-3 text-left border-l"><b>Short name</b></td>
+                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.short_name %></td>
                 </tr>
                 <tr>
-                  <td class="px-2 py-3 text-left"><b>Company</b></td>
-                  <td class="px-2 py-3 text-left"><%= @company_data.symbol_data.company %></td>
+                  <td class="py-3 text-left border-l"><b>Company</b></td>
+                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.company %></td>
                 </tr>
                 <tr>
-                  <td class="px-2 py-3 text-left"><b>Address</b></td>
-                  <td class="px-2 py-3 text-left"><%= @company_data.symbol_data.address %></td>
+                  <td class="py-3 text-left border-l"><b>Address</b></td>
+                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.address %></td>
                 </tr>
                 <tr>
-                  <td class="px-2 py-3 text-left"><b>Contact</b></td>
-                  <td class="px-2 py-3 text-left"><%= @company_data.symbol_data.contact %></td>
+                  <td class="py-3 text-left border-l"><b>Contact</b></td>
+                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.contact %></td>
                 </tr>
                 <tr>
-                  <td class="px-2 py-3 text-left"><b>Email</b></td>
-                  <td class="px-2 py-3 text-left"><%= @company_data.symbol_data.email %></td>
+                  <td class="py-3 text-left border-l"><b>Email</b></td>
+                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.email %></td>
                 </tr>
                 <tr>
-                  <td class="px-2 py-3 text-left"><b>Web page</b></td>
-                  <td class="px-2 py-3 text-left"><%= @company_data.symbol_data.web_page %></td>
-                </tr>
-                <tr>
-                  <td class="px-2 py-3 text-left"><b>Activity</b></td>
-                  <td class="px-2 py-3 text-left"><%= @company_data.symbol_data.activity %></td>
-                </tr>
-                <tr>
-                  <td class="px-2 py-3 text-left"><b>External auditor</b></td>
-                  <td class="px-2 py-3 text-left"><%= @company_data.symbol_data.external_auditor %></td>
-                </tr>
-                <tr>
-                  <td class="px-2 py-3 text-left"><b>Audit Committee</b></td>
-                  <td class="px-2 py-3 text-left"><%= @company_data.symbol_data.audit_committee %></td>
-                </tr>
-                <tr>
-                  <td class="px-2 py-3 text-left"><b>Number Of Employees</b></td>
-                  <td class="px-2 py-3 text-left"><%= @company_data.symbol_data.number_of_employees %></td>
-                </tr>
-                <tr>
-                  <td class="px-2 py-3 text-left"><b>NumberOfBussinesUnits</b></td>
-                  <td class="px-2 py-3 text-left"><%= @company_data.symbol_data.number_of_bussines_units %></td>
-                </tr>
-              </tbody>
-            </table>
-
-            <table id="table-management-board" class="table-auto xl:place-self-start w-full h-max row-span-1">
-              <thead class="p-2 bg-blue-dark-200">
-                <tr>
-                  <th colspan="2" class="px-6 py-3 rounded-lg text-white text-sm uppercase ">Management Board</th>
-                </tr>
-              </thead>
-              <tbody class="bg-gray-100 text-xs md:text-sm">
-
-                <%= for {person_name, position} <- @company_data.management_board do %>
-                  <tr>
-                    <td class="px-2 py-3 text-left"><b><%= person_name %></b></td>
-                    <td class="px-2 py-3 text-left"><%= position %></td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-
-            <table id="table-supervisory-board" class="table-auto xl:place-self-start w-full h-max row-span-1">
-              <thead class="p-2 bg-blue-dark-200">
-                <tr >
-                  <th colspan="2" class="px-6 py-3 rounded-lg text-white text-sm uppercase ">Supervisory Board</th>
-                </tr>
-              </thead>
-              <tbody class="bg-gray-100 text-xs md:text-sm">
-
-                <%= for {person_name, position} <- @company_data.supervisory_board do %>
-                  <tr>
-                    <td class="px-2 py-3 text-left"><b><%= person_name %></b></td>
-                    <td class="px-2 py-3 text-left"><%= position %></td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-
-            <%= unless is_nil(@company_data.management_shares) do %>
-              <table id="table-management-shared" class="table-auto xl:place-self-start w-full h-max row-span-1">
-                <thead class="p-2 bg-blue-dark-200">
-                  <tr>
-                    <th colspan="2" class="px-6 py-3 rounded-lg text-white text-sm uppercase ">Management Shares</th>
-                  </tr>
-                </thead>
-                <tbody class="bg-gray-100 text-xs md:text-sm">
-                    <tr>
-                      <td class="px-2 py-3 text-left"><%= @company_data.management_shares %></td>
-                    </tr>
-                </tbody>
-              </table>
-            <% end %>
-
-            <table id="table-shareholders-data" class="table-auto xl:place-self-start w-full h-max row-span-1">
-              <thead class="p-2 bg-blue-dark-200">
-                <tr>
-                  <th colspan="2" class="px-6 py-3 rounded-lg text-white text-sm uppercase ">Securities and Shareholders Data</th>
-                </tr>
-              </thead>
-              <tbody class="bg-gray-100 text-xs md:text-sm">
-                <tr>
-                  <td class="px-2 py-3 text-left"><b>Total Number Of Shareholders</b></td>
-                  <td class="px-2 py-3 text-left"><%= @company_data.securities_and_shareholders_data.total_number_of_shareholders %></td>
-                </tr>
-                <tr>
-                  <td class="px-2 py-3 text-left"><b>Number Of Shares Nominal Price</b></td>
-                  <td class="px-2 py-3 text-left flex">
-                  <a href={@company_data.securities_and_shareholders_data.sase_url} target="_blank"
-                    class="pr-2 text-blue-300"
-                  >
-                    <%= @company_data.symbol %>
-                  </a>
-                  <span><%= @company_data.securities_and_shareholders_data.number_of_shares_nominal_price %></span>
+                  <td class="py-3 text-left border-l"><b>Web page</b></td>
+                  <td class="px-2 py-3 text-left border-r">
+                    <a href={@company_data.securities_and_shareholders_data.sase_url} target="_blank"
+                      class="pr-2 text-blue-300"
+                    >
+                      <%= @company_data.symbol_data.web_page %>
+                    </a>
                   </td>
                 </tr>
+                <tr>
+                  <td class="py-3 text-left border-l"><b>Activity</b></td>
+                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.activity %></td>
+                </tr>
+                <tr>
+                  <td class="py-3 text-left border-l"><b>External auditor</b></td>
+                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.external_auditor %></td>
+                </tr>
+                <tr>
+                  <td class="py-3 text-left border-l"><b>Audit Committee</b></td>
+                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.audit_committee %></td>
+                </tr>
+                <tr>
+                  <td class="py-3 text-left border-l"><b>Number Of Employees</b></td>
+                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.number_of_employees %></td>
+                </tr>
+                <tr>
+                  <td class="py-3 text-left border-l"><b>NumberOfBussinesUnits</b></td>
+                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.number_of_bussines_units %></td>
+                </tr>
               </tbody>
             </table>
 
-            <%= unless Enum.empty?(@company_data.top_10_owners) do %>
-              <table id="table-top-10-owners" class="table-auto xl:justify-self-start w-full h-max row-span-3">
-                <thead class="p-2 bg-blue-dark-200">
+            <table id="table-top-10-owners" class="table-auto border-separate xl:justify-self-start w-full h-max row-span-3">
+              <thead class="p-2">
+                <tr>
+                  <th colspan="3" class="px-6 py-3 bg-blue-dark-200 rounded-tl-xl rounded-tr-xl border border-blue-dark-200 text-white text-left uppercase text-xs md:text-sm">
+                    Top 10 Owners
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-gray-100 text-xs md:text-sm border border-t-0">
+                <tr class="text-gray-400">
+                  <td class="py-3 text-left border-l"><b>Name</b></td>
+                  <td class="pl-0 py-3 text-left"><b>Percent</b></td>
+                  <td class="pl-0 py-3 text-left border-r"><b>Date</b></td>
+                </tr>
+                <%= for owner <- @company_data.top_10_owners do %>
                   <tr>
-                    <th colspan="3" class="px-6 py-3 rounded-lg text-white text-sm uppercase ">Top 10 Owners</th>
+                    <td class="py-3 text-left border-l"><%= owner["naziv"] %></td>
+                    <td class="pl-0 py-3 text-left"><%= owner["procenti"] %>%</td>
+                    <td class="pl-0 py-3 text-left border-r"><%= SecuritiesHelper.format_date(owner["datum"]) %></td>
                   </tr>
-                </thead>
-                <tbody class="bg-gray-100 text-xs md:text-sm">
-                  <tr>
-                    <td class="px-2 py-3 text-left"><b>Name</b></td>
-                    <td class="px-2 py-3 text-left"><b>Percent</b></td>
-                    <td class="px-2 py-3 text-left"><b>Date</b></td>
-                  </tr>
-                  <%= for owner <- @company_data.top_10_owners do %>
-                    <tr>
-                      <td class="px-2 py-3 text-left"><%= owner["naziv"] %></td>
-                      <td class="px-2 py-3 text-left"><%= owner["procenti"] %>%</td>
-                      <td class="px-2 py-3 text-left"><%= SecuritiesHelper.format_date(owner["datum"]) %></td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            <% end %>
+                <% end %>
+              </tbody>
+            </table>
+
         </div>
       </section>
     """
