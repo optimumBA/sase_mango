@@ -27,6 +27,74 @@ defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
 
   defp match_text_icon(assigns, _options, _key), do: text_sort_asc(assigns)
 
+  def arrow_down(assigns) do
+    ~H"""
+    <svg width="15" height="8"
+      viewBox="0 0 15 9"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M1 1L7.08696 7L13 1" stroke="#9A9A9A" stroke-width="2" stroke-linecap="round"/>
+     </svg>
+    """
+  end
+
+  def delete_row(assigns) do
+    ~H"""
+    <div
+      phx-click="delete_row"
+      phx-value-row_id={@row_id}
+      class="delete-row"
+    >
+      <svg
+        width="16"
+        height="17"
+        viewBox="0 0 14 15"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+      <path d="M1 3.5H2.33333H13" stroke="#1E1E1E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M11.6663 3.50004V12.8334C11.6663 13.187 11.5259 13.5261 11.2758 13.7762C11.0258 14.0262 10.6866 14.1667 10.333 14.1667H3.66634C3.31272 14.1667 2.97358 14.0262 2.72353 13.7762C2.47348 13.5261 2.33301 13.187 2.33301 12.8334V3.50004M4.33301 3.50004V2.16671C4.33301 1.81309 4.47348 1.47395 4.72353 1.2239C4.97358 0.97385 5.31272 0.833374 5.66634 0.833374H8.33301C8.68663 0.833374 9.02577 0.97385 9.27582 1.2239C9.52586 1.47395 9.66634 1.81309 9.66634 2.16671V3.50004" stroke="#1E1E1E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M5.66699 6.83337V10.8334" stroke="#1E1E1E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8.33301 6.83337V10.8334" stroke="#1E1E1E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    """
+  end
+
+  def icon_back(assigns) do
+    ~H"""
+    <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7 13L1 7L7 1" stroke="#9A9A9A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    """
+  end
+
+  def number_sort_icon(assigns) do
+    ~H"""
+    <svg
+      width="10"
+      height="15"
+      viewBox="0 0 13 12"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M6.61536 10.6666V1.33331"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path d="M1.94873 5.99998L6.6154 1.33331L11.2821 5.99998"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+    """
+  end
+
   def text_sort_asc(assigns) do
     ~H"""
       <svg
@@ -82,66 +150,6 @@ defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
       <path d="M0.740057 14H0.00142047L2.13778 8.18182H2.86506L5.00142 14H4.26278L2.52415 9.10227H2.47869L0.740057 14ZM1.01278 11.7273H3.99006V12.3523H1.01278V11.7273Z" fill="#FF1010"/>
       <path d="M0.740057 14V14.2C0.82472 14.2 0.900211 14.1467 0.928534 14.0669L0.740057 14ZM0.0014205 14L-0.186323 13.9311C-0.208849 13.9924 -0.199982 14.0609 -0.162573 14.1145C-0.125163 14.1681 -0.0639327 14.2 0.0014205 14.2V14ZM2.13778 8.18182V7.98182C2.05391 7.98182 1.97895 8.03415 1.95004 8.11288L2.13778 8.18182ZM2.86506 8.18182L3.0528 8.11288C3.02389 8.03415 2.94893 7.98182 2.86506 7.98182V8.18182ZM5.00142 14V14.2C5.06677 14.2 5.128 14.1681 5.16541 14.1145C5.20282 14.0609 5.21169 13.9924 5.18916 13.9311L5.00142 14ZM4.26278 14L4.07431 14.0669C4.10263 14.1467 4.17812 14.2 4.26278 14.2V14ZM2.52415 9.10227L2.71262 9.03537C2.6843 8.95558 2.60881 8.90227 2.52415 8.90227V9.10227ZM2.47869 9.10227V8.90227C2.39403 8.90227 2.31854 8.95558 2.29022 9.03537L2.47869 9.10227ZM1.01278 11.7273V11.5273C0.902327 11.5273 0.812784 11.6168 0.812784 11.7273H1.01278ZM3.99006 11.7273H4.19006C4.19006 11.6168 4.10051 11.5273 3.99006 11.5273V11.7273ZM3.99006 12.3523V12.5523C4.10051 12.5523 4.19006 12.4627 4.19006 12.3523H3.99006ZM1.01278 12.3523H0.812784C0.812784 12.4627 0.902327 12.5523 1.01278 12.5523V12.3523ZM0.740057 13.8H0.0014205V14.2H0.740057V13.8ZM0.189164 14.0689L2.32553 8.25076L1.95004 8.11288L-0.186323 13.9311L0.189164 14.0689ZM2.13778 8.38182H2.86506V7.98182H2.13778V8.38182ZM2.67731 8.25076L4.81368 14.0689L5.18916 13.9311L3.0528 8.11288L2.67731 8.25076ZM5.00142 13.8H4.26278V14.2H5.00142V13.8ZM4.45126 13.9331L2.71262 9.03537L2.33567 9.16918L4.07431 14.0669L4.45126 13.9331ZM2.52415 8.90227H2.47869V9.30227H2.52415V8.90227ZM2.29022 9.03537L0.55158 13.9331L0.928534 14.0669L2.66717 9.16918L2.29022 9.03537ZM1.01278 11.9273H3.99006V11.5273H1.01278V11.9273ZM3.79006 11.7273V12.3523H4.19006V11.7273H3.79006ZM3.99006 12.1523H1.01278V12.5523H3.99006V12.1523ZM1.21278 12.3523V11.7273H0.812784V12.3523H1.21278Z" fill="#FF1010"/>
     </svg>
-    """
-  end
-
-  def number_sort_icon(assigns) do
-    ~H"""
-    <svg
-      width="10"
-      height="15"
-      viewBox="0 0 13 12"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M6.61536 10.6666V1.33331"
-        stroke="currentColor"
-        stroke-width="1.8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
-      <path d="M1.94873 5.99998L6.6154 1.33331L11.2821 5.99998"
-        stroke="currentColor"
-        stroke-width="1.8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
-    </svg>
-    """
-  end
-
-  def delete_row(assigns) do
-    ~H"""
-    <div
-      phx-click="delete_row"
-      phx-value-row_id={@row_id}
-      class="delete-row"
-    >
-      <svg
-        width="16"
-        height="17"
-        viewBox="0 0 14 15"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-      <path d="M1 3.5H2.33333H13" stroke="#1E1E1E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M11.6663 3.50004V12.8334C11.6663 13.187 11.5259 13.5261 11.2758 13.7762C11.0258 14.0262 10.6866 14.1667 10.333 14.1667H3.66634C3.31272 14.1667 2.97358 14.0262 2.72353 13.7762C2.47348 13.5261 2.33301 13.187 2.33301 12.8334V3.50004M4.33301 3.50004V2.16671C4.33301 1.81309 4.47348 1.47395 4.72353 1.2239C4.97358 0.97385 5.31272 0.833374 5.66634 0.833374H8.33301C8.68663 0.833374 9.02577 0.97385 9.27582 1.2239C9.52586 1.47395 9.66634 1.81309 9.66634 2.16671V3.50004" stroke="#1E1E1E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M5.66699 6.83337V10.8334" stroke="#1E1E1E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M8.33301 6.83337V10.8334" stroke="#1E1E1E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    """
-  end
-
-  def arrow_down(assigns) do
-    ~H"""
-    <svg width="15" height="8"
-      viewBox="0 0 15 9"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M1 1L7.08696 7L13 1" stroke="#9A9A9A" stroke-width="2" stroke-linecap="round"/>
-     </svg>
     """
   end
 end
