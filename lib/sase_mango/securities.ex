@@ -79,16 +79,16 @@ defmodule SaseMango.Securities do
     management_board =
       SecuritiesHelper.filter_management_and_supervisory_data(data.symbol_data["ManagementBoard"])
 
-    separate_number_of_shares_nominal_price =
+    parsed_number_of_shares_nominal_price =
       if data.symbol_data["NumberOfSharesNominalPrice"] do
-        data.symbol_data["NumberOfSharesNominalPrice"]
-        |> String.split(~r/<\/a>/)
-        |> List.last()
+        SecuritiesHelper.parse_shares_and_nominal_price(
+          data.symbol_data["NumberOfSharesNominalPrice"]
+        )
       end
 
     securities_and_shareholders_data = %{
       total_number_of_shareholders: data.symbol_data["TotalNumberOfShareholders"],
-      number_of_shares_nominal_price: separate_number_of_shares_nominal_price,
+      shares_nominal_price: parsed_number_of_shares_nominal_price,
       sase_url: "http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{data.symbol}"
     }
 
@@ -106,6 +106,8 @@ defmodule SaseMango.Securities do
         nil
       end
 
+    legal_entities = data.symbol_data["LegalEntityTheIssuerHoldsMoreThan10Percent"]
+
     %{}
     |> Map.merge(%{symbol: data.symbol, name: data.name})
     |> Map.merge(%{symbol_data: symbol_data})
@@ -114,6 +116,7 @@ defmodule SaseMango.Securities do
     |> Map.merge(%{management_board: management_board})
     |> Map.merge(%{management_shares: maybe_management_shares})
     |> Map.merge(%{securities_and_shareholders_data: securities_and_shareholders_data})
+    |> Map.merge(%{legal_entities: legal_entities})
     |> Map.new()
   end
 
