@@ -414,8 +414,28 @@ th {
   @apply border-b;
 }
 
-#table-general-info tbody tr:last-child > td {
-  @apply border-b;
+#table-general-info tbody tr:last-child > td,
+#table-top-10-owners tbody tr:last-child > td,
+#table-management-board tbody tr:last-child > td,
+#table-supervisory-board tbody tr:last-child > td,
+#table-shareholders-data tbody tr:last-child > td {
+  @apply pb-6;
+}
+
+#table-general-info tbody tr:last-child > td:first-child,
+#table-top-10-owners tbody tr:last-child > td:first-child,
+#table-management-board tbody tr:last-child > td:first-child,
+#table-supervisory-board tbody tr:last-child > td:first-child,
+#table-shareholders-data tbody tr:last-child > td:first-child {
+  @apply border-b rounded-bl-xl;
+}
+
+#table-general-info tbody tr:last-child > td:last-child,
+#table-top-10-owners tbody tr:last-child > td:last-child,
+#table-management-board tbody tr:last-child > td:last-child,
+#table-supervisory-board tbody tr:last-child > td:last-child,
+#table-shareholders-data tbody tr:last-child > td:last-child {
+  @apply border-b rounded-br-xl;
 }
 
 .rotate-up svg {
