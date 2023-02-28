@@ -17,8 +17,28 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
         {:ok,
          socket
          |> assign(:company_data, company_data)
+         |> assign_symbol_data_fields(company_data)
          |> assign(:page_title, "Issuer profile - #{symbol}")}
     end
+  end
+
+  defp assign_symbol_data_fields(socket, %{symbol_data: symbol_data} = _company_data) do
+    data_rows = [
+      %{title: "ISIN", value: symbol_data.isin},
+      %{title: "Short name", value: symbol_data.short_name},
+      %{title: "Company", value: symbol_data.company},
+      %{title: "Address", value: symbol_data.address},
+      %{title: "Contact", value: symbol_data.contact},
+      %{title: "Email", value: symbol_data.email},
+      %{title: "Web page", value: symbol_data.web_page},
+      %{title: "Activity", value: symbol_data.activity},
+      %{title: "External auditor", value: symbol_data.external_auditor},
+      %{title: "Audit Committee", value: symbol_data.audit_committee},
+      %{title: "Number Of Employees", value: symbol_data.number_of_employees},
+      %{title: "Number Of Bussines Units", value: symbol_data.number_of_bussines_units}
+    ]
+
+    assign(socket, :symbol_data_rows, data_rows)
   end
 
   @impl Phoenix.LiveView
@@ -50,60 +70,12 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
                 </tr>
               </thead>
               <tbody class="bg-gray-100 text-xs md:text-sm border border-t-0">
-                <tr>
-                  <td class="py-3 text-left border-l"><b>ISIN</b></td>
-                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.isin %></td>
-                </tr>
-                <tr>
-                  <td class="py-3 text-left border-l"><b>Short name</b></td>
-                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.short_name %></td>
-                </tr>
-                <tr>
-                  <td class="py-3 text-left border-l"><b>Company</b></td>
-                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.company %></td>
-                </tr>
-                <tr>
-                  <td class="py-3 text-left border-l"><b>Address</b></td>
-                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.address %></td>
-                </tr>
-                <tr>
-                  <td class="py-3 text-left border-l"><b>Contact</b></td>
-                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.contact %></td>
-                </tr>
-                <tr>
-                  <td class="py-3 text-left border-l"><b>Email</b></td>
-                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.email %></td>
-                </tr>
-                <tr>
-                  <td class="py-3 text-left border-l"><b>Web page</b></td>
-                  <td class="px-2 py-3 text-left border-r">
-                    <a href={@company_data.securities_and_shareholders_data.sase_url} target="_blank"
-                      class="pr-2 text-blue-300"
-                    >
-                      <%= @company_data.symbol_data.web_page %>
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="py-3 text-left border-l"><b>Activity</b></td>
-                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.activity %></td>
-                </tr>
-                <tr>
-                  <td class="py-3 text-left border-l"><b>External auditor</b></td>
-                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.external_auditor %></td>
-                </tr>
-                <tr>
-                  <td class="py-3 text-left border-l"><b>Audit Committee</b></td>
-                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.audit_committee %></td>
-                </tr>
-                <tr>
-                  <td class="py-3 text-left border-l"><b>Number Of Employees</b></td>
-                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.number_of_employees %></td>
-                </tr>
-                <tr>
-                  <td class="py-3 text-left border-l"><b>NumberOfBussinesUnits</b></td>
-                  <td class="px-2 py-3 text-left border-r"><%= @company_data.symbol_data.number_of_bussines_units %></td>
-                </tr>
+                <%= for symbol_data <- @symbol_data_rows do %>
+                  <tr>
+                    <td class="py-3 text-left border-l"><b><%= symbol_data.title %></b></td>
+                    <td class="px-2 py-3 text-left border-r"><%= symbol_data.value %></td>
+                  </tr>
+                <% end %>
               </tbody>
             </table>
 
