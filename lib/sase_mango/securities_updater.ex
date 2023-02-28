@@ -52,7 +52,7 @@ defmodule SaseMango.SecuritiesUpdater do
     end
   end
 
-  def get_issuers_attrs(company_data, info, symbol, top_10_owners),
+  defp get_issuers_attrs(company_data, info, symbol, top_10_owners),
     do: %{
       info: info,
       symbol: symbol,
@@ -60,7 +60,7 @@ defmodule SaseMango.SecuritiesUpdater do
       top_10_owners: top_10_owners
     }
 
-  def create_or_update_issuer(symbol, attrs) do
+  defp create_or_update_issuer(symbol, attrs) do
     case Securities.get_issuer(symbol) do
       %Securities.Issuer{} = issuer ->
         Securities.update_issuer(issuer, attrs)
@@ -71,7 +71,7 @@ defmodule SaseMango.SecuritiesUpdater do
     end
   end
 
-  def maybe_create_financial_statement(%Securities.Issuer{} = issuer, semi_annual, year) do
+  defp maybe_create_financial_statement(%Securities.Issuer{} = issuer, semi_annual, year) do
     case Securities.get_financial_statement(issuer, semi_annual, year) do
       %Securities.FinancialStatement{} ->
         nil
