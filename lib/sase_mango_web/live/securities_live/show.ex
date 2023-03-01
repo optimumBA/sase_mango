@@ -150,12 +150,12 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
                 <tr>
                   <td class="py-3 text-left font-semibold border-l bg-slate-50"><b>Number Of Shares Nominal Price</b></td>
                   <td class="pl-0 py-3 flex flex-col text-left border-r bg-slate-50 flex">
-                    <%= for {symbol, values} <- @company_data.securities_and_shareholders_data.shares_nominal_price do %>
+                    <%= for {symbol, shares, nominal_price} <- @company_data.securities_and_shareholders_data.shares_nominal_price do %>
                       <div class="py-1">
                         <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{symbol}"} target="_blank" class="pr-2 text-blue-300">
                           <%= symbol %>
                         </a>
-                        <span><%= values %></span>
+                        <span> - <%= shares %> - <%= nominal_price %></span>
                       </div>
                     <% end %>
                   </td>
