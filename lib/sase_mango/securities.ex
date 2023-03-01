@@ -80,11 +80,9 @@ defmodule SaseMango.Securities do
       SecuritiesHelper.filter_management_and_supervisory_data(data.symbol_data["ManagementBoard"])
 
     parsed_number_of_shares_nominal_price =
-      if data.symbol_data["NumberOfSharesNominalPrice"] do
-        SecuritiesHelper.parse_shares_and_nominal_price(
-          data.symbol_data["NumberOfSharesNominalPrice"]
-        )
-      end
+      SecuritiesHelper.parse_shares_and_nominal_price(
+        data.symbol_data["NumberOfSharesNominalPrice"]
+      )
 
     securities_and_shareholders_data = %{
       total_number_of_shareholders: data.symbol_data["TotalNumberOfShareholders"],

@@ -38,8 +38,24 @@ defmodule SaseMango.SecuritiesHelper do
   @doc """
   Parses the management and supervisory data string and returns a list of tuples in the form {job_title, person}.
   Returns a list of tuples or an empty list.
+
+  ## Examples
+
+      iex> filter_management_and_supervisory_data("Vojko Kokoravec,predsjednik,Dragan Radusinović,član,Radovan Teslić,član, Mitar Kovačević,član")
+      [
+        {"predsjednik", "Vojko Kokoravec"},
+        {"član", "Dragan Radusinović"},
+        {"član", "Radovan Teslić"},
+        {"član", "Mitar Kovačević"}
+      ]
+
+      iex> filter_management_and_supervisory_data(nil)
+      []
+
   """
-  def filter_management_and_supervisory_data(data_string) do
+  def filter_management_and_supervisory_data(data) when data in [nil, ""], do: []
+
+  def filter_management_and_supervisory_data(data_string) when is_binary(data_string) do
     board_data_list = String.split(data_string, ~r/(\s)*(,|-)(\s)*/, trim: true)
 
     positions = ["predsj", "direktor", "član", "v.d."]
@@ -78,18 +94,23 @@ defmodule SaseMango.SecuritiesHelper do
   end
 
   @doc """
-  Parses the shares and nominal price data string and returns a list of tuples in the form {issuer_symbol, number_of_shares_and_nominal_price}.
+  Parses the shares and nominal price data string and returns a list of tuples in the form {issuer_symbol, number_of_shares, nominal_price}.
 
   ## Examples
 
       iex> parse_shares_and_nominal_price("<a href='BSNLR'>BSNLR</a> - 8.596.256 - 10,00 KM | <a href='BSNLZ'>BSNLZ</a> - 441.431 - 10,00 KM |")
       [
-        {"BSNLR", " - 8.596.256 - 10,00 KM"},
-        {"BSNLZ", " - 441.431 - 10,00 KM"}
+        {"BSNLR", "8.596.256", "10,00 KM"},
+        {"BSNLZ", "441.431", "10,00 KM"}
       ]
 
+      iex> parse_shares_and_nominal_price(nil)
+      []
+
   """
-  def parse_shares_and_nominal_price(data_string) do
+  def parse_shares_and_nominal_price(data) when data in [nil, ""], do: []
+
+  def parse_shares_and_nominal_price(data_string) when is_binary(data_string) do
     data_string
     |> String.split("|", trim: true)
     |> Enum.map(
@@ -98,7 +119,9 @@ defmodule SaseMango.SecuritiesHelper do
     )
     |> Enum.map(fn [k, v] ->
       [issuer_symbol] = Regex.split(~r{<a href=\'.*\'>}, k, trim: true)
-      {issuer_symbol, v}
+      [shares_num, nominal_price] = Regex.split(~r{(\s*-\s*)}, v, trim: true)
+
+      {issuer_symbol, shares_num, nominal_price}
     end)
   end
 
