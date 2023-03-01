@@ -96,8 +96,8 @@ defmodule SaseMango.Securities do
   def segment("The Official market - The Official market of companies"), do: "Companies"
   def segment("The Official market - The Official market of funds"), do: "Funds"
 
-  def list_securities(type_atom, filter_params \\ %{})
+  def list_securities(type_atom, params \\ %{})
       when type_atom in [:securities, :bargains] do
-    SecuritiesHelper.list_securities(type_atom, filter_params)
+    SecuritiesHelper.list_securities(type_atom, params)
   end
 end

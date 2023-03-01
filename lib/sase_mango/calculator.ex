@@ -25,7 +25,21 @@ defmodule SaseMango.Calculator do
     }
   end
 
-  def add_new_item(results, result) do
+  def maybe_add_item(securities, results, input) when length(results.securities) > 0 do
+    result = run(securities, input)
+
+    if Enum.any?(results.securities, &(&1.symbol == result.symbol)) do
+      update_item(results, result)
+    else
+      add_new_item(results, result)
+    end
+  end
+
+  def maybe_add_item(securities, results, input) do
+    add_new_item(results, run(securities, input))
+  end
+
+  defp add_new_item(results, result) do
     total_without_fee = Decimal.add(results.total_without_fee, result.total_without_fee)
     total_with_fee = Decimal.add(results.total_with_fee, result.total_with_fee)
 
@@ -36,16 +50,27 @@ defmodule SaseMango.Calculator do
     }
   end
 
-  def maybe_add_item(securities, results, input) when length(results.securities) > 0 do
-    result = run(securities, input)
+  defp update_item(results, result) do
+    old_security = Enum.find(results.securities, &(&1.symbol == result.symbol))
 
-    case Enum.any?(results.securities, &(&1.id == result.id)) do
-      true -> results
-      false -> add_new_item(results, result)
-    end
-  end
+    total_without_fee =
+      Decimal.add(
+        Decimal.sub(results.total_without_fee, old_security.total_without_fee),
+        result.total_without_fee
+      )
 
-  def maybe_add_item(securities, results, input) do
-    add_new_item(results, run(securities, input))
+    total_with_fee =
+      Decimal.add(
+        Decimal.sub(results.total_with_fee, old_security.total_with_fee),
+        result.total_with_fee
+      )
+
+    filtered_securities = Enum.filter(results.securities, &(&1.symbol != result.symbol))
+
+    %{
+      securities: Enum.sort_by([result | filtered_securities], & &1.symbol, :asc),
+      total_without_fee: total_without_fee,
+      total_with_fee: total_with_fee
+    }
   end
 end

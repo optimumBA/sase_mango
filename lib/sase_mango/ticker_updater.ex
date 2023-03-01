@@ -3,9 +3,10 @@ defmodule SaseMango.TickerUpdater do
     Module responsible for updating each issuer table.
   """
 
+  alias SaseMango.BargainsCache
   alias SaseMango.SaseScraper
   alias SaseMango.Securities
-  alias SaseMangoWeb.Endpoint
+  alias SaseMango.SecuritiesCache
 
   @doc """
     Updates each issuer in db.
@@ -51,6 +52,7 @@ defmodule SaseMango.TickerUpdater do
       end
     end
 
-    Endpoint.broadcast("securities", "securities_update", %{})
+    SecuritiesCache.update()
+    BargainsCache.update()
   end
 end

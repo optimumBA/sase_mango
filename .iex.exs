@@ -1,3 +1,5 @@
+alias SaseMango.BargainsCache
 alias SaseMango.Securities
+alias SaseMango.SecuritiesCache
 alias SaseMango.SecuritiesUpdater
 alias SaseMango.TickerUpdater

@@ -73,3 +73,10 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :sase_mango,
+  admin_auth: [
+    username: "sasemango",
+    password: "sasemango"
+  ],
+  env: config_env()

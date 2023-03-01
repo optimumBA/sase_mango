@@ -15,19 +15,17 @@
 
 html {
   box-sizing: border-box;
-  font-size: 62.5%;
+  -webkit-appearance: none;
 }
 
 body {
   color: #000000;
-  font-size: 1.6em;
-  font-weight: 300;
   letter-spacing: 0.01em;
   line-height: 1.6;
 }
 
 .container {
-  @apply relative overflow-hidden w-[100%] flex flex-col sm:max-w-[100%];
+  @apply relative w-[100%] flex flex-col sm:max-w-[100%];
 }
 
 /* Inputs, buttons */
@@ -38,12 +36,8 @@ button[type='submit'],
 input[type='button'],
 input[type='reset'],
 input[type='submit'] {
-  background-color: #9db9d3;
-  border: 0.1rem solid #9db9d3;
-  color: #fff;
   cursor: pointer;
   display: inline-block;
-  font-weight: bold;
   letter-spacing: 0.1rem;
   text-align: center;
   text-decoration: none;
@@ -56,8 +50,6 @@ input[type='button']:hover,
 input[type='reset']:hover,
 input[type='submit']:hover {
   transition: all 0.2s ease-in-out;
-  background-color: #7784b8;
-  border-color: #7784b8;
   color: #fff;
   outline: 0;
 }
@@ -67,8 +59,6 @@ button[disabled],
 input[type='button'][disabled],
 input[type='reset'][disabled],
 input[type='submit'][disabled] {
-  background-color: #b7c9db;
-  border: 0.1rem solid #b7c9db;
   color: #f6f6f6;
   cursor: default;
 }
@@ -171,7 +161,6 @@ input:not([type]),
 textarea,
 select {
   -webkit-appearance: none;
-  background-color: transparent;
   box-shadow: none;
   box-sizing: inherit;
   width: 100%;
@@ -193,7 +182,7 @@ input[type='week']:focus,
 input:not([type]):focus,
 textarea:focus,
 select:focus {
-  outline: 0;
+  outline: none;
 }
 
 [type='text']:focus,
@@ -212,16 +201,7 @@ select:focus {
 textarea:focus,
 select:focus {
   outline: none;
-  --tw-ring-inset: var(--tw-empty);
-  --tw-ring-offset-width: 0px;
-  --tw-ring-offset-color: #fff;
-  --tw-ring-color: #404248;
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
-    var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
-    calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow),
-    var(--tw-shadow);
+  box-shadow: none;
 }
 
 select {
@@ -247,7 +227,6 @@ label,
 legend {
   display: block;
   font-size: 1.6rem;
-  margin-bottom: 0.5rem;
 }
 fieldset {
   border-width: 0;
@@ -360,7 +339,7 @@ th:last-child {
 /* Calculator table */
 
 .data-table > thead > tr > th {
-  @apply px-8 py-4 text-[#1E1E1E] bg-[#D9D9D9] text-center font-[400] text-[0.95em];
+  @apply px-8 py-4 text-gray-800 bg-gray-200 text-center font-normal text-base;
 }
 
 .data-table > tbody > tr:last-child {
@@ -376,7 +355,7 @@ th:last-child {
 }
 
 .data-table > tbody > tr:not(:last-child):hover {
-  @apply bg-[#ECF2F7];
+  @apply bg-blue-50;
 }
 
 .delete-row {
@@ -386,7 +365,12 @@ th:last-child {
 /* Securities table */
 
 .table-wrapper {
-  @apply overflow-y-auto max-h-[75vh];
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
+}
+
+.table-wrapper::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, and Opera */
 }
 
 .securities-table {
@@ -394,7 +378,7 @@ th:last-child {
 }
 
 .securities-table > thead {
-  @apply sticky top-0;
+  @apply sticky top-0 h-11;
 }
 
 .securities-table > tfoot {
@@ -402,7 +386,7 @@ th:last-child {
 }
 
 .securities-table > thead > tr > th {
-  @apply text-white bg-[#9DB9D3] text-center font-[700] text-[0.95em] 2xl:text-[1em] px-6 py-6 2xl:py-8 2xl:px-4;
+  @apply text-white bg-blue-dark-200 text-center font-semibold text-xs px-0 py-2 2xl:text-sm 2xl:py-4 2xl:px-2;
 }
 
 .securities-table > thead > tr > th:first-child {
@@ -410,7 +394,7 @@ th:last-child {
 }
 
 .securities-table > thead > tr > th:last-child {
-  @apply px-4 2xl:px-8;
+  @apply px-4 2xl:pr-0;
 }
 
 .securities-table > tbody > tr {
@@ -419,11 +403,15 @@ th:last-child {
 
 .securities-table tbody tr td,
 .securities-table tbody tr th {
-  @apply text-center text-[#1E1E1E] text-[1em] 2xl:text-[1.1em];
+  @apply text-gray-800 text-xs 2xl:text-sm;
+}
+
+.securities-table tbody tr td {
+  @apply pr-2 pl-0 leading-4 2xl:leading-5 font-normal;
 }
 
 .sortable-column {
-  @apply flex justify-center items-center gap-4 cursor-pointer;
+  @apply flex justify-around items-center gap-1 2xl:justify-center 2xl:gap-2 cursor-pointer;
 }
 
 .sortable-column span {
@@ -432,30 +420,30 @@ th:last-child {
 
 .rotate-up svg {
   transform: rotateX(180deg);
-  @apply duration-500 ease-linear;
+  @apply duration-[200ms] ease-linear;
 }
 
 .rotate-down svg {
   transform: rotateX(0deg);
-  @apply duration-500 ease-linear;
+  @apply duration-[200ms] ease-linear;
 }
 
 /* Header with page links */
-
-.page-link {
-  @apply block h-full py-5 text-[#8C8C8C] text-[0.95em] font-[400] px-8 duration-300 ease-in-out;
-}
 
 .page-tab {
   @apply relative cursor-pointer;
 }
 
+.page-link {
+  @apply block h-full py-4 text-gray-450 text-sm xl:text-base font-normal px-6 duration-300 ease-in-out;
+}
+
 .page-tab:hover a {
-  @apply text-[#3b3a3a];
+  @apply text-gray-750;
 }
 
 .tab-line {
-  @apply absolute -bottom-[3px] w-0 bg-[#9DB9D3] h-[2px] rounded-xl;
+  @apply absolute -bottom-0.75 w-0 bg-blue-dark-200 h-0.5 rounded-xl;
 }
 
 .page-tab.securities .tab-line,
@@ -473,71 +461,6 @@ th:last-child {
     left: 0;
     width: 100%;
   }
-}
-
-/* Table search form */
-
-.table-form {
-  @apply relative;
-}
-
-.search-icons {
-  @apply absolute w-max flex items-center gap-4 right-5 top-[50%] -translate-y-[50%];
-}
-
-.search-field {
-  @apply text-[1.2em] duration-150 ease-linear text-[#3e3e3e] my-2 pl-8 pr-28 py-3 rounded-xl border border-[#D9D9D9];
-}
-
-.search-field::placeholder {
-  @apply text-[#9A9A9A];
-}
-
-.search-field:focus {
-  @apply border-[#bababa];
-}
-
-/* Calculator */
-
-.calc-select {
-  @apply border border-[#979797] rounded-[0.7rem] text-[1em] font-[300] py-[1.4rem] pr-[4rem] pl-[0.5rem];
-
-  background: url('data:image/svg+xml;utf8,<svg width="14" height="8" viewBox="0 0 14 9" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L7.08696 7L13 1" stroke="%23999999" stroke-width="2" stroke-linecap="round"/></svg>')
-    95% no-repeat;
-}
-
-.calc-select:hover {
-  @apply border-[#5f5f5f] cursor-pointer;
-}
-
-.calc-select:focus {
-  @apply border-[#5f5f5f];
-  background: url('data:image/svg+xml;utf8,<svg width="14" height="8" viewBox="0 0 14 9" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 8L7.08696 2L13 8" stroke="%23999999" stroke-width="2" stroke-linecap="round"/></svg>')
-    95% no-repeat;
-}
-
-.calc-select::placeholder {
-  @apply text-[#B5B5B5];
-}
-
-.calc-field {
-  @apply border border-[#979797] rounded-[0.7rem] shadow-none;
-}
-
-.calc-field > input {
-  @apply border-0 p-[1rem] text-[1.2em] font-[300] text-center;
-}
-
-.calc-field::placeholder {
-  @apply text-[1.2em] text-[#B5B5B5];
-}
-
-.calc-field:focus {
-  @apply outline-none border-[#565656];
-}
-
-.clear-icon {
-  @apply cursor-pointer text-[#ADADAD] hover:text-[#565555];
 }
 
 /* Alerts and form errors used by phx.new */
@@ -573,9 +496,8 @@ th:last-child {
   display: none;
 }
 .invalid-feedback {
-  color: #a94442;
-  display: block;
-  margin: -1rem 0 2rem;
+  @apply text-red-700 block my-4 ml-4;
+  animation: 0.2s ease-in 0s normal forwards 1 fade-in-scale-keys;
 }
 
 /* LiveView specific classes for your customization */
@@ -583,6 +505,10 @@ th:last-child {
 .phx-no-feedback.invalid-feedback,
 .phx-no-feedback .invalid-feedback {
   display: none;
+}
+
+.phx-no-feedback .label-invalid {
+  @apply text-[#9A9A9A];
 }
 
 .phx-click-loading {

@@ -6,9 +6,10 @@ defmodule SaseMango.SecuritiesUpdater do
 
   require Logger
 
+  alias SaseMango.BargainsCache
   alias SaseMango.SaseScraper
   alias SaseMango.Securities
-  alias SaseMangoWeb.Endpoint
+  alias SaseMango.SecuritiesCache
 
   @doc """
     Updates existing or create new issuer.
@@ -43,7 +44,8 @@ defmodule SaseMango.SecuritiesUpdater do
           end
         end)
 
-        Endpoint.broadcast("securities", "securities_update", %{})
+        SecuritiesCache.update()
+        BargainsCache.update()
 
       _ ->
         nil
