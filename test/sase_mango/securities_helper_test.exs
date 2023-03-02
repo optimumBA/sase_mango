@@ -1,4 +1,4 @@
-defmodule SaseMango.DataTextParsingTest do
+defmodule SaseMango.SecuritiesHelperTest do
   use SaseMango.DataCase, async: true
 
   alias SaseMango.SecuritiesHelper
