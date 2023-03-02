@@ -1,11 +1,11 @@
 defmodule SaseMangoWeb.SecuritiesLive.Show do
   @moduledoc false
 
+  use SaseMangoWeb, :live_view
+
   alias SaseMango.Securities
   alias SaseMango.SecuritiesHelper
   alias SaseMangoWeb.SharedComponents.TableIconsComponent
-
-  use SaseMangoWeb, :live_view
 
   @impl Phoenix.LiveView
   def mount(%{"symbol" => symbol} = _params, _session, socket) do

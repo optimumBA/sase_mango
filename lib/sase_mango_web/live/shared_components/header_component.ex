@@ -3,9 +3,9 @@ defmodule SaseMangoWeb.SharedComponents.HeaderComponent do
   Component that renders page tabs with links
   """
 
-  alias SaseMango.SecuritiesHelper
-
   use SaseMangoWeb, :component
+
+  alias SaseMango.SecuritiesHelper
 
   def header(assigns) do
     ~H"""
