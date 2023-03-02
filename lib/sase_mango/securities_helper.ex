@@ -113,16 +113,17 @@ defmodule SaseMango.SecuritiesHelper do
   def parse_shares_and_nominal_price(data_string) when is_binary(data_string) do
     data_string
     |> String.split("|", trim: true)
-    |> Enum.map(
+    |> Stream.map(
       &(String.trim(&1)
         |> String.split(~r/<\/a>/))
     )
-    |> Enum.map(fn [k, v] ->
+    |> Stream.map(fn [k, v] ->
       [issuer_symbol] = Regex.split(~r{<a href=\'.*\'>}, k, trim: true)
       [shares_num, nominal_price] = Regex.split(~r{(\s*-\s*)}, v, trim: true)
 
       {issuer_symbol, shares_num, nominal_price}
     end)
+    |> Enum.to_list()
   end
 
   @doc """
