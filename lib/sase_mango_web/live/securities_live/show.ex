@@ -70,10 +70,23 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
               </thead>
               <tbody class="text-xs md:text-sm border border-t-0">
                 <%= for symbol_data <- @symbol_data_rows do %>
-                  <tr>
-                    <td class="py-3 text-left border-l bg-slate-50"><b><%= symbol_data.title %></b></td>
-                    <td class="px-2 py-3 text-left border-r bg-slate-50"><%= symbol_data.value %></td>
-                  </tr>
+                  <%= if symbol_data.title == "Web page" do %>
+                    <tr>
+                      <td class="py-3 text-left border-l bg-slate-50"><b>Web page</b></td>
+                      <td class="px-2 py-3 text-left border-r bg-slate-50">
+                        <a href={"https://#{symbol_data.value}"} target="_blank"
+                          class="pr-2 text-blue-dark-500 hover:underline font-light"
+                        >
+                          <%= symbol_data.value %>
+                        </a>
+                      </td>
+                    </tr>
+                    <% else %>
+                    <tr>
+                      <td class="py-3 text-left border-l bg-slate-50"><b><%= symbol_data.title %></b></td>
+                      <td class="px-2 py-3 text-left border-r bg-slate-50"><%= symbol_data.value %></td>
+                    </tr>
+                  <% end %>
                 <% end %>
               </tbody>
             </table>
@@ -152,7 +165,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
                   <td class="pl-0 py-3 flex flex-col text-left border-r bg-slate-50 flex">
                     <%= for {symbol, shares, nominal_price} <- @company_data.securities_and_shareholders_data.shares_nominal_price do %>
                       <div class="py-1">
-                        <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{symbol}"} target="_blank" class="pr-2 text-blue-300">
+                        <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{symbol}"} target="_blank" class="pr-2 text-blue-dark-500 hover:underline">
                           <%= symbol %>
                         </a>
                         <span> - <%= shares %> - <%= nominal_price %></span>
