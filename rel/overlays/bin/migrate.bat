@@ -1,1 +1,0 @@
-call "%~dp0\sase_mango" eval SaseMango.Release.migrate
