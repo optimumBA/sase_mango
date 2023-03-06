@@ -1,9 +1,9 @@
 defmodule SaseMango.Securities.FinancialStatement do
   @moduledoc """
-    Financial statement Ecto schema.
+  Financial statement Ecto schema.
 
-    Defines all table fields, including the reference to the associated
-    issuer and Ecto changeset function.
+  Defines all table fields, including the reference to the associated
+  issuer and Ecto changeset function.
   """
   use Ecto.Schema
 
@@ -18,7 +18,7 @@ defmodule SaseMango.Securities.FinancialStatement do
   end
 
   @doc """
-    Financial statements changeset for validation.
+  Financial statements changeset for validation.
 
   """
   def changeset(financial_statement, attrs \\ %{}) do

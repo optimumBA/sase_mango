@@ -5,13 +5,15 @@ defmodule SaseMangoWeb.SharedComponents.HeaderComponent do
 
   use SaseMangoWeb, :component
 
+  alias SaseMango.SecuritiesHelper
+
   def header(assigns) do
     ~H"""
     <div class="mx-12 xl:mx-16 mt-30 mb-0 md:mb-2 py-4">
       <div class="flex items-center gap-2 text-sm xl:text-base">
         <span class="text-gray-450 font-normal">Date:</span>
         <.date_icon />
-        <span class="font-normal"><%= todays_date() %></span>
+        <span class="font-normal"><%= SecuritiesHelper.format_date() %></span>
       </div>
 
       <div class="w-full mt-8 flex items-end justify-start border-b border-gray-350">
@@ -54,10 +56,5 @@ defmodule SaseMangoWeb.SharedComponents.HeaderComponent do
       <path d="M1 6.66663H13" stroke="#5B92D7" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
     """
-  end
-
-  defp todays_date do
-    {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()
-    "#{day}.#{month}.#{year}"
   end
 end

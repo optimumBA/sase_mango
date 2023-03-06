@@ -1,4 +1,8 @@
 defmodule SaseMango.Calculator.Input do
+  @moduledoc """
+  Defines a CalculatorInput struct.
+  """
+
   import Ecto.Changeset
 
   @types %{
@@ -10,6 +14,9 @@ defmodule SaseMango.Calculator.Input do
 
   defstruct [:amount, :fee, :price, :symbol]
 
+  @doc """
+  CalculatorInput changeset for validation.
+  """
   def changeset(input, attrs \\ %{}) do
     {input, @types}
     |> cast(attrs, Map.keys(@types))
