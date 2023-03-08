@@ -45,17 +45,10 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
   def render(assigns) do
     ~H"""
       <section class="w-full min-h-screen">
-        <header class="p-4 border-b shadow-md mb-4">
+        <header class="py-4 px-4 md:px-0 border-b shadow-md mb-4">
           <div class="w-full md:w-11/12 xl:w-3/4 mx-auto px-2 md:px-0 py-2 mt-10">
             <div class="relative ml-6 md:ml-0">
-
-                <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{@company_data.symbol}"} target="_blank"
-                  class="flex items-center text-blue-dark-200 text-lg font-semibold md:text-2xl tracking-wide underline"
-                >
-                  <TableIconsComponent.link />
-                  <span class="ml-2"><%= @company_data.name %></span>
-                </a>
-
+                <TableIconsComponent.issuer_link company_symbol={@company_data.symbol} company_name={@company_data.name} />
               <%= live_redirect to: Routes.securities_index_path(@socket, :securities), class: "absolute top-1/2 left-0 -translate-x-8 -translate-y-1/2" do %>
                 <TableIconsComponent.icon_back />
               <% end %>
