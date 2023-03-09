@@ -60,18 +60,10 @@ defmodule SaseMango.BargainsCache do
     new_list =
       Securities.list_securities(:bargains)
       |> Enum.reduce([], fn %{} = security, new_list ->
-        new =
-          !Enum.find(state.yesterday_bargains, fn %{} = old_security ->
-            old_security.symbol == security.symbol
-          end)
-
+        new = update_bargains(state.yesterday_bargains, security)
         security = Map.put(security, :new, new)
 
-        newest =
-          !Enum.find(state.today_bargains, fn %{} = old_security ->
-            old_security.symbol == security.symbol
-          end)
-
+        newest = update_bargains(state.today_bargains, security)
         security = Map.put(security, :newest, newest)
 
         [security | new_list]
@@ -80,6 +72,12 @@ defmodule SaseMango.BargainsCache do
     state
     |> Map.put(:executed_at, DateTime.utc_now())
     |> Map.put(:today_bargains, new_list)
+  end
+
+  defp update_bargains(bargains, security) do
+    !Enum.find(bargains, fn %{} = old_security ->
+      old_security.symbol == security.symbol
+    end)
   end
 
   defp maybe_move_to_yesterday_list(state) do
