@@ -8,7 +8,7 @@
     <.live_title>
       <%= assigns[:page_title] || "SaseMango"%>
     </.live_title>
-    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")} />
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <!-- Google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,7 +24,7 @@
       defer
       phx-track-static
       type="text/javascript"
-      src={Routes.static_path(@conn, "/assets/app.js")}
+      src={~p"/assets/app.js"}
     >
     </script>
   </head>
