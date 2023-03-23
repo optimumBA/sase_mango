@@ -33,7 +33,6 @@ defmodule SaseMango.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.7.0"},
-      {:phoenix_view, "~> 2.0"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},
@@ -45,7 +44,6 @@ defmodule SaseMango.MixProject do
       {:esbuild, "~> 0.3", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
-      {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.6"},
       {:csv, "~> 2.4"},

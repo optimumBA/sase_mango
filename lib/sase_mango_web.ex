@@ -107,7 +107,6 @@ defmodule SaseMangoWeb do
       import Phoenix.View
 
       import SaseMangoWeb.ErrorHelpers
-      import SaseMangoWeb.Gettext
       alias SaseMangoWeb.Router.Helpers, as: Routes
 
       unquote(verified_routes())
