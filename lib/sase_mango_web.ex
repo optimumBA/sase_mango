@@ -104,7 +104,7 @@ defmodule SaseMangoWeb do
       import Phoenix.Component
 
       # Import basic rendering functionality (render, render_layout, etc)
-      import Phoenix.View
+      # import Phoenix.View
 
       import SaseMangoWeb.ErrorHelpers
       alias SaseMangoWeb.Router.Helpers, as: Routes

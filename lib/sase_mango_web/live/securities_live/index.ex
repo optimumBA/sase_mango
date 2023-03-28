@@ -2,13 +2,15 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   use SaseMangoWeb, :live_view
 
   alias Phoenix.Socket.Broadcast
+  alias SaseMango.BargainsCache
   alias SaseMango.HandleTable
   alias SaseMango.HandleTable.SearchFilter
   alias SaseMango.Securities
-  alias SaseMangoWeb.Components.FilterFormComponent
-  alias SaseMangoWeb.Components.HeaderComponent
-  alias SaseMangoWeb.Components.SortingComponent
+  alias SaseMango.SecuritiesCache
   alias SaseMangoWeb.Endpoint
+  alias SaseMangoWeb.SecuritiesLive.FilterFormComponent
+  alias SaseMangoWeb.SecuritiesLive.TableComponents
+  alias SaseMangoWeb.SharedComponents.HeaderComponent
 
   @impl true
   def mount(_params, _session, socket) do
@@ -16,7 +18,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
       Endpoint.subscribe("securities")
     end
 
-    {:ok, socket}
+    {:ok, assign_table_columns(socket)}
   end
 
   @impl true
@@ -28,19 +30,61 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
      |> apply_action(socket.assigns.live_action, params)}
   end
 
+  defp assign_filter_options(socket, params),
+    do: assign(socket, :filter_options, %SearchFilter{q: params["q"] || nil})
+
   defp assign_sort_options(socket, params) do
-    new_sort_by = params["sort_by"] || nil
+    new_sort_by = params["sort_by"] || "eps_roi"
     new_sort_order = set_sort_order(params["sort_order"])
     sort_options = %{sort_by: new_sort_by, sort_order: new_sort_order}
 
     assign(socket, :sort_options, sort_options)
   end
 
-  defp assign_filter_options(socket, params) do
-    assign(socket, :filter_options, %SearchFilter{q: params["q"] || nil})
+  defp apply_action(socket, :securities, _params) do
+    socket
+    |> assign(:active_tab, :securities)
+    |> assign(:page_title, "List of securities")
+    |> assign_list_of_securities()
+    |> maybe_filter_securities()
   end
 
-  @impl true
+  defp apply_action(socket, :bargains, _params) do
+    socket
+    |> assign(:active_tab, :bargains)
+    |> assign(:page_title, "Bargain securities")
+    |> assign_list_of_bargains()
+    |> maybe_filter_securities()
+  end
+
+  defp assign_table_columns(socket) do
+    table_columns = [
+      %{id: "sort-symbol", title: "Symbol", type: :text, name: "symbol"},
+      %{id: "sort-issuer", title: "Issuer", type: :text, name: "name"},
+      %{id: "sort-price", title: "Price", type: :number, name: "price"},
+      %{id: "sort-nominal-price", title: "Nominal price", type: :number, name: "nominal_price"},
+      %{id: "sort-ask", title: "Ask", type: :number, name: "ask_price"},
+      %{id: "sort-bid", title: "Bid", type: :number, name: "bid_price"},
+      %{id: "sort-dividend-roi", title: "Dividend ROI (%)", type: :number, name: "dividend_roi"},
+      %{id: "sort-eps-roi", title: "EPS ROI (%)", type: :number, name: "eps_roi"},
+      %{id: "sort-pe", title: "P/E", type: :number, name: "pe"},
+      %{id: "sort-pb", title: "P/B", type: :number, name: "pb"},
+      %{id: "sort-market-value", title: "Market Value", type: :number, name: "market_value"},
+      %{id: "sort-book-value", title: "Book Value", type: :number, name: "book_value"},
+      %{id: "sort-bvs", title: "BVS", type: :number, name: "bvs"},
+      %{id: "sort-profit-margin", title: "Profit margin", type: :number, name: "profit_margin"}
+    ]
+
+    assign(socket, :table_columns, table_columns)
+  end
+
+  defp assign_list_of_securities(socket),
+    do: assign(socket, :securities, SecuritiesCache.get())
+
+  defp assign_list_of_bargains(socket),
+    do: assign(socket, :securities, BargainsCache.get())
+
+  @impl Phoenix.LiveView
   def handle_info(%Broadcast{event: "securities_update"}, socket) do
     {:noreply, update_securities(socket, socket.assigns.live_action)}
   end
@@ -53,19 +97,29 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   end
 
   defp update_securities(socket, :securities) do
-    assign(socket, :securities, Securities.list_securities(:securities))
+    socket
+    |> assign_list_of_securities()
+    |> maybe_filter_securities()
   end
 
   defp update_securities(socket, :bargains) do
-    assign(socket, :securities, Securities.list_securities(:bargains))
+    socket
+    |> assign_list_of_bargains()
+    |> maybe_filter_securities()
   end
 
   @impl true
-  def handle_event("sort_column", %{"key" => key} = _params, socket) do
-    %{sort_options: %{sort_order: sort_order}} = socket.assigns
+  def handle_event("sort_column", %{"col_name" => name} = _params, socket) do
+    %{sort_options: %{sort_by: col_name, sort_order: sort_order}} = socket.assigns
 
-    sort_order = if sort_order == :asc, do: :desc, else: :asc
-    sort_options = %{sort_by: key, sort_order: sort_order}
+    maybe_update_sort_order =
+      if col_name != name do
+        :asc
+      else
+        revert_sort_order(sort_order)
+      end
+
+    sort_options = %{sort_by: name, sort_order: maybe_update_sort_order}
 
     url_params = merge_url_params(socket, sort_options)
     path = Routes.securities_index_path(socket, socket.assigns.live_action, url_params)
@@ -78,20 +132,6 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     path = Routes.securities_index_path(socket, socket.assigns.live_action, url_params)
 
     {:noreply, push_patch(socket, to: path, replace: true)}
-  end
-
-  defp apply_action(socket, :securities, _params) do
-    socket
-    |> assign(:page_title, "List of securities")
-    |> assign(:active_tab, :securities)
-    |> assign_list_securities(:securities)
-  end
-
-  defp apply_action(socket, :bargains, _params) do
-    socket
-    |> assign(:page_title, "Bargain securities")
-    |> assign(:active_tab, :bargains)
-    |> assign_list_securities(:bargains)
   end
 
   defp merge_url_params(socket, options) do
@@ -108,10 +148,20 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     url_params
   end
 
-  defp assign_list_securities(%{assigns: %{filter_options: filter_options}} = socket, type) do
-    list_securities = Securities.list_securities(type, filter_options)
+  defp maybe_filter_securities(%{assigns: %{filter_options: %{q: query}}} = socket)
+       when is_binary(query),
+       do: sort_securities(socket, filter(socket.assigns.securities, query))
 
-    sort_securities(socket, list_securities)
+  defp maybe_filter_securities(socket), do: sort_securities(socket, socket.assigns.securities)
+
+  defp filter(list, query) do
+    term = String.downcase(query)
+
+    Enum.filter(
+      list,
+      &(String.contains?(String.downcase(&1.symbol), term) ||
+          String.contains?(String.downcase(&1.name), term))
+    )
   end
 
   defp sort_securities(
@@ -122,9 +172,12 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     assign(socket, :securities, HandleTable.sort_table(list, field, sort_order))
   end
 
-  defp sort_securities(socket, list), do: assign(socket, :securities, list)
+  defp sort_securities(socket, _list), do: socket
 
   defp set_sort_order("asc"), do: :asc
   defp set_sort_order("desc"), do: :desc
-  defp set_sort_order(_value), do: :asc
+  defp set_sort_order(_value), do: :desc
+
+  defp revert_sort_order(:asc), do: :desc
+  defp revert_sort_order(:desc), do: :asc
 end

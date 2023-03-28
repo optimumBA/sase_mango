@@ -1,8 +1,7 @@
 defmodule SaseMango.SecuritiesHelper do
   @moduledoc """
-    Securities list helper module.
-
-    Implements functions for managing lists of securities.
+  Securities list helper module.
+  Implements functions for managing lists of securities.
   """
 
   import Ecto.Query
@@ -12,13 +11,126 @@ defmodule SaseMango.SecuritiesHelper do
   alias SaseMango.Repo
 
   @doc """
-    Returns the list of securities
+  Returns today's or the given date in the following format (dd.mm.yyyy).
+  """
+  def format_date do
+    [year, month, day] =
+      DateTime.now!("Europe/Sarajevo")
+      |> DateTime.to_date()
+      |> Date.to_string()
+      |> String.split("-")
 
-    List is calculated depending on the type(regular or bargains list)
-    by either regular or ask price.
+    "#{day}.#{month}.#{year}"
+  end
+
+  def format_date(date) do
+    {:ok, date_format} = NaiveDateTime.from_iso8601(date)
+
+    [year, month, day] =
+      date_format
+      |> NaiveDateTime.to_date()
+      |> Date.to_string()
+      |> String.split("-")
+
+    "#{day}.#{month}.#{year}"
+  end
+
+  @doc """
+  Parses the management and supervisory data string and returns a list of tuples in the form {job_title, person}.
+  Returns a list of tuples or an empty list.
+
+  ## Examples
+
+      iex> filter_management_and_supervisory_data("Vojko Kokoravec,predsjednik,Dragan Radusinović,član,Radovan Teslić,član, Mitar Kovačević,član")
+      [
+        {"predsjednik", "Vojko Kokoravec"},
+        {"član", "Dragan Radusinović"},
+        {"član", "Radovan Teslić"},
+        {"član", "Mitar Kovačević"}
+      ]
+
+      iex> filter_management_and_supervisory_data(nil)
+      []
 
   """
-  def list_securities(list_type, filter_params \\ %{}) do
+  def filter_management_and_supervisory_data(data) when data in [nil, ""], do: []
+
+  def filter_management_and_supervisory_data(data_string) when is_binary(data_string) do
+    board_data_list = String.split(data_string, ~r/(\s)*(,|-)(\s)*/, trim: true)
+
+    positions = ["predsj", "direktor", "član", "v.d."]
+
+    if rem(Enum.count(board_data_list), 2) == 1 do
+      board_data_list_with_index = Enum.with_index(board_data_list)
+
+      board_data_list_with_index
+      |> Stream.map(fn {item, i} ->
+        next_el = Enum.find(board_data_list_with_index, fn {_item, ei} -> ei == i + 1 end)
+
+        is_name? = !String.contains?(String.downcase(item), positions)
+
+        has_position? =
+          next_el &&
+            String.contains?(String.downcase(elem(next_el, 0)), positions)
+
+        cond do
+          is_name? && has_position? ->
+            {elem(next_el, 0), item}
+
+          is_name? ->
+            {"", item}
+
+          true ->
+            nil
+        end
+      end)
+      |> Stream.reject(&is_nil/1)
+      |> Enum.map(& &1)
+    else
+      board_data_list
+      |> Enum.chunk_every(2)
+      |> Enum.map(fn [k, v] -> {v, k} end)
+    end
+  end
+
+  @doc """
+  Parses the shares and nominal price data string and returns a list of tuples in the form {issuer_symbol, number_of_shares, nominal_price}.
+
+  ## Examples
+
+      iex> parse_shares_and_nominal_price("<a href='BSNLR'>BSNLR</a> - 8.596.256 - 10,00 KM | <a href='BSNLZ'>BSNLZ</a> - 441.431 - 10,00 KM |")
+      [
+        {"BSNLR", "8.596.256", "10,00 KM"},
+        {"BSNLZ", "441.431", "10,00 KM"}
+      ]
+
+      iex> parse_shares_and_nominal_price(nil)
+      []
+
+  """
+  def parse_shares_and_nominal_price(data) when data in [nil, ""], do: []
+
+  def parse_shares_and_nominal_price(data_string) when is_binary(data_string) do
+    data_string
+    |> String.split("|", trim: true)
+    |> Stream.map(
+      &(String.trim(&1)
+        |> String.split(~r/<\/a>/))
+    )
+    |> Stream.map(fn [k, v] ->
+      [issuer_symbol] = Regex.split(~r{<a href=\'.*\'>}, k, trim: true)
+      [shares_num, nominal_price] = Regex.split(~r{(\s*-\s*)}, v, trim: true)
+
+      {issuer_symbol, shares_num, nominal_price}
+    end)
+    |> Enum.to_list()
+  end
+
+  @doc """
+  Returns the list of securities.
+  List is calculated depending on the type(regular or bargains list) by either regular or ask price.
+  """
+  def list_securities(list_type, _params \\ %{}) do
     current_financial_statement = current_financial_statement()
     previous_financial_statement = previous_financial_statement()
 
@@ -30,7 +142,6 @@ defmodule SaseMango.SecuritiesHelper do
       current: current_fs,
       previous: previous_fs
     })
-    |> filter_by_symbol_or_name(filter_params)
     |> maybe_filter_available_securities(list_type)
     |> Repo.all()
     |> Stream.map(fn %{} = security ->
@@ -175,7 +286,6 @@ defmodule SaseMango.SecuritiesHelper do
       }
     end)
     |> maybe_additional_filter(list_type)
-    |> Enum.sort_by(& &1.eps_roi, {:desc, Decimal})
   end
 
   defp financial_statements do
@@ -203,19 +313,6 @@ defmodule SaseMango.SecuritiesHelper do
       where: fs_ids.issuer_id == parent_as(:issuer).id,
       where: fs_ids.rank == 2
   end
-
-  defp filter_by_symbol_or_name(query, %{q: name}) when is_binary(name) do
-    search_value = "%#{name}%"
-
-    query
-    |> where(
-      [issuer: i],
-      ilike(i.symbol, ^search_value) or
-        ilike(fragment("(?->'SymbolDescription')::TEXT", i.info), ^search_value)
-    )
-  end
-
-  defp filter_by_symbol_or_name(query, _params), do: query
 
   defp maybe_filter_available_securities(query, :securities), do: query
 

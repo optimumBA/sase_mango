@@ -1,7 +1,6 @@
 defmodule SaseMango.HandleTable do
   @moduledoc """
-    The HandleTable context module gives sort and filter/search support for the table and table form.
-
+  The HandleTable context module gives sort and filter/search support for the table and table form.
   """
 
   alias __MODULE__.SearchFilter
@@ -24,7 +23,7 @@ defmodule SaseMango.HandleTable do
   @text_fields ["symbol", "name"]
 
   @doc """
-    Returns a changeset for a `FilterForm.SearchFilter`.
+  Returns a changeset for a `FilterForm.SearchFilter`.
   """
   def change_table_filter(%SearchFilter{} = filter, attrs \\ %{}) do
     SearchFilter.changeset(filter, attrs)
@@ -41,8 +40,7 @@ defmodule SaseMango.HandleTable do
   defp get_sort_params(_field, _sort_order), do: nil
 
   @doc """
-    Sorts the list of securities by field type in ascending/descending order.
-
+  Sorts the list of securities by field type in ascending/descending order.
   """
   def sort_table(securities, field, sort_order) do
     case get_sort_params(field, sort_order) do

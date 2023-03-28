@@ -52,7 +52,8 @@ defmodule SaseMango.MixProject do
       {:tzdata, "~> 1.1"},
       {:quantum, "~> 3.4"},
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
-      {:ecto_psql_extras, "~> 0.6"}
+      {:ecto_psql_extras, "~> 0.6"},
+      {:number, "~> 1.0"}
     ]
   end
 

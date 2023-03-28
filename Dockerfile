@@ -44,18 +44,14 @@ RUN mix deps.compile
 
 COPY priv priv
 
-# note: if your project uses a tool like https://purgecss.com/,
-# which customizes asset compilation based on what it finds in
-# your Elixir templates, you will need to move the asset compilation
-# step down so that `lib` is available.
-COPY assets assets
-
-# Compile the release
 COPY lib lib
+
+COPY assets assets
 
 # compile assets
 RUN mix assets.deploy
 
+# Compile the release
 RUN mix compile
 
 # Changes to config/runtime.exs don't require recompiling the code
@@ -91,3 +87,4 @@ CMD ["/app/bin/server"]
 # Appended by flyctl
 ENV ECTO_IPV6 true
 ENV ERL_AFLAGS "-proto_dist inet6_tcp"
+
