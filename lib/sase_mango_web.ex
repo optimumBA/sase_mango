@@ -19,12 +19,20 @@ defmodule SaseMangoWeb do
 
   def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
-  def verified_routes do
+  def router do
     quote do
-      use Phoenix.VerifiedRoutes,
-        endpoint: SaseMangoWeb.Endpoint,
-        router: SaseMangoWeb.Router,
-        statics: SaseMangoWeb.static_paths()
+      use Phoenix.Router
+
+      import Plug.Conn
+      import Phoenix.Controller
+      import Phoenix.LiveView.Router
+    end
+  end
+
+  def channel do
+    quote do
+      use Phoenix.Channel
+      import SaseMangoWeb.Gettext
     end
   end
 
@@ -37,19 +45,6 @@ defmodule SaseMangoWeb do
       alias SaseMangoWeb.Router.Helpers, as: Routes
 
       unquote(verified_routes())
-    end
-  end
-
-  def html do
-    quote do
-      use Phoenix.Component
-
-      # Import convenience functions from controllers
-      import Phoenix.Controller,
-        only: [get_csrf_token: 0, view_module: 1, view_template: 1]
-
-      # Include shared imports and aliases for views
-      unquote(html_helpers())
     end
   end
 
@@ -70,46 +65,44 @@ defmodule SaseMangoWeb do
     end
   end
 
-  def component do
+  def html do
     quote do
       use Phoenix.Component
 
+      # Import convenience functions from controllers
+      import Phoenix.Controller,
+        only: [get_csrf_token: 0, view_module: 1, view_template: 1]
+
+      # Include shared imports and aliases for views
       unquote(html_helpers())
-    end
-  end
-
-  def router do
-    quote do
-      use Phoenix.Router
-
-      import Plug.Conn
-      import Phoenix.Controller
-      import Phoenix.LiveView.Router
-    end
-  end
-
-  def channel do
-    quote do
-      use Phoenix.Channel
-      import SaseMangoWeb.Gettext
     end
   end
 
   defp html_helpers do
     quote do
-      # Use all HTML functionality (forms, tags, etc)
-      use Phoenix.HTML
+      # HTML escaping functionality
+      import Phoenix.HTML
+      # Core UI components and translation
+      import SaseMangoWeb.CoreComponents
+      import SaseMangoWeb.Gettext
 
-      # Import LiveView and .heex helpers (live_render, live_patch, <.form>, etc)
-      import Phoenix.Component
-
-      # Import basic rendering functionality (render, render_layout, etc)
-      # import Phoenix.View
+      # Shortcut for generating JS commands
+      alias Phoenix.LiveView.JS
 
       import SaseMangoWeb.ErrorHelpers
       alias SaseMangoWeb.Router.Helpers, as: Routes
 
+      # Routes generation with the ~p sigil
       unquote(verified_routes())
+    end
+  end
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: SaseMangoWeb.Endpoint,
+        router: SaseMangoWeb.Router,
+        statics: SaseMangoWeb.static_paths()
     end
   end
 

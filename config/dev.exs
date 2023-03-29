@@ -6,6 +6,7 @@ config :sase_mango, SaseMango.Repo,
   password: "postgres",
   hostname: "localhost",
   database: "sase_mango_dev",
+  stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
@@ -24,7 +25,6 @@ config :sase_mango, SaseMangoWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "HaOgVnuFLuI5cqo3z7LGHSQzN8x1bFUgBThR7QW9H9MkFYri7Y/LTH+drc4gdcr8",
   watchers: [
-    # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
@@ -37,7 +37,6 @@ config :sase_mango, SaseMangoWeb.Endpoint,
 #
 #     mix phx.gen.cert
 #
-# Note that this task requires Erlang/OTP 20 or later.
 # Run `mix help phx.gen.cert` for more information.
 #
 # The `http:` config above can be replaced with:
@@ -59,10 +58,12 @@ config :sase_mango, SaseMangoWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/sase_mango_web/(live|views)/.*(ex)$",
-      ~r"lib/sase_mango_web/templates/.*(eex)$"
+      ~r"lib/sase_mango_web/(controllers|live|components)/.*(ex|heex)$"
     ]
   ]
+
+# Enable dev routes for dashboard and mailbox
+config :sase_mango, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"

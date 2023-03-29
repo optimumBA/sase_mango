@@ -7,7 +7,8 @@ defmodule SaseMangoWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_sase_mango_key",
-    signing_salt: "nTT6C1Z+"
+    signing_salt: "nTT6C1Z+",
+    same_site: "Lax"
   ]
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]

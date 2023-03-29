@@ -3,7 +3,7 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
   Module contains helper components used by the securities table
   """
 
-  use SaseMangoWeb, :component
+  use SaseMangoWeb, :html
 
   alias SaseMangoWeb.SharedComponents.TableIconsComponent
 

@@ -3,22 +3,22 @@ defmodule SaseMangoWeb.SharedComponents.FormComponents do
   Helper module with form components
   """
 
-  use SaseMangoWeb, :component
+  use SaseMangoWeb, :html
 
   def input_wrapper(assigns) do
     assigns =
       assigns
       |> assign_new(:class, fn -> "" end)
       |> assign_new(:error_tag, fn -> false end)
-      |> assign_new(:phx_feedback_for, fn -> input_name(assigns.form, assigns.field) end)
+      |> assign_new(:phx_feedback_for, fn -> Phoenix.HTML.Form.input_name(assigns.form, assigns.field) end)
       |> assign_new(:required, fn -> false end)
       |> assign_new(:show_feedback, fn -> false end)
 
     ~H"""
     <div class={@class}
-      id={input_id(@form, @field) <> "_wrapper"}
+      id={Phoenix.HTML.Form.input_id(@form, @field) <> "_wrapper"}
       phx-feedback-for={@phx_feedback_for}>
-      <%= label @form, @field, class: "text-sm xl:text-base font-light mb-[0.5rem] #{if(@show_feedback,
+      <%= Phoenix.HTML.Form.label @form, @field, class: "text-sm xl:text-base font-light mb-[0.5rem] #{if(@show_feedback,
           do: label_class(@form, @field),
           else: "text-gray-450")}"
       do %>
@@ -57,7 +57,7 @@ defmodule SaseMangoWeb.SharedComponents.FormComponents do
     assigns = assign(assigns, :attrs, attrs)
 
     ~H"""
-    <%= submit(@text, @attrs) %>
+    <%= Phoenix.HTML.Form.submit(@text, @attrs) %>
     """
   end
 end

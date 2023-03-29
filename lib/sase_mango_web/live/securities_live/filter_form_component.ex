@@ -47,7 +47,7 @@ defmodule SaseMangoWeb.SecuritiesLive.FilterFormComponent do
         class="relative"
       >
         <div>
-          <%= text_input f,
+          <%= Phoenix.HTML.Form.text_input f,
             :q,
             phx_debounce: 400,
             placeholder: "Search...",

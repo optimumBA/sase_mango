@@ -1,19 +1,4 @@
 <main class="container">
-  <div
-    class="alert alert-info"
-    role="alert"
-    phx-click="lv:clear-flash"
-    phx-value-key="info"
-    phx-no-format
-  ><%= Phoenix.Flash.get(@flash, :info) %></div>
-
-  <div
-    class="alert alert-danger"
-    role="alert"
-    phx-click="lv:clear-flash"
-    phx-value-key="error"
-    phx-no-format
-  ><%= Phoenix.Flash.get(@flash, :error) %></div>
-
+  <.flash_group flash={@flash} />
   <%= @inner_content %>
 </main>
