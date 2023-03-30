@@ -130,7 +130,7 @@ defmodule SaseMango.SecuritiesHelper do
   Returns the list of securities.
   List is calculated depending on the type(regular or bargains list) by either regular or ask price.
   """
-  def list_securities(list_type, params \\ %{}) do
+  def list_securities(list_type, _params \\ %{}) do
     current_financial_statement = current_financial_statement()
     previous_financial_statement = previous_financial_statement()
 

@@ -3,7 +3,7 @@ defmodule SaseMangoWeb.SharedComponents.HeaderComponent do
   Component that renders page tabs with links
   """
 
-  use SaseMangoWeb, :component
+  use SaseMangoWeb, :html
 
   alias SaseMango.SecuritiesHelper
 

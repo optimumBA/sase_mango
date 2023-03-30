@@ -1,12 +1,12 @@
 <section class="px-2 2xl:px-6">
-
+  
   <HeaderComponent.header
     socket={@socket}
     active_tab={@active_tab}
    />
 
   <.form
-    let={f}
+    :let={f}
     for={@changeset}
     phx-submit="calculate"
     phx-change="validate"
@@ -16,13 +16,13 @@
     <div class="w-full flex flex-col flex-wrap sm:flex-row items-center sm:items-end gap-8 pb-12">
 
       <div class="sm:w-max">
-          <%= label f, :symbol, "Issuer or symbol", for: :symbol, class: "w-max mb-[0.5rem] text-sm xl:text-base font-light text-gray-450" %>
-          <.live_component module={IssuerSelectComponent}
-            id="issuers_select_comp"
-            issuer_input_cover={@issuer_input_cover}
-            options={@select_list}
-            selected_issuer={@selected_issuer}
-          />
+        <%= Phoenix.HTML.Form.label f, :symbol, "Issuer or symbol", for: :symbol, class: "w-max mb-[0.5rem] text-sm xl:text-base font-light text-gray-450" %>
+        <.live_component module={IssuerSelectComponent}
+          id="issuers_select_comp"
+          issuer_input_cover={@issuer_input_cover}
+          options={@select_list}
+          selected_issuer={@selected_issuer}
+        />
       </div>
 
       <div class="sm:min-w-39 sm:max-w-39">
@@ -32,7 +32,7 @@
           label="Price"
         >
           <div class="relative rounded-[0.7rem] shadow-none">
-            <%= text_input f, :price, placeholder: "0.00",
+            <%= Phoenix.HTML.Form.text_input f, :price, placeholder: "0.00",
               class: "border-1 border-gray-450 focus:border-gray-600 placeholder-gray-450 rounded-[0.6rem] h-11 p-2 text-sm xl:text-base font-light text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>
             <div class="absolute inset-y-0 right-2 pr-3 xl:pr-1 flex items-center pointer-events-none">
               <span class={if(Keyword.has_key?(@changeset.errors, :price), do: "text-gray-450", else: "text-gray-600") <> " text-sm xl:text-base"} id="price-currency"> KM </span>
@@ -48,7 +48,7 @@
           label="Amount"
         >
           <div class="relative rounded-[0.7rem] shadow-none">
-            <%= text_input f, :amount, placeholder: "0",
+            <%= Phoenix.HTML.Form.text_input f, :amount, placeholder: "0",
               class: "border-1 border-gray-450 focus:border-gray-600 placeholder-gray-450 rounded-[0.6rem] h-11 p-2 text-sm xl:text-base font-light text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>
           </div>
         </FormComponents.input_wrapper>
@@ -61,7 +61,7 @@
           label="Fee percentage"
         >
           <div class="relative rounded-[0.7rem] shadow-none">
-            <%= text_input f, :fee, placeholder: "0", phx_debounce: "500",
+            <%= Phoenix.HTML.Form.text_input f, :fee, placeholder: "0", phx_debounce: "500",
               class: "border-1 border-gray-450 focus:border-gray-600 placeholder-gray-450 rounded-[0.6rem] h-11 p-2 text-sm xl:text-base font-light text-center placeholder:focus:text-transparent", autocomplete: "off" %>
             <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
               <span class={if(Keyword.has_key?(@changeset.errors, :fee), do: "text-gray-450", else: "text-gray-600") <> " text-sm xl:text-base"} id="price-currency-2"> % </span>
@@ -130,5 +130,4 @@
       </table>
     </div>
   <% end %>
-
 </section>
