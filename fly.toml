@@ -1,9 +1,9 @@
-# fly.toml file generated for sasemango on 2022-02-22T16:22:17+01:00
+# fly.toml file generated for sasemango on 2023-03-30T11:51:29+02:00
 
 app = "sasemango"
-
 kill_signal = "SIGTERM"
 kill_timeout = 5
+primary_region = "fra"
 processes = []
 
 [deploy]
@@ -11,25 +11,24 @@ processes = []
 
 [env]
   PHX_HOST = "sasemango.fly.dev"
-  PORT = "4000"
+  PORT = "8080"
 
 [experimental]
-  allowed_public_ports = []
   auto_rollback = true
 
 [[services]]
   http_checks = []
-  internal_port = 4000
+  internal_port = 8080
   processes = ["app"]
   protocol = "tcp"
   script_checks = []
-
   [services.concurrency]
-    hard_limit = 25
-    soft_limit = 20
+    hard_limit = 1000
+    soft_limit = 1000
     type = "connections"
 
   [[services.ports]]
+    force_https = true
     handlers = ["http"]
     port = 80
 
@@ -38,7 +37,7 @@ processes = []
     port = 443
 
   [[services.tcp_checks]]
-    grace_period = "30s"
+    grace_period = "1s"
     interval = "15s"
-    restart_limit = 6
+    restart_limit = 0
     timeout = "2s"
