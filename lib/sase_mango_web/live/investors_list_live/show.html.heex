@@ -1,0 +1,48 @@
+<section class="px-2 2xl:px-6">
+  <HeaderComponent.header active_tab={@active_tab} />
+
+  <div class="relative">
+    <div class="mb-2 md:absolute md:right-16 md:-top-8 md:-translate-y-[100%] xl:right-16">
+      <.live_component module={FilterFormComponent} id="filter_form" filter={@filter_options} />
+    </div>
+
+    <div class="md:mx-12 xl:mx-16 overflow-y-auto max-h-[70vh]">
+      <p class="my-6 text-2xl font-normal mx-auto">Issuers list for <%= @investor.name %></p>
+
+      <table class="investors-table font-montserrat">
+        <thead>
+          <tr>
+            <th :for={table_column <- @table_columns} class="">
+              <div class="flex justify-center items-center gap-2">
+                <TableComponents.sort_link column={table_column} sort_options={@sort_options} />
+              </div>
+            </th>
+          </tr>
+        </thead>
+
+        <tbody id="issuers-list">
+          <tr :for={issuer <- @table_list} id={"issuer-#{issuer.symbol}"}>
+            <td class="text-center p-2 2xl:px-4 2xl:py-2">
+              <.link navigate={~p"/issuer/#{issuer.symbol}"} class="text-blue-400">
+                <span><%= issuer.name %></span>
+              </.link>
+            </td>
+            <TableComponents.one_value_number_cell
+              value={issuer.investor_shares_number}
+              delimiter="."
+              separator=","
+            />
+            <TableComponents.one_value_number_cell
+              value={Decimal.mult(issuer.investor_shares_number, issuer.price)}
+              delimiter="."
+              separator=","
+            />
+          </tr>
+        </tbody>
+        <tfoot></tfoot>
+      </table>
+
+      <div id="infinite-scroll-marker" phx-hook="TableInfiniteScroll" data-page-number={@page} />
+    </div>
+  </div>
+</section>
