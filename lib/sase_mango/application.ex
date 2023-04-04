@@ -7,18 +7,19 @@ defmodule SaseMango.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      # Start the Telemetry supervisor
-      SaseMangoWeb.Telemetry,
-      # Start the Ecto repository
-      SaseMango.Repo,
-      # Start the PubSub system
-      {Phoenix.PubSub, name: SaseMango.PubSub},
-      # Start the Endpoint (http/https)
-      SaseMangoWeb.Endpoint,
-      # Start a worker by calling: SaseMango.Worker.start_link(arg)
-      # {SaseMango.Worker, arg}
-      SaseMango.SaseMangoClient.child_spec()
+    children =
+      [
+        # Start the Telemetry supervisor
+        SaseMangoWeb.Telemetry,
+        # Start the Ecto repository
+        SaseMango.Repo,
+        # Start the PubSub system
+        {Phoenix.PubSub, name: SaseMango.PubSub},
+        # Start the Endpoint (http/https)
+        SaseMangoWeb.Endpoint,
+        # Start a worker by calling: SaseMango.Worker.start_link(arg)
+        # {SaseMango.Worker, arg}
+        SaseMango.SaseMangoClient.child_spec()
       ] ++ more_children()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -32,8 +33,9 @@ defmodule SaseMango.Application do
 
   defp more_children(_env) do
     [
-      SaseMango.SecuritiesCache,
       SaseMango.BargainsCache,
+      SaseMango.InvestorsCache,
+      SaseMango.SecuritiesCache,
       SaseMango.Scheduler
     ]
   end

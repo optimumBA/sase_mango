@@ -6,6 +6,7 @@ defmodule SaseMango.SecuritiesUpdater do
   require Logger
 
   alias SaseMango.BargainsCache
+  alias SaseMango.InvestorsCache
   alias SaseMango.SaseScraper
   alias SaseMango.Securities
   alias SaseMango.SecuritiesCache
@@ -44,8 +45,9 @@ defmodule SaseMango.SecuritiesUpdater do
           end
         end)
 
-        SecuritiesCache.update()
         BargainsCache.update()
+        InvestorsCache.update()
+        SecuritiesCache.update()
 
       _ ->
         nil
