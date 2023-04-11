@@ -6,15 +6,19 @@ defmodule GitHubWorkflows do
 
   def get do
     %{
-      "cd.yml" => cd_workflow()
+      "main.yml" => main_workflow()
     }
   end
 
-  defp cd_workflow do
+  defp main_workflow do
     [
       [
-        name: "CD",
-        on: [:push, :workflow_dispatch],
+        name: "Main",
+        on: [
+          push: [
+            branches: ["main"]
+          ]
+        ],
         jobs: [
           deploy: deploy_job()
         ]
@@ -25,7 +29,6 @@ defmodule GitHubWorkflows do
   defp deploy_job do
     [
       name: "Deploy to Fly.io",
-      if: "github.event_name != 'pull_request'",
       "runs-on": "ubuntu-latest",
       env: [
         FLY_API_TOKEN: "${{ secrets.FLY_API_TOKEN }}"
