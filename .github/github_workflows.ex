@@ -144,7 +144,7 @@ defmodule GitHubWorkflows do
           with: [
             name: "pr-${{ github.event.number }}-#{app_name}",
             secrets:
-              "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} MAXMIND_LICENSE_KEY=${{ secrets.MAXMIND_LICENSE_KEY }} PHX_HOST=${{ env.PHX_HOST }} SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}",
+              "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }} PHX_HOST=${{ env.PHX_HOST }} SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}",
             vm_memory: 1024
           ]
         ]
