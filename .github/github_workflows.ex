@@ -116,7 +116,7 @@ defmodule GitHubWorkflows do
       env: [
         FLY_API_TOKEN: "${{ secrets.FLY_API_TOKEN }}",
         FLY_ORG: "optimum-bh",
-        FLY_REGION: "fra",
+        FLY_REGION: "iad",
         PHX_HOST: "pr-${{ github.event.number }}-#{app_name}.fly.dev",
         REPO_NAME: repo_name
       ],
