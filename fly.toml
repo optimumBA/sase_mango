@@ -1,6 +1,7 @@
 # fly.toml file generated for sasemango on 2023-03-30T11:51:29+02:00
 
 app = "sasemango"
+primary_region = "fra"
 kill_signal = "SIGTERM"
 kill_timeout = 5
 primary_region = "fra"
