@@ -80,7 +80,7 @@ defmodule GitHubWorkflows do
         ],
         [
           name: "Delete preview app",
-          uses: "almirsarajcic/fly-pr-review-apps@machines",
+          uses: "almirsarajcic/fly-pr-review-apps@nomad",
           with: [
             name: "pr-${{ github.event.number }}-#{app_name}"
           ]
@@ -140,7 +140,7 @@ defmodule GitHubWorkflows do
         ],
         [
           name: "Deploy preview app",
-          uses: "almirsarajcic/fly-pr-review-apps@machines",
+          uses: "almirsarajcic/fly-pr-review-apps@nomad",
           with: [
             name: "pr-${{ github.event.number }}-#{app_name}",
             secrets:
