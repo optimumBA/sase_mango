@@ -479,7 +479,8 @@ th {
 
 .page-tab.securities .tab-line,
 .page-tab.bargains .tab-line,
-.page-tab.calculator .tab-line {
+.page-tab.calculator .tab-line,
+.page-tab.investors_list .tab-line{
   @apply animate-[show-tab-line_0.4s_ease-in-out_forwards];
 }
 

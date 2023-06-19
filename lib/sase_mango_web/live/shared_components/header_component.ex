@@ -44,6 +44,7 @@ defmodule SaseMangoWeb.SharedComponents.HeaderComponent do
     [
       %{id: :securities, title: "List of securities", path: ~p"/", class_name: "securities"},
       %{id: :bargains, title: "Bargain securities", path: ~p"/bargains", class_name: "bargains"},
+      %{id: :investors_list, title: "List of Investors", path: ~p"/investors", class_name: "investors_list"},
       %{id: :calculator, title: "Calculator", path: ~p"/calculator", class_name: "calculator"}
     ]
   end

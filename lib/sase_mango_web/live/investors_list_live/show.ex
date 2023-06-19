@@ -14,7 +14,7 @@ defmodule SaseMangoWeb.InvestorsListLive.Show do
      socket
      |> assign(:page, 1)
      |> assign(:per_page, 15)
-     |> assign(:active_tab, :issuers_list)
+     |> assign(:active_tab, :investors_list)
      |> assign(:sortable, false)
      |> assign(:investor_slug, investor_slug)
      |> assign_table_columns()
