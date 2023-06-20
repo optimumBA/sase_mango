@@ -7,11 +7,13 @@
     </div>
 
     <div class="md:mx-12 xl:mx-16 overflow-y-auto max-h-[70vh]">
-      <p class="my-6 text-2xl font-normal mx-auto">Issuers list for <%= @investor.name %></p>
+      <p class="my-6 text-2xl font-normal mx-auto"><%= @investor.name %></p>
 
       <table class="investors-table font-montserrat">
         <thead>
           <tr>
+            <th>#</th>
+
             <th :for={table_column <- @table_columns} class="">
               <div class="flex justify-center items-center gap-2">
                 <TableComponents.sort_link column={table_column} sort_options={@sort_options} />
@@ -21,7 +23,10 @@
         </thead>
 
         <tbody id="issuers-list">
-          <tr :for={issuer <- @table_list} id={"issuer-#{issuer.symbol}"}>
+          <tr :for={{index, issuer} <- table_list_with_index(@table_list)} id={"issuer-#{issuer.symbol}"}>
+            <td class="text-center p-2 2xl:px-4 2xl:py-2" colspan="1">
+              <%= index %>
+            </td>
             <td class="text-center p-2 2xl:px-4 2xl:py-2">
               <.link navigate={~p"/issuer/#{issuer.symbol}"} class="text-blue-400">
                 <span><%= issuer.name %></span>

@@ -48,7 +48,7 @@ defmodule SaseMangoWeb.InvestorsListLive.Index do
 
   defp assign_table_columns(socket, :investors_list) do
     table_columns = [
-      %{id: "sort-name", title: "Investor name", type: :text, name: "name"},
+      %{id: "sort-name", title: "Investors", type: :text, name: "name"},
       %{id: "sort-number", title: "Companies number", type: :number, name: "company_number"},
       %{id: "sort-capital", title: "Total capital", type: :number, name: "total_capital"}
     ]
@@ -137,4 +137,9 @@ defmodule SaseMangoWeb.InvestorsListLive.Index do
   end
 
   defp sort_table(socket, _list), do: socket
+
+  defp investor_list_with_index(investors_list) do
+    Enum.with_index(investors_list,
+      fn investor, index -> {index + 1, investor} end)
+  end
 end
