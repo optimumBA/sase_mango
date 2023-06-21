@@ -31,7 +31,7 @@ defmodule SaseMangoWeb.SharedComponents.HeaderComponent do
             :for={item <- header_items()}
             class={"page-tab #{if @active_tab == item.id, do: item.class_name}"}
           >
-            <.link patch={item.path} class="page-link"><%= item.title %></.link>
+            <.link navigate={item.path} class="page-link"><%= item.title %></.link>
             <div class="tab-line"></div>
           </div>
         </div>
@@ -44,7 +44,12 @@ defmodule SaseMangoWeb.SharedComponents.HeaderComponent do
     [
       %{id: :securities, title: "List of securities", path: ~p"/", class_name: "securities"},
       %{id: :bargains, title: "Bargain securities", path: ~p"/bargains", class_name: "bargains"},
-      %{id: :investors_list, title: "List of Investors", path: ~p"/investors", class_name: "investors_list"},
+      %{
+        id: :investors_list,
+        title: "List of Investors",
+        path: ~p"/investors",
+        class_name: "investors_list"
+      },
       %{id: :calculator, title: "Calculator", path: ~p"/calculator", class_name: "calculator"}
     ]
   end

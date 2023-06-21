@@ -10,14 +10,18 @@ defmodule SaseMangoWeb.SharedComponents.FormComponents do
       assigns
       |> assign_new(:class, fn -> "" end)
       |> assign_new(:error_tag, fn -> false end)
-      |> assign_new(:phx_feedback_for, fn -> Phoenix.HTML.Form.input_name(assigns.form, assigns.field) end)
+      |> assign_new(:phx_feedback_for, fn ->
+        Phoenix.HTML.Form.input_name(assigns.form, assigns.field)
+      end)
       |> assign_new(:required, fn -> false end)
       |> assign_new(:show_feedback, fn -> false end)
 
     ~H"""
-    <div class={@class}
+    <div
+      class={@class}
       id={Phoenix.HTML.Form.input_id(@form, @field) <> "_wrapper"}
-      phx-feedback-for={@phx_feedback_for}>
+      phx-feedback-for={@phx_feedback_for}
+    >
       <%= Phoenix.HTML.Form.label @form, @field, class: "text-sm xl:text-base font-light mb-[0.5rem] #{if(@show_feedback,
           do: label_class(@form, @field),
           else: "text-gray-450")}"
@@ -28,7 +32,7 @@ defmodule SaseMangoWeb.SharedComponents.FormComponents do
       <%= render_slot(@inner_block) %>
 
       <%= if @error_tag do %>
-        <%= error_tag @form, @field %>
+        <%= error_tag(@form, @field) %>
       <% end %>
     </div>
     """

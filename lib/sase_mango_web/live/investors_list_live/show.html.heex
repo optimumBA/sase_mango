@@ -15,7 +15,7 @@
             <th>#</th>
 
             <th :for={table_column <- @table_columns} class="">
-              <div class="flex justify-center items-center gap-2">
+              <div class="uppercase flex justify-center items-center gap-2">
                 <TableComponents.sort_link column={table_column} sort_options={@sort_options} />
               </div>
             </th>
@@ -23,7 +23,10 @@
         </thead>
 
         <tbody id="issuers-list">
-          <tr :for={{index, issuer} <- table_list_with_index(@table_list)} id={"issuer-#{issuer.symbol}"}>
+          <tr
+            :for={{index, issuer} <- table_list_with_index(@table_list)}
+            id={"issuer-#{issuer.symbol}"}
+          >
             <td class="text-center p-2 2xl:px-4 2xl:py-2" colspan="1">
               <%= index %>
             </td>
@@ -49,5 +52,11 @@
 
       <div id="infinite-scroll-marker" phx-hook="TableInfiniteScroll" data-page-number={@page} />
     </div>
+    <p class="text-xs py-4 fixed bottom-0 bg-white">
+      <span class="font-bold">Note:</span>
+      <span class="italic">
+        Data is not accurate as it as based only on the top 10 investors for the companies 
+      </span>
+    </p>
   </div>
 </section>
