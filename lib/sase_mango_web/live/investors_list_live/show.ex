@@ -18,7 +18,8 @@ defmodule SaseMangoWeb.InvestorsListLive.Show do
      |> assign(:sortable, false)
      |> assign(:investor_slug, investor_slug)
      |> assign_table_columns()
-     |> assign(:investor, InvestorsCache.get_investor(investor_slug))}
+     |> assign(:investor, InvestorsCache.get_investor(investor_slug)) |> dbg()
+    }
   end
 
   @impl Phoenix.LiveView
@@ -44,8 +45,8 @@ defmodule SaseMangoWeb.InvestorsListLive.Show do
   defp assign_table_columns(socket) do
     table_columns = [
       %{id: "sort-name", title: "Companies", type: :text, name: "name"},
-      %{id: "sort-number", title: "Stocks(Unit)", type: :number, name: "investor_shares_number"},
-      %{id: "sort-capital", title: "Value(KM)", type: :number, name: "price"}
+      %{id: "sort-number", title: "Stocks", type: :number, name: "investor_shares_number"},
+      %{id: "sort-capital", title: "Value", type: :number, name: "price"}
     ]
 
     assign(socket, :table_columns, table_columns)
@@ -123,7 +124,7 @@ defmodule SaseMangoWeb.InvestorsListLive.Show do
          list
        )
        when sort_order in [:asc, :desc] do
-    sorted_table_list = HandleTable.sort_table(list, field, sort_order)
+    sorted_table_list = HandleTable.sort_table(list, field, sort_order) |> dbg()
 
     assign(socket, :table_list, sorted_table_list)
   end

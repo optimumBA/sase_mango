@@ -49,7 +49,7 @@ defmodule SaseMangoWeb.InvestorsListLive.Index do
   defp assign_table_columns(socket, :investors_list) do
     table_columns = [
       %{id: "sort-name", title: "Investors", type: :text, name: "name"},
-      %{id: "sort-capital", title: "Capital(KM)", type: :number, name: "total_capital"},
+      %{id: "sort-capital", title: "Value", type: :number, name: "total_capital"},
       %{id: "sort-number", title: "Companies", type: :number, name: "company_number"}
     ]
 

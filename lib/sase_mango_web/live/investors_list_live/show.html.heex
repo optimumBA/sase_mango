@@ -30,18 +30,20 @@
             <td class="text-center p-2 2xl:px-4 2xl:py-2" colspan="1">
               <%= index %>
             </td>
+
             <td class="text-center p-2 2xl:px-4 2xl:py-2">
               <.link navigate={~p"/issuer/#{issuer.symbol}"} class="text-blue-400">
                 <span><%= issuer.name %></span>
               </.link>
             </td>
-            <TableComponents.one_value_number_cell
-              value={issuer.investor_shares_number}
-              delimiter="."
-              separator=","
-            />
+
+            <td class="text-center p-2 2xl:px-4 2xl:py-2">
+              <%= Decimal.round(issuer.investor_shares_number) %>
+            </td>
+
             <TableComponents.one_value_number_cell
               value={Decimal.mult(issuer.investor_shares_number, issuer.price)}
+              suffix=" KM"
               delimiter="."
               separator=","
             />

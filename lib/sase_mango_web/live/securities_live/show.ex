@@ -57,6 +57,9 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
     assign(socket, :top_10_owners, top_10_owners)
   end
 
+  # Sort top 10 owners by desc percentage
+  # Handle sort event
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""

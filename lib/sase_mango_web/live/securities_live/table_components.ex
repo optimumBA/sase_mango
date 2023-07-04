@@ -95,6 +95,7 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
   attr :percentage, :boolean, default: false
   attr :round, :integer
   attr :separator, :string
+  attr :suffix, :string, default: nil
   attr :value, :float, required: true
 
   def one_value_number_cell(assigns) do
@@ -112,7 +113,9 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
       |> assign_new(:class, fn -> "text-center" end)
 
     ~H"""
-    <td class={@class}><%= @value %><%= @maybe_add_percentage %></td>
+    <td class={@class}>
+      <%= @value %><%= @suffix %><%= @maybe_add_percentage %>
+    </td>
     """
   end
 

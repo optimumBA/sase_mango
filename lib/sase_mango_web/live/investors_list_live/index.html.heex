@@ -9,7 +9,7 @@
     <div class="md:mx-12 xl:mx-16 overflow-y-auto max-h-[70vh]">
       <p class="my-6 text-2xl font-normal mx-auto">List of investors</p>
 
-      <table class="investors-table font-montserrat">
+      <table class="investors-table font-montserrat overflow-hidden whitespace-nowrap">
         <thead>
           <tr>
             <th>#</th>
@@ -37,6 +37,7 @@
             </td>
             <TableComponents.one_value_number_cell
               value={investor.total_capital}
+              suffix=" KM"
               delimiter="."
               separator=","
             />
