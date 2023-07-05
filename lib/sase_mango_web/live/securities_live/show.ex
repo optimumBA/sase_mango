@@ -6,6 +6,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
   alias SaseMango.HandleTable
   alias SaseMango.Securities
   alias SaseMango.SecuritiesHelper
+  alias SaseMangoWeb.SecuritiesLive.TableComponents
   alias SaseMangoWeb.SharedComponents.TableIconsComponent
 
   @impl Phoenix.LiveView
@@ -17,12 +18,51 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
       company_data ->
         {:ok,
          socket
+         |> assign(:symbol, symbol)
          |> assign(:company_data, company_data)
          |> assign_symbol_data_fields(company_data)
          |> assign_top_10_owners(company_data)
+         |> assign_top_10_owners_table_columns()
+         |> assign(:sortable, false)
          |> assign(:page_title, "Issuer profile - #{symbol}")}
     end
   end
+
+  @impl Phoenix.LiveView
+  def handle_params(params,_url, socket) do
+    {:noreply,
+    socket
+    |> assign_url_options(params)
+    |> sort_top_owners()}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("sort_column", %{"col_name" => name} = _params, socket) do
+    %{sort_options: %{sort_by: col_name, sort_order: sort_order}} = socket.assigns
+
+    maybe_update_sort_order =
+      if col_name != name do
+        :asc
+      else
+        HandleTable.revert_sort_order(sort_order)
+      end
+
+    sort_options = %{sort_by: name, sort_order: maybe_update_sort_order}
+
+    {:noreply,
+     socket
+     |> assign(:sortable, true)
+     |> push_patch(to: ~p"/issuer/#{socket.assigns.symbol}?#{sort_options}", replace: true)}
+  end
+
+  defp assign_url_options(socket, params) do
+    sort_by = params["sort_by"] || "percentage_shares"
+    sort_order = HandleTable.set_sort_order(params["sort_order"])
+    sort_options = %{sort_by: sort_by, sort_order: sort_order}
+
+    assign(socket, :sort_options, sort_options)
+  end
+
 
   defp assign_symbol_data_fields(socket, %{symbol_data: symbol_data} = _company_data) do
     data_rows = [
@@ -53,12 +93,37 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
 
         [owner_data | owners_list]
       end)
+      |> Enum.sort_by(&Map.fetch(&1, "procenti"), :desc)
+
 
     assign(socket, :top_10_owners, top_10_owners)
   end
 
-  # Sort top 10 owners by desc percentage
-  # Handle sort event
+  defp assign_top_10_owners_table_columns(socket) do
+    table_columns = [
+      %{id: "sort-percentage", title: "Percent", type: :number, name: "percentage_shares"}
+    ]
+
+    assign(socket, :top_10_owners_columns, table_columns)
+  end
+
+  defp sort_top_owners(%{assigns: %{sort_options: %{sort_order: sort_order}, sortable: true, top_10_owners: list}} =
+   socket)
+    when sort_order in [:asc, :desc]
+   do
+    if sort_order == :desc do
+      assign(socket, :top_10_owners, Enum.sort_by(list, &Map.fetch(&1, "procenti"), :desc))
+    else
+      assign(socket, :top_10_owners,Enum.sort_by(list, &Map.fetch(&1, "procenti")))
+    end
+  end
+
+  defp sort_top_owners(%{assigns: %{sort_options: _sort_options}, top_10_owners: list} = socket) do
+
+    assign(socket, :top_10_owners, list)
+  end
+
+  defp sort_top_owners(socket), do: socket
 
   @impl Phoenix.LiveView
   def render(assigns) do
@@ -131,8 +196,12 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
           </thead>
           <tbody class="text-xs md:text-sm border border-t-0">
             <tr class="text-gray-400 bg-slate-50">
-              <td class="py-3 text-left border-l"><b>Name</b></td>
-              <td class="pl-0 py-3 text-left"><b>Percent</b></td>
+            <td class="py-3 text-left border-l"><b>Name</b></td>
+              <td :for={table_column <- @top_10_owners_columns} class="pl-0 py-3 text-left">
+                <div>
+                <TableComponents.sort_link column={table_column} sort_options={@sort_options} class="font-bold"/>
+                </div>
+              </td>
               <td class="pl-0 py-3 text-left border-r"><b>Date</b></td>
             </tr>
             <tr :for={owner <- @top_10_owners}>
@@ -296,3 +365,6 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
     """
   end
 end
+# <td class="py-3 text-left border-l"><b>Name</b></td>
+#               <td class="pl-0 py-3 text-left"><b>Percent</b></td>
+#

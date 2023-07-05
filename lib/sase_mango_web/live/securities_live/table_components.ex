@@ -18,6 +18,7 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
           ...
       </th>
   """
+  attr :class, :string, default: nil
   attr :column, :map, required: true
   attr :sort_options, :map, required: true
 
@@ -26,7 +27,7 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
     <div
       phx-click="sort_column"
       phx-value-col_name={@column.name}
-      class="sortable-column 2xl:flex-row"
+      class={["sortable-column 2xl:flex-row", @class]}
     >
       <span><%= @column.title %></span>
       <div class={"
