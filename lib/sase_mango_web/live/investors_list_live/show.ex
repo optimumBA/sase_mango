@@ -18,7 +18,7 @@ defmodule SaseMangoWeb.InvestorsListLive.Show do
      |> assign(:sortable, false)
      |> assign(:investor_slug, investor_slug)
      |> assign_table_columns()
-     |> assign(:investor, InvestorsCache.get_investor(investor_slug)) |> dbg()
+     |> assign(:investor, InvestorsCache.get_investor(investor_slug))
     }
   end
 
@@ -140,5 +140,15 @@ defmodule SaseMangoWeb.InvestorsListLive.Show do
       table_list,
       fn company, index -> {index + 1, company} end
     )
+  end
+
+  defp format_value(shares_number, price) do
+     [_, formatted] =
+      shares_number
+      |> Decimal.mult(price)
+      |> Number.Currency.number_to_currency(precision: 2, unit: "KM")
+      |> String.split("KM")
+
+   formatted <> " KM"
   end
 end

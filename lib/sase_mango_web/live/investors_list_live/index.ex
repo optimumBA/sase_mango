@@ -36,7 +36,9 @@ defmodule SaseMangoWeb.InvestorsListLive.Index do
 
   defp assign_url_options(socket, params) do
     sort_by = params["sort_by"] || "total_capital"
+
     sort_order = HandleTable.set_sort_order(params["sort_order"])
+
     sort_options = %{sort_by: sort_by, sort_order: sort_order}
 
     filter_options = %SearchFilter{q: params["q"] || nil}
@@ -143,5 +145,14 @@ defmodule SaseMangoWeb.InvestorsListLive.Index do
       investors_list,
       fn investor, index -> {index + 1, investor} end
     )
+  end
+
+  defp format_total_capital(value) do
+    [_, formatted] =
+      value
+      |> Number.Currency.number_to_currency(precision: 2, unit: "KM")
+      |> String.split("KM")
+
+   formatted <> " KM"
   end
 end
