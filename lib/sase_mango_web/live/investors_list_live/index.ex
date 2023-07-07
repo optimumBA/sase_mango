@@ -114,11 +114,11 @@ defmodule SaseMangoWeb.InvestorsListLive.Index do
     sort_table(socket, InvestorsCache.filter_investor_list(query))
   end
 
+  # BROKEN: Infinite scrolling
   defp maybe_filter_table_and_assign(socket) do
-    cur_page = socket.assigns.page
-    per_page = socket.assigns.per_page
+    # %{page: cur_page, per_page: per_page} = socket.assigns
 
-    investors_list = InvestorsCache.get(cur_page * per_page)
+    investors_list = InvestorsCache.get()
 
     sort_table(socket, investors_list)
   end
@@ -129,16 +129,29 @@ defmodule SaseMangoWeb.InvestorsListLive.Index do
          list
        )
        when sort_order in [:asc, :desc] do
-    sorted_table_list = HandleTable.sort_table(list, field, sort_order)
 
-    assign(socket, :investors_list, sorted_table_list)
+    if field == "total_capital" do
+      assign(socket, :investors_list, sort_by_capital(list, sort_order))
+
+    else
+      sorted_table_list = HandleTable.sort_table(list, field, sort_order)
+       assign(socket, :investors_list,sorted_table_list)
+    end
   end
 
   defp sort_table(%{assigns: %{sort_options: _sort_options}} = socket, list) do
-    assign(socket, :investors_list, list)
+    assign(socket, :investors_list, sort_by_capital(list, :desc))
   end
 
   defp sort_table(socket, _list), do: socket
+
+  defp sort_by_capital(list, sort_order) do
+    if sort_order == :desc do
+      Enum.sort(list, &Decimal.compare(&1.total_capital, &2.total_capital) == :gt)
+    else
+      Enum.sort(list, &Decimal.compare(&1.total_capital, &2.total_capital) != :gt)
+    end
+  end
 
   defp investor_list_with_index(investors_list) do
     Enum.with_index(
