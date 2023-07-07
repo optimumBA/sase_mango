@@ -114,11 +114,11 @@ defmodule SaseMangoWeb.InvestorsListLive.Index do
     sort_table(socket, InvestorsCache.filter_investor_list(query))
   end
 
-  # BROKEN: Infinite scrolling
   defp maybe_filter_table_and_assign(socket) do
-    # %{page: cur_page, per_page: per_page} = socket.assigns
+    %{page: cur_page, per_page: per_page} = socket.assigns
 
     investors_list = InvestorsCache.get()
+      |> Enum.take(cur_page * per_page)
 
     sort_table(socket, investors_list)
   end
