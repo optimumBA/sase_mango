@@ -22,7 +22,7 @@
           </tr>
         </thead>
 
-        <tbody id="investors-list" phx-viewport-bottom="end-table">
+        <tbody id="investors-list">
           <tr
             :for={{index, investor} <- investor_list_with_index(@investors_list)}
             id={"investor-#{investor.name}"}
