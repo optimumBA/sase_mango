@@ -26,6 +26,7 @@
           <tr
             :for={{index, investor} <- investor_list_with_index(@investors_list)}
             id={"investor-#{investor.name}"}
+            class="hover:bg-[#b7deff]"
           >
             <td class="text-center p-4 2xl:px-4 2xl:py-2 w-[10%]" colspan="1">
               <%= index %>

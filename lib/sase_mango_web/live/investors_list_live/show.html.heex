@@ -31,6 +31,7 @@
           <tr
             :for={{index, issuer} <- table_list_with_index(@table_list)}
             id={"issuer-#{issuer.symbol}"}
+            class="hover:bg-[#b7deff]"
           >
             <td class="text-center p-4 2xl:px-4 2xl:py-2" colspan="1">
               <%= index %>
