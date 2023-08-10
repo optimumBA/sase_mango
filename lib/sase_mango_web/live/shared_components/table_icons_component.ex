@@ -6,7 +6,7 @@ defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
   use SaseMangoWeb, :html
 
   @doc """
-  Renders sor icon components for number and text column types.
+  Renders sort icon components for number and text column types.
 
   ## Examples
 
