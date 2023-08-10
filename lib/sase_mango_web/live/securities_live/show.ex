@@ -29,11 +29,11 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
   end
 
   @impl Phoenix.LiveView
-  def handle_params(params,_url, socket) do
+  def handle_params(params, _url, socket) do
     {:noreply,
-    socket
-    |> assign_url_options(params)
-    |> sort_top_owners()}
+     socket
+     |> assign_url_options(params)
+     |> sort_top_owners()}
   end
 
   @impl Phoenix.LiveView
@@ -62,7 +62,6 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
 
     assign(socket, :sort_options, sort_options)
   end
-
 
   defp assign_symbol_data_fields(socket, %{symbol_data: symbol_data} = _company_data) do
     data_rows = [
@@ -95,7 +94,6 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
       end)
       |> Enum.sort_by(&Map.fetch(&1, "procenti"), :desc)
 
-
     assign(socket, :top_10_owners, top_10_owners)
   end
 
@@ -107,19 +105,24 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
     assign(socket, :top_10_owners_columns, table_columns)
   end
 
-  defp sort_top_owners(%{assigns: %{sort_options: %{sort_order: sort_order}, sortable: true, top_10_owners: list}} =
-   socket)
-    when sort_order in [:asc, :desc]
-   do
+  defp sort_top_owners(
+         %{
+           assigns: %{
+             sort_options: %{sort_order: sort_order},
+             sortable: true,
+             top_10_owners: list
+           }
+         } = socket
+       )
+       when sort_order in [:asc, :desc] do
     if sort_order == :desc do
       assign(socket, :top_10_owners, Enum.sort_by(list, &Map.fetch(&1, "procenti"), :desc))
     else
-      assign(socket, :top_10_owners,Enum.sort_by(list, &Map.fetch(&1, "procenti")))
+      assign(socket, :top_10_owners, Enum.sort_by(list, &Map.fetch(&1, "procenti")))
     end
   end
 
   defp sort_top_owners(%{assigns: %{sort_options: _sort_options}, top_10_owners: list} = socket) do
-
     assign(socket, :top_10_owners, list)
   end
 
@@ -196,10 +199,14 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
           </thead>
           <tbody class="text-xs md:text-sm border border-t-0">
             <tr class="text-gray-400 bg-slate-50">
-            <td class="py-3 text-left border-l"><b>Name</b></td>
+              <td class="py-3 text-left border-l"><b>Name</b></td>
               <td :for={table_column <- @top_10_owners_columns} class="pl-0 py-3 text-left">
                 <div>
-                <TableComponents.sort_link column={table_column} sort_options={@sort_options} class="font-bold"/>
+                  <TableComponents.sort_link
+                    column={table_column}
+                    sort_options={@sort_options}
+                    class="font-bold"
+                  />
                 </div>
               </td>
               <td class="pl-0 py-3 text-left border-r"><b>Date</b></td>
@@ -365,6 +372,3 @@ defmodule SaseMangoWeb.SecuritiesLive.Show do
     """
   end
 end
-# <td class="py-3 text-left border-l"><b>Name</b></td>
-#               <td class="pl-0 py-3 text-left"><b>Percent</b></td>
-#
