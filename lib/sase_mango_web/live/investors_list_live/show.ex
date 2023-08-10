@@ -7,6 +7,7 @@ defmodule SaseMangoWeb.InvestorsListLive.Show do
   alias SaseMangoWeb.SecuritiesLive.FilterFormComponent
   alias SaseMangoWeb.SecuritiesLive.TableComponents
   alias SaseMangoWeb.SharedComponents.HeaderComponent
+  alias SaseMangoWeb.SharedComponents.TableIconsComponent
 
   @impl Phoenix.LiveView
   def mount(%{"slug" => investor_slug} = _params, _session, socket) do
@@ -18,8 +19,7 @@ defmodule SaseMangoWeb.InvestorsListLive.Show do
      |> assign(:sortable, false)
      |> assign(:investor_slug, investor_slug)
      |> assign_table_columns()
-     |> assign(:investor, InvestorsCache.get_investor(investor_slug))
-    }
+     |> assign(:investor, InvestorsCache.get_investor(investor_slug))}
   end
 
   @impl Phoenix.LiveView
@@ -143,12 +143,12 @@ defmodule SaseMangoWeb.InvestorsListLive.Show do
   end
 
   defp format_value(shares_number, price) do
-     [_, formatted] =
+    [_, formatted] =
       shares_number
       |> Decimal.mult(price)
       |> Number.Currency.number_to_currency(precision: 2, unit: "KM")
       |> String.split("KM")
 
-   formatted <> " KM"
+    formatted <> " KM"
   end
 end
