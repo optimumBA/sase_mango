@@ -106,8 +106,8 @@ defmodule SaseMango.HandleTable do
       "&" => "and"
     }
 
-    Enum.reduce(replacements, title, fn {from, to}, acc ->
-      String.replace(acc, from, to)
+    Enum.reduce(replacements, title, fn {latin_letter, english_letter}, title ->
+      String.replace(title, latin_letter, english_letter)
     end)
   end
 end
