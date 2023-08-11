@@ -58,8 +58,8 @@ defmodule SaseMango.HandleTable do
   def create_slug(title) do
     title
     |> String.downcase()
+    |> apply_replacements()
     |> String.replace(~r/[^a-zA-Z0-9 &]/, "")
-    |> String.replace("&", "and")
     |> String.split()
     |> Enum.join("-")
   end
@@ -95,4 +95,19 @@ defmodule SaseMango.HandleTable do
   """
   def revert_sort_order(:asc), do: :desc
   def revert_sort_order(:desc), do: :asc
+
+  defp apply_replacements(title) do
+    replacements = %{
+      "č" => "c",
+      "ć" => "c",
+      "ž" => "z",
+      "đ" => "dj",
+      "š" => "s",
+      "&" => "and"
+    }
+
+    Enum.reduce(replacements, title, fn {from, to}, acc ->
+      String.replace(acc, from, to)
+    end)
+  end
 end
