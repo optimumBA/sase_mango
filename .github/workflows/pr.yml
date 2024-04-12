@@ -1,0 +1,41 @@
+name: PR
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+jobs:
+  deploy_preview_app:
+    name: Deploy preview app
+    runs-on: ubuntu-latest
+    permissions: write-all
+    concurrency:
+      group: pr-${{ github.event.number }}
+    environment:
+      name: pr-${{ github.event.number }}
+      url: https://sase-mango-pr-${{ github.event.number }}.fly.dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Delete previous deployments
+        uses: strumwolf/delete-deployment-environment@v2.2.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: pr-${{ github.event.number }}
+          ref: ${{ github.head_ref }}
+          onlyRemoveDeployments: true
+      - name: Deploy preview app
+        uses: optimumBA/fly-preview-apps@main
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLY_ORG: optimum-bh
+          FLY_REGION: fra
+          PHX_HOST: sase-mango-pr-${{ github.event.number }}.fly.dev
+          REPO_NAME: sase_mango
+        with:
+          name: sase-mango-pr-${{ github.event.number }}
+          secrets: ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }} PHX_HOST=${{ env.PHX_HOST }} SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}
+          vm_memory: 1024

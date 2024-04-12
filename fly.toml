@@ -1,10 +1,9 @@
-# fly.toml file generated for sasemango on 2023-03-30T11:51:29+02:00
-
 app = "sasemango"
-kill_signal = "SIGTERM"
-kill_timeout = 5
+
 primary_region = "fra"
-processes = []
+kill_signal = "SIGTERM"
+
+[build]
 
 [deploy]
   release_command = "/app/bin/migrate"
@@ -13,31 +12,20 @@ processes = []
   PHX_HOST = "sasemango.fly.dev"
   PORT = "8080"
 
-[experimental]
-  auto_rollback = true
-
-[[services]]
-  http_checks = []
+[http_service]
   internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
   processes = ["app"]
-  protocol = "tcp"
-  script_checks = []
-  [services.concurrency]
+
+  [http_service.concurrency]
+    type = "connections"
     hard_limit = 1000
     soft_limit = 1000
-    type = "connections"
 
-  [[services.ports]]
-    force_https = true
-    handlers = ["http"]
-    port = 80
-
-  [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 443
-
-  [[services.tcp_checks]]
-    grace_period = "1s"
-    interval = "15s"
-    restart_limit = 0
-    timeout = "2s"
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024
