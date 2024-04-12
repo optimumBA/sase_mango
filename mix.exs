@@ -54,7 +54,8 @@ defmodule SaseMango.MixProject do
       {:tzdata, "~> 1.1"},
       {:quantum, "~> 3.4"},
       {:ecto_psql_extras, "~> 0.6"},
-      {:number, "~> 1.0"}
+      {:number, "~> 1.0"},
+      {:github_workflows_generator, "~> 0.1", only: :dev, runtime: false}
     ]
   end
 
