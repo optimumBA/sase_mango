@@ -3,7 +3,7 @@ defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
   Component that contains svg icons
   """
 
-  use SaseMangoWeb, :component
+  use SaseMangoWeb, :html
 
   def sort_icon(%{col_type: :text, sort_options: options, key: key} = assigns) do
     match_text_icon(assigns, options, key)
@@ -67,6 +67,27 @@ defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
     <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M7 13L1 7L7 1" stroke="#9A9A9A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
+    """
+  end
+
+  def issuer_link(assigns) do
+    ~H"""
+    <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{@company_symbol}"} target="_blank"
+      class="flex items-center text-blue-dark-200 text-lg font-semibold md:text-2xl tracking-wide underline"
+    >
+      <svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0_1501_2)">
+          <path d="M9 12.4999C9.42945 13.0741 9.97736 13.5491 10.6066 13.8929C11.2357 14.2366 11.9315 14.441 12.6467 14.4923C13.3618 14.5435 14.0796 14.4403 14.7513 14.1897C15.4231 13.9391 16.0331 13.547 16.54 13.0399L19.54 10.0399C20.4508 9.09696 20.9548 7.83394 20.9434 6.52296C20.932 5.21198 20.4061 3.95791 19.4791 3.03087C18.5521 2.10383 17.298 1.57799 15.987 1.5666C14.676 1.5552 13.413 2.05918 12.47 2.96997L10.75 4.67997" stroke="#9DB9D3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M13.0002 10.5C12.5707 9.92585 12.0228 9.4508 11.3936 9.10704C10.7645 8.76328 10.0687 8.55886 9.35355 8.50765C8.63841 8.45643 7.92061 8.55961 7.24885 8.8102C6.5771 9.06079 5.96709 9.45291 5.4602 9.95998L2.4602 12.96C1.54941 13.903 1.04544 15.166 1.05683 16.477C1.06822 17.788 1.59407 19.042 2.52111 19.9691C3.44815 20.8961 4.70221 21.422 6.01319 21.4334C7.32418 21.4447 8.58719 20.9408 9.5302 20.03L11.2402 18.32" stroke="#9DB9D3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+          <defs>
+            <clipPath id="clip0_1501_2">
+              <rect width="22" height="23" fill="white"/>
+            </clipPath>
+          </defs>
+      </svg>
+      <span class="ml-2"><%= @company_name %></span>
+    </a>
     """
   end
 

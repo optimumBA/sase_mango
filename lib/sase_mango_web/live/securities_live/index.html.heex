@@ -73,18 +73,18 @@
         <% end %>
       </tbody>
 
-      <tfoot></tfoot>
+        <tfoot></tfoot>
+      </table>
+    </div>
 
-    </table>
+    <%= if Enum.empty?(@securities) do %>
+      <tr>
+        <p class="w-max m-auto my-[4rem] text-[1.2em] alert alert-info">
+          No results found!
+        </p>
+      </tr>
+    <% end %>
   </div>
-
-  <%= if Enum.empty?(@securities) do %>
-    <tr>
-      <p class="w-max m-auto my-16 text-base alert alert-info"> No results found!</p>
-    </tr>
-  <% end %>
-</div>
-
-<div class="h-2 mt-4"></div>
-
+  
+  <div class="h-2 mt-4"></div>
 </section>

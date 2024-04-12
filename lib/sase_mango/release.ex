@@ -1,6 +1,7 @@
 defmodule SaseMango.Release do
   @moduledoc """
-  Used for executing DB release tasks when run in production without Mix installed.
+  Used for executing DB release tasks when run in production without Mix
+  installed.
   """
   @app :sase_mango
 

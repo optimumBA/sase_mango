@@ -3,7 +3,7 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
   Module contains helper components used by the securities table
   """
 
-  use SaseMangoWeb, :component
+  use SaseMangoWeb, :html
 
   alias SaseMangoWeb.SharedComponents.TableIconsComponent
 
@@ -42,8 +42,10 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
           ""
       end
 
+    assigns = assign(assigns, :class, class)
+
     ~H"""
-    <tr class={class} id={"security-" <> @security.symbol}>
+    <tr class={@class} id={"security-" <> @security.symbol}>
       <%= render_slot(@inner_block) %>
     </tr>
     """
@@ -57,10 +59,10 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
       |> maybe_round_value(assigns[:round])
       |> maybe_format_with_delimiter(assigns[:delimiter], assigns[:separator])
 
-    assigns = assign(assigns, :value, format_value)
+    assigns = assign(assigns, value: format_value, maybe_add_percentage: maybe_add_percentage)
 
     ~H"""
-    <td class="text-right 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= @value %><%= maybe_add_percentage %></td>
+    <td class="text-right 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= @value %><%= @maybe_add_percentage %></td>
     """
   end
 
@@ -79,14 +81,15 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
 
     assigns =
       assigns
+      |> assign(:maybe_add_percentage, maybe_add_percentage)
       |> assign(:first_value, format_first_value)
       |> assign(:second_value, format_second_value)
 
     ~H"""
     <td class="p-2 2xl:px-4 2xl:py-2">
       <div class="flex flex-col gap-4 text-right">
-          <span><%= @first_value %><%= maybe_add_percentage %></span>
-          <span><%= @second_value %><%= maybe_add_percentage %></span>
+          <span><%= @first_value %><%= @maybe_add_percentage %></span>
+          <span><%= @second_value %><%= @maybe_add_percentage %></span>
       </div>
     </td>
     """
