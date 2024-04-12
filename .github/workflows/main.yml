@@ -7,10 +7,10 @@ jobs:
   deploy_staging_app:
     name: Deploy staging app
     runs-on: ubuntu-latest
-    env:
-      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: superfly/flyctl-actions@1.1
-        with:
-          args: deploy
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
