@@ -38,4 +38,3 @@ jobs:
         with:
           name: sase-mango-pr-${{ github.event.number }}
           secrets: ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }} PHX_HOST=${{ env.PHX_HOST }} SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}
-          vm_memory: 1024

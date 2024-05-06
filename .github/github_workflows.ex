@@ -131,7 +131,6 @@ defmodule GithubWorkflows do
             name: @preview_app_name,
             secrets:
               "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }} PHX_HOST=${{ env.PHX_HOST }} SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}",
-            vm_memory: 1024
           ]
         ]
       ]
