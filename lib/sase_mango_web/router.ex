@@ -22,6 +22,8 @@ defmodule SaseMangoWeb.Router do
 
   import Phoenix.LiveDashboard.Router
 
+  resources "/health", SaseMangoWeb.HealthController, only: [:index]
+
   scope "/", SaseMangoWeb do
     pipe_through [:browser, :admin]
 
