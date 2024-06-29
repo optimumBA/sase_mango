@@ -109,74 +109,79 @@ defmodule SaseMangoWeb.SharedComponents.IssuerSelectComponent do
   def render(assigns) do
     ~H"""
     <div id="issuer-select-comp">
-      <div class="relative mt-1" >
+      <div class="relative mt-1">
         <div
           class="relative cursor-pointer w-95 h-11 flex flex-col justify-center px-4 py-2 text-left bg-white border border-gray-450 hover:border-gray-600 rounded-[0.6rem] shadow-sm focus:outline-none font-light"
           phx-click={JS.toggle(to: "#issuers-list")}
           phx-click-away={hide_issuers_list()}
         >
-            <%= if @issuer_input_cover do %>
-              <div id="input-cover" class="z-10 text-sm xl:text-base bg-white flex items-center gap-2 text-left py-0 mr-8"
-                phx-hook="FieldReset"
-              >
-                <span class="block text-blue-dark-500"><%= @selected_issuer.symbol %></span>
-                <span class="block truncate text-gray-800"><%= @selected_issuer.name %></span>
-              </div>
-            <% end %>
-            <div class={if(@issuer_input_cover, do: "", else: "relative")}>
-              <input
-                autocomplete="off"
-                id="select-field"
-                type="text"
-                placeholder="SELECT"
-                class={if(@issuer_input_cover, do: "absolute top-1 left-1 -z-10", else: "block") <> " border-0 px-1 py-0 tracking-normal bg-transparent text-sm xl:text-base font-light pr-8 placeholder:focus:text-transparent"}
-                phx-hook="InputField"
-                phx-blur={hide_issuers_list()}
-                phx-target={@myself}
-              />
-            </div>
-
-            <span class={"absolute " <> if(@suggested_element, do: "opacity-60", else: "opacity-0") <> " top-1/2 -translate-y-1/2 pl-1 tracking-normal text-sm xl:text-base font-light text-gray-450"}
-              {if(@suggested_element, do: [phx_click: JS.push("select_issuer", value: %{symbol: @suggested_element}) |> hide_issuers_list()], else: [])}
+          <%= if @issuer_input_cover do %>
+            <div
+              id="input-cover"
+              class="z-10 text-sm xl:text-base bg-white flex items-center gap-2 text-left py-0 mr-8"
+              phx-hook="FieldReset"
             >
-              <%= @suggested_element %>
-            </span>
+              <span class="block text-blue-dark-500"><%= @selected_issuer.symbol %></span>
+              <span class="block truncate text-gray-800"><%= @selected_issuer.name %></span>
+            </div>
+          <% end %>
+          <div class={if(@issuer_input_cover, do: "", else: "relative")}>
+            <input
+              autocomplete="off"
+              id="select-field"
+              type="text"
+              placeholder="SELECT"
+              class={if(@issuer_input_cover, do: "absolute top-1 left-1 -z-10", else: "block") <> " border-0 px-1 py-0 tracking-normal bg-transparent text-sm xl:text-base font-light pr-8 placeholder:focus:text-transparent"}
+              phx-hook="InputField"
+              phx-blur={hide_issuers_list()}
+              phx-target={@myself}
+            />
+          </div>
 
-            <span class="absolute inset-y-0 right-0 flex items-center pr-4 ml-3">
-              <TableIconsComponent.arrow_down />
-            </span>
+          <span
+            class={"absolute " <> if(@suggested_element, do: "opacity-60", else: "opacity-0") <> " top-1/2 -translate-y-1/2 pl-1 tracking-normal text-sm xl:text-base font-light text-gray-450"}
+            {if(@suggested_element, do: [phx_click: JS.push("select_issuer", value: %{symbol: @suggested_element}) |> hide_issuers_list()], else: [])}
+          >
+            <%= @suggested_element %>
+          </span>
+
+          <span class="absolute inset-y-0 right-0 flex items-center pr-4 ml-3">
+            <TableIconsComponent.arrow_down />
+          </span>
         </div>
 
-          <ul id="issuers-list"
-            class="absolute hidden z-10 w-full sm:min-w-96 py-1 mt-2 overflow-y-auto text-base font-light max-h-94 bg-white shadow-lg rounded-lg ring-1 ring-gray-400 ring-opacity-25 focus:outline-none"
-            role="listbox"
-          >
-            <%= unless Enum.empty?(@suggestions) do %>
-              <%= for {suggestion, idx} <- @suggestions do %>
-                <li
-                  class="relative m-0"
-                  role="option"
-                  phx-click={JS.push("select_issuer", value: %{symbol: suggestion.symbol}) |> hide_issuers_list()}
-                >
-                  <div class={"w-full flex flex-col gap-2 py-2 pl-3 pr-3 border-b border-gray-100 cursor-pointer #{if(@idx == idx, do: "bg-sky-100", else: "")} hover:bg-sky-100"}
-                  >
-                    <span class="block ml-3 font-normal text-blue-dark-500">
-                      <%= suggestion.symbol %>
-                    </span>
-                    <span class="block ml-3 font-normal text-gray-800">
-                      <%= suggestion.name %>
-                    </span>
-                  </div>
-                </li>
-              <% end %>
-              <% else %>
-                <li class="relative m-0">
-                    <span class="block ml-3 py-2 text-sm xl:text-base font-normal text-blue-dark-500">
-                      No results
-                    </span>
-                </li>
+        <ul
+          id="issuers-list"
+          class="absolute hidden z-10 w-full sm:min-w-96 py-1 mt-2 overflow-y-auto text-base font-light max-h-94 bg-white shadow-lg rounded-lg ring-1 ring-gray-400 ring-opacity-25 focus:outline-none"
+          role="listbox"
+        >
+          <%= unless Enum.empty?(@suggestions) do %>
+            <%= for {suggestion, idx} <- @suggestions do %>
+              <li
+                class="relative m-0"
+                role="option"
+                phx-click={
+                  JS.push("select_issuer", value: %{symbol: suggestion.symbol}) |> hide_issuers_list()
+                }
+              >
+                <div class={"w-full flex flex-col gap-2 py-2 pl-3 pr-3 border-b border-gray-100 cursor-pointer #{if(@idx == idx, do: "bg-sky-100", else: "")} hover:bg-sky-100"}>
+                  <span class="block ml-3 font-normal text-blue-dark-500">
+                    <%= suggestion.symbol %>
+                  </span>
+                  <span class="block ml-3 font-normal text-gray-800">
+                    <%= suggestion.name %>
+                  </span>
+                </div>
+              </li>
             <% end %>
-          </ul>
+          <% else %>
+            <li class="relative m-0">
+              <span class="block ml-3 py-2 text-sm xl:text-base font-normal text-blue-dark-500">
+                No results
+              </span>
+            </li>
+          <% end %>
+        </ul>
       </div>
     </div>
     """

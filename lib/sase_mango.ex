@@ -155,7 +155,7 @@ defmodule SaseMango do
   end
 
   defp get_details(issuer, year) do
-    with symbol when not is_nil(symbol) <- Map.get(issuer, "Symbol"),
+    with symbol when is_binary(symbol) <- Map.get(issuer, "Symbol"),
          {:ok, %Finch.Response{body: body, status: 200}} <-
            SaseMangoClient.get_financial_statement(symbol, year, false),
          data when is_map(data) <- XmlToMap.naive_map(body),

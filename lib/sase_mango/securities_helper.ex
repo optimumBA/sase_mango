@@ -41,7 +41,9 @@ defmodule SaseMango.SecuritiesHelper do
 
   ## Examples
 
-      iex> filter_management_and_supervisory_data("Vojko Kokoravec,predsjednik,Dragan Radusinović,član,Radovan Teslić,član, Mitar Kovačević,član")
+      iex> filter_management_and_supervisory_data(
+      ...>   "Vojko Kokoravec,predsjednik,Dragan Radusinović,član,Radovan Teslić,član, Mitar Kovačević,član"
+      ...> )
       [
         {"predsjednik", "Vojko Kokoravec"},
         {"član", "Dragan Radusinović"},
@@ -98,7 +100,9 @@ defmodule SaseMango.SecuritiesHelper do
 
   ## Examples
 
-      iex> parse_shares_and_nominal_price("<a href='BSNLR'>BSNLR</a> - 8.596.256 - 10,00 KM | <a href='BSNLZ'>BSNLZ</a> - 441.431 - 10,00 KM |")
+      iex> parse_shares_and_nominal_price(
+      ...>   "<a href='BSNLR'>BSNLR</a> - 8.596.256 - 10,00 KM | <a href='BSNLZ'>BSNLZ</a> - 441.431 - 10,00 KM |"
+      ...> )
       [
         {"BSNLR", "8.596.256", "10,00 KM"},
         {"BSNLZ", "441.431", "10,00 KM"}
@@ -246,7 +250,10 @@ defmodule SaseMango.SecuritiesHelper do
           ),
         eps: eps,
         eps_roi:
-          if(Decimal.equal?(calc_param, 0), do: Decimal.new(0), else: Decimal.div(eps, calc_param)),
+          if(Decimal.equal?(calc_param, 0),
+            do: Decimal.new(0),
+            else: Decimal.div(eps, calc_param)
+          ),
         last_trade_date: last_trade_date,
         market_value: market_value,
         name: security.issuer.info["SymbolDescription"],

@@ -1,7 +1,7 @@
 [
   import_deps: [:ecto, :phoenix],
   subdirectories: ["priv/*/migrations"],
-  plugins: [Phoenix.LiveView.HTMLFormatter],
+  plugins: [DoctestFormatter, Phoenix.LiveView.HTMLFormatter],
   inputs: [
     "*.{heex,ex,exs}",
     ".github/github_workflows.ex",

@@ -1,10 +1,12 @@
 name: PR closure
+
 on:
   pull_request:
     branches:
       - main
     types:
       - closed
+
 jobs:
   delete_preview_app:
     name: Delete preview app
@@ -20,7 +22,7 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
           REPO_NAME: sase_mango
         with:
-          name: sase-mango-pr-${{ github.event.number }}
+          name: sasemango-pr-${{ github.event.number }}
       - name: Generate token
         uses: navikt/github-app-token-generator@v1.1.1
         id: generate_token

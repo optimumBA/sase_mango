@@ -6,8 +6,9 @@ defmodule SaseMangoWeb.HealthController do
   alias Ecto.Adapters.SQL
 
   @type conn :: Plug.Conn.t()
+  @type params :: map()
 
-  @spec index(conn(), map()) :: conn()
+  @spec index(conn(), params()) :: conn()
   def index(conn, _params) do
     # Return status 500 if unable to connect to DB
     SQL.query!(SaseMango.Repo, "SELECT 1")

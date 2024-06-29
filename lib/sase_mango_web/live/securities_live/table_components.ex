@@ -23,7 +23,7 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
           col_type={@column.type}
           sort_options={@sort_options}
           key={@column.name}
-         />
+        />
       </div>
     </div>
     """
@@ -62,7 +62,9 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
     assigns = assign(assigns, value: format_value, maybe_add_percentage: maybe_add_percentage)
 
     ~H"""
-    <td class="text-right 2xl:text-xl p-2 2xl:px-4 2xl:py-2"><%= @value %><%= @maybe_add_percentage %></td>
+    <td class="text-right 2xl:text-xl p-2 2xl:px-4 2xl:py-2">
+      <%= @value %><%= @maybe_add_percentage %>
+    </td>
     """
   end
 
@@ -88,8 +90,8 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
     ~H"""
     <td class="p-2 2xl:px-4 2xl:py-2">
       <div class="flex flex-col gap-4 text-right">
-          <span><%= @first_value %><%= @maybe_add_percentage %></span>
-          <span><%= @second_value %><%= @maybe_add_percentage %></span>
+        <span><%= @first_value %><%= @maybe_add_percentage %></span>
+        <span><%= @second_value %><%= @maybe_add_percentage %></span>
       </div>
     </td>
     """

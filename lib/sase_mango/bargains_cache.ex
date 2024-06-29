@@ -85,7 +85,7 @@ defmodule SaseMango.BargainsCache do
   defp maybe_move_to_yesterday_list(state) do
     today_date = DateTime.to_date(DateTime.utc_now())
 
-    with executed_at when not is_nil(executed_at) <- state.executed_at,
+    with %DateTime{} = executed_at <- state.executed_at,
          date_of_execution <- DateTime.to_date(executed_at),
          :gt <- Date.compare(today_date, date_of_execution) do
       Map.put(state, :yesterday_bargains, state.today_bargains)

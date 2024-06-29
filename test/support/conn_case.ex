@@ -29,7 +29,6 @@ defmodule SaseMangoWeb.ConnCase do
       import Plug.Conn
       import Phoenix.ConnTest
       import SaseMangoWeb.ConnCase
-
     end
   end
 

@@ -35,15 +35,11 @@ sase_mango-*.tar
 npm-debug.log
 /assets/node_modules/
 
-# Screenshots from the tests
+# Optimum development/test artifacts
+/node_modules/
+/priv/plts/
 /screenshots/
-
-# Environment secrets
-.env
-
-# macOS temp file
 .DS_Store
-
-# Dialyzer PLT files
-/priv/plts/*.plt
-/priv/plts/*.plt.hash
+.env
+package.json
+package-lock.json

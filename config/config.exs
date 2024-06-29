@@ -25,7 +25,7 @@ config :sase_mango, SaseMangoWeb.Endpoint,
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
-  default: [
+  sase_mango: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
@@ -35,7 +35,7 @@ config :esbuild,
 # Configure tailwind (the version is required)
 config :tailwind,
   version: "3.2.7",
-  default: [
+  sase_mango: [
     args: ~w(
       --config=tailwind.config.js
       --input=css/app.css
@@ -65,6 +65,15 @@ config :sase_mango, SaseMango.Scheduler,
     {"0-30/5 13 * * 1-5", {SaseMango.TickerUpdater, :update, []}}
   ],
   timezone: "Europe/Sarajevo"
+
+# AppSignal
+config :appsignal, :config,
+  active: false,
+  ecto_repos: [SaseMango.Repo],
+  env: config_env(),
+  ignore_actions: ["SaseMangoWeb.HealthController#index"],
+  name: "sase_mango",
+  otp_app: :sase_mango
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

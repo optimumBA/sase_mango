@@ -61,6 +61,8 @@ RUN mix compile
 COPY config/runtime.exs config/
 
 COPY rel rel
+COPY .git .git
+RUN cat .git/HEAD | grep "ref: " && (cat .git/HEAD | awk '{print ".git/"$2}' | xargs cat >> priv/REVISION) || cat .git/HEAD >> priv/REVISION
 RUN mix release
 
 # start a new build stage so that the final image will only contain
@@ -89,7 +91,3 @@ COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/sase_mango ./
 USER nobody
 
 CMD ["/app/bin/server"]
-
-# Appended by flyctl
-ENV ECTO_IPV6 true
-ENV ERL_AFLAGS "-proto_dist inet6_tcp"
