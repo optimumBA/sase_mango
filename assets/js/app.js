@@ -22,9 +22,11 @@ import { Socket } from 'phoenix'
 import { LiveSocket } from 'phoenix_live_view'
 import topbar from '../vendor/topbar'
 import CalculatorInputHooks from './hooks/calculator_input_hooks'
+import TableInfiniteScroll from './hooks/table_infinite_scroll'
 
 const Hooks = {
   ...CalculatorInputHooks,
+  TableInfiniteScroll
 }
 
 let csrfToken = document

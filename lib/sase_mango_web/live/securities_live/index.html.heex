@@ -1,77 +1,120 @@
 <section class="px-2 2xl:px-6">
+  <HeaderComponent.header active_tab={@active_tab} />
 
-  <HeaderComponent.header
-    socket={@socket}
-    active_tab={@active_tab}
-   />
+  <div class="relative">
+    <div class="mb-2 md:absolute md:right-16 md:-top-8 md:-translate-y-[100%] xl:right-16">
+      <.live_component module={FilterFormComponent} id="filter_form" filter={@filter_options} />
+    </div>
 
-<div class="relative">
+    <div class="table-wrapper overflow-y-auto max-h-[70vh]">
+      <table class="securities-table font-montserrat">
+        <thead>
+          <tr>
+            <th :for={table_column <- @table_columns}>
+              <div class="flex justify-center items-center gap-2">
+                <TableComponents.sort_link column={table_column} sort_options={@sort_options} />
+              </div>
+            </th>
+          </tr>
+        </thead>
 
-  <div class="mb-2 md:absolute md:right-16 md:-top-8 md:-translate-y-[100%] xl:right-16">
-    <.live_component
-      module={FilterFormComponent}
-      id="filter_form"
-      filter={@filter_options}
-    />
-  </div>
-
-  <div class="table-wrapper overflow-y-auto max-h-[75vh]">
-    <table class="securities-table font-montserrat">
-      <thead>
-        <tr>
-          <%= for table_column <- @table_columns do %>
-            <th class="">
-                <div class="flex justify-center items-center gap-2">
-                  <TableComponents.sort_link
-                    column={table_column}
-                    sort_options={@sort_options}
-                  />
-                </div>
-              </th>
-          <% end %>
-        </tr>
-      </thead>
-
-      <tbody id="securities">
-        <%= for security <- @securities do %>
-          <TableComponents.table_row live_action={@active_tab} security={security} >
-
-            <td class="text-center p-2 2xl:px-4 2xl:py-2">
-              <%= live_redirect to: Routes.securities_show_path(@socket, :index, security.symbol), class: "text-blue-400" do %>
+        <tbody id="securities">
+          <%= for security <- @securities do %>
+            <TableComponents.table_row security={security}>
+              <td class="text-center p-2 2xl:px-4 2xl:py-2">
+                <%= live_redirect to: Routes.securities_show_path(@socket, :index, security.symbol), class: "text-blue-400" do %>
                   <%= security.symbol %>
-              <% end %>
-            </td>
-            <td class="text-center p-2 2xl:px-4 2xl:py-2">
-              <span><%= security.name %></span><br />
-              <span><%= Securities.segment(security.segment) %></span>
-            </td>
-            <TableComponents.one_value_number_cell value={security.price} round={2} />
-            <TableComponents.one_value_number_cell value={security.nominal_price} round={2}/>
+                <% end %>
+              </td>
+              <td class="text-center p-2 2xl:px-4 2xl:py-2">
+                <span><%= security.name %></span> <br />
+                <span><%= Securities.segment(security.segment) %></span>
+              </td>
+              <TableComponents.one_value_number_cell
+                class="text-right 2xl:text-xl p-2 2xl:px-4 2xl:py-2"
+                value={security.price}
+                round={2}
+              />
+              <TableComponents.one_value_number_cell
+                class="text-right 2xl:text-xl p-2 2xl:px-4 2xl:py-2"
+                value={security.nominal_price}
+                round={2}
+              />
 
-            <TableComponents.double_value_number_cell first_value={security.ask_price} second_value={security.ask_volume} round_first={2}/>
-            <TableComponents.double_value_number_cell first_value={security.bid_price} second_value={security.bid_volume} round_first={2}/>
-            <TableComponents.double_value_number_cell first_value={Decimal.mult(security.dividend_roi, 100)}
-              second_value={Decimal.mult(security.previous_dividend_roi, 100)} round_first={2} round_second={2} percentage />
+              <TableComponents.double_value_number_cell
+                class="flex flex-col gap-4 text-right"
+                first_value={security.ask_price}
+                second_value={security.ask_volume}
+                round_first={2}
+              />
+              <TableComponents.double_value_number_cell
+                class="flex flex-col gap-4 text-right"
+                first_value={security.bid_price}
+                second_value={security.bid_volume}
+                round_first={2}
+              />
+              <TableComponents.double_value_number_cell
+                class="flex flex-col gap-4 text-right"
+                first_value={Decimal.mult(security.dividend_roi, 100)}
+                second_value={Decimal.mult(security.previous_dividend_roi, 100)}
+                round_first={2}
+                round_second={2}
+                percentage
+              />
 
-            <TableComponents.double_value_number_cell first_value={Decimal.mult(security.eps_roi, 100)}
-              second_value={Decimal.mult(security.previous_eps_roi, 100)} round_first={2} round_second={2} percentage />
+              <TableComponents.double_value_number_cell
+                class="flex flex-col gap-4 text-right"
+                first_value={Decimal.mult(security.eps_roi, 100)}
+                second_value={Decimal.mult(security.previous_eps_roi, 100)}
+                round_first={2}
+                round_second={2}
+                percentage
+              />
 
-            <TableComponents.one_value_number_cell value={security.pe} round={2}/>
-            <TableComponents.one_value_number_cell value={security.pb} round={2}/>
-            <TableComponents.one_value_number_cell value={security.market_value} delimiter={","} separator={"."} />
+              <TableComponents.one_value_number_cell
+                class="text-right 2xl:text-xl p-2 2xl:px-4 2xl:py-2"
+                value={security.pe}
+                round={2}
+              />
+              <TableComponents.one_value_number_cell
+                class="text-right 2xl:text-xl p-2 2xl:px-4 2xl:py-2"
+                value={security.pb}
+                round={2}
+              />
+              <TableComponents.one_value_number_cell
+                class="text-right 2xl:text-xl p-2 2xl:px-4 2xl:py-2"
+                value={security.market_value}
+                delimiter=","
+                separator="."
+              />
 
-            <TableComponents.double_value_number_cell first_value={security.book_value}
-              second_value={security.previous_book_value} delimiter={","} separator={"."} />
+              <TableComponents.double_value_number_cell
+                class="flex flex-col gap-4 text-right"
+                first_value={security.book_value}
+                second_value={security.previous_book_value}
+                delimiter=","
+                separator="."
+              />
 
-            <TableComponents.double_value_number_cell first_value={security.bvs}
-              second_value={security.previous_bvs} round_first={2} round_second={2} />
+              <TableComponents.double_value_number_cell
+                class="flex flex-col gap-4 text-right"
+                first_value={security.bvs}
+                second_value={security.previous_bvs}
+                round_first={2}
+                round_second={2}
+              />
 
-            <TableComponents.double_value_number_cell first_value={Decimal.mult(security.profit_margin, 100)}
-              second_value={Decimal.mult(security.previous_profit_margin, 100)} round_first={2} round_second={2} percentage />
-
-          </TableComponents.table_row>
-        <% end %>
-      </tbody>
+              <TableComponents.double_value_number_cell
+                class="flex flex-col gap-4 text-right"
+                first_value={Decimal.mult(security.profit_margin, 100)}
+                second_value={Decimal.mult(security.previous_profit_margin, 100)}
+                round_first={2}
+                round_second={2}
+                percentage
+              />
+            </TableComponents.table_row>
+          <% end %>
+        </tbody>
 
         <tfoot></tfoot>
       </table>
@@ -85,6 +128,6 @@
       </tr>
     <% end %>
   </div>
-  
+
   <div class="h-2 mt-4"></div>
 </section>

@@ -1,9 +1,5 @@
 <section class="px-2 2xl:px-6">
-  
-  <HeaderComponent.header
-    socket={@socket}
-    active_tab={@active_tab}
-   />
+  <HeaderComponent.header active_tab={@active_tab} />
 
   <.form
     :let={f}
@@ -14,10 +10,13 @@
     phx-click="toggle_input"
   >
     <div class="w-full flex flex-col flex-wrap sm:flex-row items-center sm:items-end gap-8 pb-12">
-
       <div class="sm:w-max">
-        <%= Phoenix.HTML.Form.label f, :symbol, "Issuer or symbol", for: :symbol, class: "w-max mb-[0.5rem] text-sm xl:text-base font-light text-gray-450" %>
-        <.live_component module={IssuerSelectComponent}
+        <%= Phoenix.HTML.Form.label(f, :symbol, "Issuer or symbol",
+          for: :symbol,
+          class: "w-max mb-[0.5rem] text-sm xl:text-base font-light text-gray-450"
+        ) %>
+        <.live_component
+          module={IssuerSelectComponent}
           id="issuers_select_comp"
           issuer_input_cover={@issuer_input_cover}
           options={@select_list}
@@ -26,45 +25,58 @@
       </div>
 
       <div class="sm:min-w-39 sm:max-w-39">
-        <FormComponents.input_wrapper
-          field={:price}
-          form={f}
-          label="Price"
-        >
+        <FormComponents.input_wrapper field={:price} form={f} label="Price">
           <div class="relative rounded-[0.7rem] shadow-none">
-            <%= Phoenix.HTML.Form.text_input f, :price, placeholder: "0.00",
-              class: "border-1 border-gray-450 focus:border-gray-600 placeholder-gray-450 rounded-[0.6rem] h-11 p-2 text-sm xl:text-base font-light text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>
+            <%= Phoenix.HTML.Form.text_input(f, :price,
+              placeholder: "0.00",
+              class:
+                "border-1 border-gray-450 focus:border-gray-600 placeholder-gray-450 rounded-[0.6rem] h-11 p-2 text-sm xl:text-base font-light text-center placeholder:focus:text-transparent",
+              phx_debounce: "500",
+              autocomplete: "off"
+            ) %>
             <div class="absolute inset-y-0 right-2 pr-3 xl:pr-1 flex items-center pointer-events-none">
-              <span class={if(Keyword.has_key?(@changeset.errors, :price), do: "text-gray-450", else: "text-gray-600") <> " text-sm xl:text-base"} id="price-currency"> KM </span>
+              <span
+                class={if(Keyword.has_key?(@changeset.errors, :price), do: "text-gray-450", else: "text-gray-600") <> " text-sm xl:text-base"}
+                id="price-currency"
+              >
+                 KM 
+              </span>
             </div>
           </div>
         </FormComponents.input_wrapper>
       </div>
 
       <div class="sm:min-w-39 sm:max-w-39">
-        <FormComponents.input_wrapper
-          field={:amount}
-          form={f}
-          label="Amount"
-        >
+        <FormComponents.input_wrapper field={:amount} form={f} label="Amount">
           <div class="relative rounded-[0.7rem] shadow-none">
-            <%= Phoenix.HTML.Form.text_input f, :amount, placeholder: "0",
-              class: "border-1 border-gray-450 focus:border-gray-600 placeholder-gray-450 rounded-[0.6rem] h-11 p-2 text-sm xl:text-base font-light text-center placeholder:focus:text-transparent", phx_debounce: "500", autocomplete: "off" %>
+            <%= Phoenix.HTML.Form.text_input(f, :amount,
+              placeholder: "0",
+              class:
+                "border-1 border-gray-450 focus:border-gray-600 placeholder-gray-450 rounded-[0.6rem] h-11 p-2 text-sm xl:text-base font-light text-center placeholder:focus:text-transparent",
+              phx_debounce: "500",
+              autocomplete: "off"
+            ) %>
           </div>
         </FormComponents.input_wrapper>
       </div>
 
       <div class="sm:min-w-39 sm:max-w-39">
-        <FormComponents.input_wrapper
-          field={:fee}
-          form={f}
-          label="Fee percentage"
-        >
+        <FormComponents.input_wrapper field={:fee} form={f} label="Fee percentage">
           <div class="relative rounded-[0.7rem] shadow-none">
-            <%= Phoenix.HTML.Form.text_input f, :fee, placeholder: "0", phx_debounce: "500",
-              class: "border-1 border-gray-450 focus:border-gray-600 placeholder-gray-450 rounded-[0.6rem] h-11 p-2 text-sm xl:text-base font-light text-center placeholder:focus:text-transparent", autocomplete: "off" %>
+            <%= Phoenix.HTML.Form.text_input(f, :fee,
+              placeholder: "0",
+              phx_debounce: "500",
+              class:
+                "border-1 border-gray-450 focus:border-gray-600 placeholder-gray-450 rounded-[0.6rem] h-11 p-2 text-sm xl:text-base font-light text-center placeholder:focus:text-transparent",
+              autocomplete: "off"
+            ) %>
             <div class="absolute inset-y-0 right-2 pr-4 flex items-center pointer-events-none">
-              <span class={if(Keyword.has_key?(@changeset.errors, :fee), do: "text-gray-450", else: "text-gray-600") <> " text-sm xl:text-base"} id="price-currency-2"> % </span>
+              <span
+                class={if(Keyword.has_key?(@changeset.errors, :fee), do: "text-gray-450", else: "text-gray-600") <> " text-sm xl:text-base"}
+                id="price-currency-2"
+              >
+                 % 
+              </span>
             </div>
           </div>
         </FormComponents.input_wrapper>
@@ -78,11 +90,12 @@
         />
       </div>
     </div>
-    <p class="text-sm text-gray-450 mb-2">To calculate the price, please enter your requirements.</p>
+    <p class="text-sm text-gray-450 mb-2">
+      To calculate the price, please enter your requirements.
+    </p>
   </.form>
 
   <%= if Enum.count(@results.securities) > 0 do %>
-
     <div class="mx-12 xl:mx-16">
       <p class="text-lg xl:text-xl text-gray-800">Stock prices</p>
 
@@ -100,19 +113,24 @@
           <%= for result <- @results.securities do %>
             <tr class="h-6">
               <td class="text-center text-blue-400 px-4" colspan="3">
-                <a href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{result.symbol}"} target="_blank">
+                <a
+                  href={"http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{result.symbol}"}
+                  target="_blank"
+                >
                   <%= result.symbol %>
                 </a>
               </td>
               <td class="text-center px-4" colspan="2"><%= result.name %></td>
               <td class="text-center px-4"><%= Decimal.round(result.amount, 0) %></td>
               <td class="text-center px-4"><%= Decimal.round(result.price, 2) %></td>
-              <td class="text-center px-4" colspan="2"><%= Decimal.round(result.total_without_fee, 2) %></td>
-              <td class="text-center px-4" colspan="2"><%= Decimal.round(result.total_with_fee, 2) %></td>
+              <td class="text-center px-4" colspan="2">
+                <%= Decimal.round(result.total_without_fee, 2) %>
+              </td>
+              <td class="text-center px-4" colspan="2">
+                <%= Decimal.round(result.total_with_fee, 2) %>
+              </td>
               <td class="text-center ">
-                <TableIconsComponent.delete_row
-                  row_id={result.id}
-                />
+                <TableIconsComponent.delete_row row_id={result.id} />
               </td>
             </tr>
           <% end %>
@@ -122,8 +140,12 @@
             <td class="px-4" colspan="2"></td>
             <td class="px-4"></td>
             <td class="px-4"></td>
-            <td class="px-4 text-center" colspan="2"><%= Decimal.round(@results.total_without_fee, 2) %></td>
-            <td class="text-center px-4" colspan="2"><%= Decimal.round(@results.total_with_fee, 2) %></td>
+            <td class="px-4 text-center" colspan="2">
+              <%= Decimal.round(@results.total_without_fee, 2) %>
+            </td>
+            <td class="text-center px-4" colspan="2">
+              <%= Decimal.round(@results.total_with_fee, 2) %>
+            </td>
             <td></td>
           </tr>
         </tbody>

@@ -94,6 +94,21 @@ defmodule SaseMango.SecuritiesHelper do
   end
 
   @doc """
+  Returns the shares number for specific issuer.
+  """
+  def get_shares_number_for_issuer(source_data, issuer_symbol) do
+    source_data
+    |> parse_shares_and_nominal_price()
+    |> Enum.find_value(fn {symbol, number_of_shares, _price} ->
+      if symbol == issuer_symbol do
+        number_of_shares
+      end
+    end)
+    |> String.replace(".", "", global: false)
+    |> Decimal.new()
+  end
+
+  @doc """
   Parses the shares and nominal price data string and returns a list of tuples in the form {issuer_symbol, number_of_shares, nominal_price}.
 
   ## Examples
@@ -191,9 +206,9 @@ defmodule SaseMango.SecuritiesHelper do
           else: Decimal.div(previous_total_dividends, previous_total_shares)
         )
 
-      price = convert_price_to_decimal(security.issuer.info["AvgPrice"])
-      ask_price = convert_price_to_decimal(security.issuer.info["BestAskPrice"])
-      bid_price = convert_price_to_decimal(security.issuer.info["BestBidPrice"])
+      price = convert_number_to_decimal(security.issuer.info["AvgPrice"])
+      ask_price = convert_number_to_decimal(security.issuer.info["BestAskPrice"])
+      bid_price = convert_number_to_decimal(security.issuer.info["BestBidPrice"])
 
       last_trade_date = convert_date_format(security.issuer.info["LastTradeDate"])
 
@@ -323,10 +338,10 @@ defmodule SaseMango.SecuritiesHelper do
   end
 
   defp get_calculate_param(security, :securities),
-    do: convert_price_to_decimal(security.issuer.info["AvgPrice"])
+    do: convert_number_to_decimal(security.issuer.info["AvgPrice"])
 
   defp get_calculate_param(security, :bargains),
-    do: convert_price_to_decimal(security.issuer.info["BestAskPrice"])
+    do: convert_number_to_decimal(security.issuer.info["BestAskPrice"])
 
   defp maybe_additional_filter(securities, :securities), do: securities
 
@@ -471,8 +486,8 @@ defmodule SaseMango.SecuritiesHelper do
     end
   end
 
-  defp convert_price_to_decimal(price) when is_float(price), do: Decimal.from_float(price)
-  defp convert_price_to_decimal(price), do: Decimal.new(price)
+  def convert_number_to_decimal(value) when is_float(value), do: Decimal.from_float(value)
+  def convert_number_to_decimal(value), do: Decimal.new(value)
 
   defp convert_date_format(value) do
     {:ok, datetime} =
