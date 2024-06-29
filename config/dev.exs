@@ -25,8 +25,8 @@ config :sase_mango, SaseMangoWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "HaOgVnuFLuI5cqo3z7LGHSQzN8x1bFUgBThR7QW9H9MkFYri7Y/LTH+drc4gdcr8",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
+    esbuild: {Esbuild, :install_and_run, [:sase_mango, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:sase_mango, ~w(--watch)]}
   ]
 
 # ## SSL Support
