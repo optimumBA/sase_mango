@@ -5,6 +5,15 @@ defmodule SaseMango.Calculator.Input do
 
   import Ecto.Changeset
 
+  defstruct [:amount, :fee, :price, :symbol]
+
+  @type t :: %__MODULE__{
+          amount: Decimal.t() | nil,
+          fee: Decimal.t() | nil,
+          price: Decimal.t() | nil,
+          symbol: String.t() | nil
+        }
+
   @types %{
     amount: :decimal,
     fee: :decimal,
@@ -12,11 +21,10 @@ defmodule SaseMango.Calculator.Input do
     symbol: :string
   }
 
-  defstruct [:amount, :fee, :price, :symbol]
-
   @doc """
   CalculatorInput changeset for validation.
   """
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(input, attrs \\ %{}) do
     {input, @types}
     |> cast(attrs, Map.keys(@types))

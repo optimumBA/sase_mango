@@ -1,12 +1,14 @@
 defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
-  @moduledoc """
-  Module contains helper components used by the securities table
-  """
+  @moduledoc false
 
   use SaseMangoWeb, :html
 
   alias SaseMangoWeb.SharedComponents.TableIconsComponent
 
+  @type assigns :: map()
+  @type rendered :: Phoenix.LiveView.Rendered.t()
+
+  @spec sort_link(assigns()) :: rendered()
   def sort_link(assigns) do
     ~H"""
     <div
@@ -29,6 +31,7 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
     """
   end
 
+  @spec table_row(assigns()) :: rendered()
   def table_row(%{security: security} = assigns) do
     class =
       cond do
@@ -51,6 +54,7 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
     """
   end
 
+  @spec one_value_number_cell(assigns()) :: rendered()
   def one_value_number_cell(assigns) do
     maybe_add_percentage = maybe_add_percentage(assigns[:percentage])
 
@@ -68,6 +72,7 @@ defmodule SaseMangoWeb.SecuritiesLive.TableComponents do
     """
   end
 
+  @spec double_value_number_cell(assigns()) :: rendered()
   def double_value_number_cell(assigns) do
     maybe_add_percentage = maybe_add_percentage(assigns[:percentage])
 

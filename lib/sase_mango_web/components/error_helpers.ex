@@ -8,8 +8,11 @@ defmodule SaseMangoWeb.ErrorHelpers do
   @doc """
   Generates tag for inlined form input errors.
   """
+  @spec error_tag(Phoenix.HTML.Form.t(), atom, keyword) :: [{:safe, iodata}]
   def error_tag(form, field, opts \\ []) do
-    Enum.map(Keyword.get_values(form.errors, field), fn error ->
+    form.errors
+    |> Keyword.get_values(field)
+    |> Enum.map(fn error ->
       content_tag(:span, translate_error(error),
         class: Keyword.get(opts, :class, "invalid-feedback"),
         phx_feedback_for: input_name(form, field)
@@ -20,6 +23,7 @@ defmodule SaseMangoWeb.ErrorHelpers do
   @doc """
   Translates an error message using gettext.
   """
+  @spec translate_error({String.t(), keyword}) :: binary
   def translate_error({msg, opts}) do
     # When using gettext, we typically pass the strings we want
     # to translate as a static argument:

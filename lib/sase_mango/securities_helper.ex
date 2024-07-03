@@ -6,16 +6,22 @@ defmodule SaseMango.SecuritiesHelper do
 
   import Ecto.Query
 
+  alias SaseMango.Repo
   alias SaseMango.Securities.FinancialStatement
   alias SaseMango.Securities.Issuer
-  alias SaseMango.Repo
+
+  @type date :: String.t()
+  @type management_data :: [tuple()]
+  @type price_data :: [tuple()]
 
   @doc """
   Returns today's or the given date in the following format (dd.mm.yyyy).
   """
+  @spec format_date() :: date()
   def format_date do
     [year, month, day] =
-      DateTime.now!("Europe/Sarajevo")
+      "Europe/Sarajevo"
+      |> DateTime.now!()
       |> DateTime.to_date()
       |> Date.to_string()
       |> String.split("-")
@@ -23,6 +29,7 @@ defmodule SaseMango.SecuritiesHelper do
     "#{day}.#{month}.#{year}"
   end
 
+  @spec format_date(date()) :: date()
   def format_date(date) do
     {:ok, date_format} = NaiveDateTime.from_iso8601(date)
 
@@ -55,6 +62,7 @@ defmodule SaseMango.SecuritiesHelper do
       []
 
   """
+  @spec filter_management_and_supervisory_data(String.t()) :: any()
   def filter_management_and_supervisory_data(data) when data in [nil, ""], do: []
 
   def filter_management_and_supervisory_data(data_string) when is_binary(data_string) do
@@ -69,17 +77,24 @@ defmodule SaseMango.SecuritiesHelper do
       |> Stream.map(fn {item, i} ->
         next_el = Enum.find(board_data_list_with_index, fn {_item, ei} -> ei == i + 1 end)
 
-        is_name? = !String.contains?(String.downcase(item), positions)
+        is_name? =
+          item
+          |> String.downcase()
+          |> String.contains?(positions)
 
-        has_position? =
-          next_el &&
-            String.contains?(String.downcase(elem(next_el, 0)), positions)
+        is_position? =
+          next_el
+          |> elem(0)
+          |> String.downcase()
+          |> String.contains?(positions)
+
+        has_position? = next_el && is_position?
 
         cond do
-          is_name? && has_position? ->
+          !is_name? && has_position? ->
             {elem(next_el, 0), item}
 
-          is_name? ->
+          !is_name? ->
             {"", item}
 
           true ->
@@ -112,13 +127,15 @@ defmodule SaseMango.SecuritiesHelper do
       []
 
   """
+  @spec parse_shares_and_nominal_price(String.t()) :: price_data()
   def parse_shares_and_nominal_price(data) when data in [nil, ""], do: []
 
   def parse_shares_and_nominal_price(data_string) when is_binary(data_string) do
     data_string
     |> String.split("|", trim: true)
     |> Stream.map(
-      &(String.trim(&1)
+      &(&1
+        |> String.trim()
         |> String.split(~r/<\/a>/))
     )
     |> Stream.map(fn [k, v] ->
@@ -134,20 +151,10 @@ defmodule SaseMango.SecuritiesHelper do
   Returns the list of securities.
   List is calculated depending on the type(regular or bargains list) by either regular or ask price.
   """
+  @spec list_securities(atom(), map()) :: Enumerable.t()
   def list_securities(list_type, _params \\ %{}) do
-    current_financial_statement = current_financial_statement()
-    previous_financial_statement = previous_financial_statement()
-
-    from(i in Issuer, as: :issuer)
-    |> join(:inner_lateral, [], fs_1 in subquery(current_financial_statement), as: :current_fs)
-    |> join(:inner_lateral, [], fs_2 in subquery(previous_financial_statement), as: :previous_fs)
-    |> select([issuer: i, current_fs: current_fs, previous_fs: previous_fs], %{
-      issuer: i,
-      current: current_fs,
-      previous: previous_fs
-    })
-    |> maybe_filter_available_securities(list_type)
-    |> Repo.all()
+    list_type
+    |> fetch_financial_statements()
     |> Stream.map(fn %{} = security ->
       calc_param = get_calculate_param(security, list_type)
 
@@ -295,6 +302,22 @@ defmodule SaseMango.SecuritiesHelper do
     |> maybe_additional_filter(list_type)
   end
 
+  defp fetch_financial_statements(list_type) do
+    current_financial_statement = current_financial_statement()
+    previous_financial_statement = previous_financial_statement()
+
+    from(i in Issuer, as: :issuer)
+    |> join(:inner_lateral, [], fs_1 in subquery(current_financial_statement), as: :current_fs)
+    |> join(:inner_lateral, [], fs_2 in subquery(previous_financial_statement), as: :previous_fs)
+    |> select([issuer: i, current_fs: current_fs, previous_fs: previous_fs], %{
+      issuer: i,
+      current: current_fs,
+      previous: previous_fs
+    })
+    |> maybe_filter_available_securities(list_type)
+    |> Repo.all()
+  end
+
   defp financial_statements do
     current_year = NaiveDateTime.utc_now().year
 
@@ -354,7 +377,7 @@ defmodule SaseMango.SecuritiesHelper do
          balance_sheet when is_list(balance_sheet) <- Map.get(statement, "BALANCESHEET") do
       balance_sheet
     else
-      _ ->
+      _other ->
         %{}
     end
   end
@@ -365,7 +388,7 @@ defmodule SaseMango.SecuritiesHelper do
          equity_changes when is_list(equity_changes) <- Map.get(statement, "EQUITYCHANGES") do
       equity_changes
     else
-      _ ->
+      _other ->
         %{}
     end
   end
@@ -377,7 +400,7 @@ defmodule SaseMango.SecuritiesHelper do
            Map.get(statement, "PROFITANDLOSSACCOUNT") do
       profit_and_loss_account
     else
-      _ ->
+      _other ->
         %{}
     end
   end
@@ -395,7 +418,7 @@ defmodule SaseMango.SecuritiesHelper do
          previous_book_value <- Decimal.new(previous_book_value) do
       {book_value, previous_book_value}
     else
-      _ ->
+      _other ->
         {Decimal.new(0), Decimal.new(0)}
     end
   end
@@ -410,7 +433,7 @@ defmodule SaseMango.SecuritiesHelper do
          total_dividends <- Decimal.new(total_capital) do
       total_dividends
     else
-      _ ->
+      _other ->
         Decimal.new(0)
     end
   end
@@ -427,7 +450,7 @@ defmodule SaseMango.SecuritiesHelper do
          previous_income <- Decimal.new(previous_income) do
       {income, previous_income}
     else
-      _ ->
+      _other ->
         {Decimal.new(0), Decimal.new(0)}
     end
   end
@@ -445,7 +468,7 @@ defmodule SaseMango.SecuritiesHelper do
          previous_profit <- Decimal.new(previous_profit) do
       {profit, previous_profit}
     else
-      _ ->
+      _other ->
         {Decimal.new(0), Decimal.new(0)}
     end
   end
@@ -473,7 +496,7 @@ defmodule SaseMango.SecuritiesHelper do
 
       {nominal_price, total_shares}
     else
-      _ ->
+      _other ->
         {Decimal.new(0), Decimal.new(0)}
     end
   end
@@ -483,7 +506,8 @@ defmodule SaseMango.SecuritiesHelper do
 
   defp convert_date_format(value) do
     {:ok, datetime} =
-      Regex.run(~r/[0-9]{1,}/, value)
+      ~r/[0-9]{1,}/
+      |> Regex.run(value)
       |> List.first()
       |> String.slice(0..-4)
       |> String.to_integer()

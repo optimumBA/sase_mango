@@ -1,5 +1,12 @@
 defmodule SaseMango.SaseScraper do
+  @moduledoc false
+
   alias SaseMango.SaseMangoClient
+
+  @type date :: String.t()
+  @type semi_annual :: boolean()
+  @type symbol :: String.t()
+  @type year :: integer()
 
   @relevant_segments MapSet.new([
                        "The Official market - The Official market of companies",
@@ -9,14 +16,11 @@ defmodule SaseMango.SaseScraper do
                        "Free market - Subsegment 3"
                      ])
 
+  @spec get_list(date()) :: {:ok, [map()]} | {:error, any()}
   def get_list(date) do
     with {:ok, %Finch.Response{body: body, status: 200}} <- SaseMangoClient.get_list(date),
          {:ok, issuers} <- Jason.decode(body) do
-      issuers =
-        issuers
-        |> Enum.filter(fn issuer ->
-          @relevant_segments |> MapSet.member?(Map.get(issuer, "Segment"))
-        end)
+      issuers = Enum.filter(issuers, &MapSet.member?(@relevant_segments, &1["Segment"]))
 
       {:ok, issuers}
     else
@@ -25,14 +29,12 @@ defmodule SaseMango.SaseScraper do
     end
   end
 
+  @spec get_financial_statement(symbol(), year(), semi_annual()) :: {:ok, map()} | {:error, any()}
   def get_financial_statement(symbol, year, semi_annual) do
     with {:ok, %Finch.Response{body: body, status: 200}} <-
            SaseMangoClient.get_financial_statement(symbol, year, semi_annual),
          data when is_map(data) <- XmlToMap.naive_map(body),
-         [key] <- Map.keys(data),
-         %{^key => data} <- data,
-         # Discard statements containing only GENERALINFO
-         keys when length(keys) > 1 <- Map.keys(data) do
+         data <- check_data(data) do
       {:ok, data}
     else
       error ->
@@ -40,6 +42,19 @@ defmodule SaseMango.SaseScraper do
     end
   end
 
+  defp check_data(data) do
+    with [key] <- Map.keys(data),
+         %{^key => data} <- data,
+         # Discard statements containing only GENERALINFO
+         keys when length(keys) > 1 <- Map.keys(data) do
+      data
+    else
+      error ->
+        {:error, error}
+    end
+  end
+
+  @spec get_company_data(symbol()) :: {:ok, map()}
   def get_company_data(symbol) do
     with {:ok, %Finch.Response{body: body, status: 200}} <-
            SaseMangoClient.get_general_data(symbol),
@@ -54,6 +69,7 @@ defmodule SaseMango.SaseScraper do
     end
   end
 
+  @spec get_company_owners(symbol()) :: {:ok, map()}
   def get_company_owners(symbol) do
     with {:ok, %Finch.Response{body: body, status: 200}} <-
            SaseMangoClient.get_top_10_owners(symbol),
@@ -64,6 +80,7 @@ defmodule SaseMango.SaseScraper do
     end
   end
 
+  @spec get_ticker(symbol()) :: {:ok, map()} | {:error, any()}
   def get_ticker(symbol) do
     with {:ok, %Finch.Response{body: body, status: 200}} <-
            SaseMangoClient.get_ticker(symbol),

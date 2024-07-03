@@ -6,10 +6,18 @@ defmodule SaseMango.Securities do
 
   import Ecto.Query, warn: false
 
+  alias SaseMango.Repo
   alias SaseMango.Securities.FinancialStatement
   alias SaseMango.Securities.Issuer
   alias SaseMango.SecuritiesHelper
-  alias SaseMango.Repo
+
+  @type attrs :: map()
+  @type changeset :: Ecto.Changeset.t()
+  @type financial_statement :: FinancialStatement.t()
+  @type issuer :: Issuer.t()
+  @type semi_annual :: boolean()
+  @type symbol :: String.t()
+  @type year :: integer()
 
   @doc """
   Returns the list of issuers.
@@ -20,18 +28,39 @@ defmodule SaseMango.Securities do
       [%Issuer{}, ...]
 
   """
-  def list_issuers(), do: Repo.all(Issuer)
+  @spec list_issuers() :: [issuer()]
+  def list_issuers, do: Repo.all(Issuer)
 
   @doc """
   Gets single issuer from db.
   Returns the issuer if exists, nil otherwise.
+
+  ## Examples
+
+      iex> get_issuer("BSNLR")
+      %Issuer{}
+
+      iex> get_issuer("NON-EXISTENT")
+      nil
+
   """
+  @spec get_issuer(symbol) :: issuer() | nil
   def get_issuer(symbol), do: Repo.get_by(Issuer, symbol: symbol)
 
   @doc """
   Gets company data for issuer.
   Returns all relevant company information and facts owned by the Issuer.
+
+   ## Examples
+
+      iex> get_comapny_data("BSNLR")
+      %{symbol: "BSNLR", ...}
+
+      iex> get_comapny_data("NON-EXISTENT")
+      nil
+
   """
+  @spec get_company_data(symbol) :: map() | nil
   def get_company_data(symbol) do
     Issuer
     |> where([is], is.symbol == ^symbol)
@@ -130,6 +159,7 @@ defmodule SaseMango.Securities do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_issuer(attrs()) :: {:ok, issuer()} | {:error, changeset()}
   def create_issuer(attrs) do
     %Issuer{}
     |> Issuer.changeset(attrs)
@@ -148,6 +178,7 @@ defmodule SaseMango.Securities do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_issuer(issuer(), attrs()) :: {:ok, issuer()} | {:error, changeset()}
   def update_issuer(issuer, attrs) do
     issuer
     |> Issuer.changeset(attrs)
@@ -156,7 +187,17 @@ defmodule SaseMango.Securities do
 
   @doc """
     Gets the financial statement for issuer by semiannual status and year.
+
+     ## Examples
+
+      iex> get_financial_statement(issuer, true, 2023)
+      %FinancialStatement{semi_annual: true, ...}
+
+      iex> get_financial_statement(non_existent_issuer, true, 2023)
+      nil
+
   """
+  @spec get_financial_statement(issuer(), semi_annual(), year()) :: financial_statement() | nil
   def get_financial_statement(%Issuer{} = issuer, semi_annual, year) do
     Repo.get_by(FinancialStatement, issuer_id: issuer.id, semi_annual: semi_annual, year: year)
   end
@@ -164,6 +205,8 @@ defmodule SaseMango.Securities do
   @doc """
   Creates the financial statement for current issuer.
   """
+  @spec create_financial_statement(issuer(), attrs()) ::
+          {:ok, financial_statement()} | {:error, any()}
   def create_financial_statement(issuer, attrs) do
     %FinancialStatement{}
     |> FinancialStatement.changeset(attrs)
@@ -177,12 +220,14 @@ defmodule SaseMango.Securities do
   @doc """
   Helper function that returns market segment for specific security.
   """
+  @spec segment(String.t()) :: String.t()
   def segment("Free market - Subsegment 1"), do: "ST1"
   def segment("Free market - Subsegment 2"), do: "ST2"
   def segment("Free market - Subsegment 3"), do: "ST3"
   def segment("The Official market - The Official market of companies"), do: "Companies"
   def segment("The Official market - The Official market of funds"), do: "Funds"
 
+  @spec list_securities(atom(), map()) :: Enumerable.t()
   def list_securities(type_atom, params \\ %{})
       when type_atom in [:securities, :bargains] do
     SecuritiesHelper.list_securities(type_atom, params)

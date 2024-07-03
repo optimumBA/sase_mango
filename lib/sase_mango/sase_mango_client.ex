@@ -1,6 +1,15 @@
 defmodule SaseMango.SaseMangoClient do
+  @moduledoc false
+
   require Logger
 
+  @type date :: String.t()
+  @type finch_response :: {:ok, Finch.Response.t()} | {:error, any()}
+  @type semi_annual :: boolean()
+  @type symbol :: String.t()
+  @type year :: integer()
+
+  @spec child_spec() :: {Finch, [{:name, SaseMango.SaseMangoClient} | {:pools, map()}, ...]}
   def child_spec do
     {Finch,
      name: __MODULE__,
@@ -9,6 +18,7 @@ defmodule SaseMango.SaseMangoClient do
      }}
   end
 
+  @spec get_list(date()) :: finch_response()
   def get_list(date) do
     Logger.info("Fetching list of issuers for date #{date}")
 
@@ -21,6 +31,7 @@ defmodule SaseMango.SaseMangoClient do
     })
   end
 
+  @spec get_financial_statement(symbol(), year(), semi_annual()) :: finch_response()
   def get_financial_statement(symbol, year, semi_annual) do
     Logger.info(
       "Fetching #{year} (#{if(semi_annual, do: "semi-", else: "")}annual) financial statement for issuer #{symbol}"
@@ -37,6 +48,7 @@ defmodule SaseMango.SaseMangoClient do
     |> send_request()
   end
 
+  @spec get_ticker(symbol()) :: finch_response()
   def get_ticker(symbol) do
     Logger.info("Fetching ticker for issuer #{symbol}")
 
@@ -45,6 +57,7 @@ defmodule SaseMango.SaseMangoClient do
     |> send_request()
   end
 
+  @spec get_general_data(symbol()) :: finch_response()
   def get_general_data(symbol) do
     Logger.info("Fetching company information data for issuer #{symbol}")
 
@@ -53,13 +66,14 @@ defmodule SaseMango.SaseMangoClient do
     |> send_request()
   end
 
+  @spec get_top_10_owners(symbol()) :: finch_response()
   def get_top_10_owners(symbol) do
     common_request_params()
     |> Map.merge(%{"symbol" => symbol, "type" => 18, "Months" => 0})
     |> send_request()
   end
 
-  defp common_request_params() do
+  defp common_request_params do
     %{
       "id" => 0,
       "lng" => 1,

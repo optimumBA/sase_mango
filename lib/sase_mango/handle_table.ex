@@ -5,6 +5,13 @@ defmodule SaseMango.HandleTable do
 
   alias __MODULE__.SearchFilter
 
+  @type attrs :: map()
+  @type changeset :: Ecto.Changeset.t()
+  @type field :: String.t()
+  @type search_filter :: SearchFilter.t()
+  @type securities :: list()
+  @type sort_order :: atom()
+
   @number_fields [
     "ask_price",
     "bid_price",
@@ -25,6 +32,7 @@ defmodule SaseMango.HandleTable do
   @doc """
   Returns a changeset for a `FilterForm.SearchFilter`.
   """
+  @spec change_table_filter(search_filter(), attrs()) :: changeset()
   def change_table_filter(%SearchFilter{} = filter, attrs \\ %{}) do
     SearchFilter.changeset(filter, attrs)
   end
@@ -42,6 +50,7 @@ defmodule SaseMango.HandleTable do
   @doc """
   Sorts the list of securities by field type in ascending/descending order.
   """
+  @spec sort_table(securities(), field(), sort_order()) :: securities()
   def sort_table(securities, field, sort_order) do
     case get_sort_params(field, sort_order) do
       nil -> securities

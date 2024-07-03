@@ -1,4 +1,6 @@
 defmodule SaseMango.SecuritiesCache do
+  @moduledoc false
+
   use GenServer
 
   alias SaseMango.Securities
@@ -9,6 +11,7 @@ defmodule SaseMango.SecuritiesCache do
 
   # Client side API
 
+  @spec start_link(any()) :: {:ok, pid()} | :ignore
   def start_link(_attrs) do
     case GenServer.start_link(__MODULE__, :ok, name: __MODULE__) do
       {:ok, pid} ->
@@ -19,17 +22,19 @@ defmodule SaseMango.SecuritiesCache do
     end
   end
 
-  def get() do
+  @spec get() :: list()
+  def get do
     case :ets.lookup(@table, @key) do
       [{_key, securities}] ->
         securities
 
-      _ ->
+      _other ->
         []
     end
   end
 
-  def update() do
+  @spec update() :: :ok
+  def update do
     GenServer.cast(__MODULE__, :update)
   end
 
@@ -57,7 +62,7 @@ defmodule SaseMango.SecuritiesCache do
     {:noreply, []}
   end
 
-  defp update_cache() do
+  defp update_cache do
     securities =
       :securities
       |> Securities.list_securities()

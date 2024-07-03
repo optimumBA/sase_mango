@@ -9,6 +9,10 @@ defmodule SaseMango do
 
   alias SaseMango.SaseMangoClient
 
+  @type date :: String.t()
+  @type issuers :: list()
+  @type year :: integer()
+
   @description_dividends "21. Objavljene dividende i drugi oblici raspodjele dobiti i pokriće gubitka"
 
   @relevant_segments MapSet.new([
@@ -19,19 +23,18 @@ defmodule SaseMango do
                        "Free market - Subsegment 3"
                      ])
 
+  @spec get_list(date()) :: issuers() | any()
   def get_list(date) do
     with {:ok, %Finch.Response{body: body, status: 200}} <- SaseMangoClient.get_list(date),
          {:ok, issuers} <- Jason.decode(body) do
-      issuers
-      |> Enum.filter(fn issuer ->
-        @relevant_segments |> MapSet.member?(Map.get(issuer, "Segment"))
-      end)
+      Enum.filter(issuers, &MapSet.member?(@relevant_segments, &1["Segment"]))
     else
       response ->
         response
     end
   end
 
+  @spec get_financial_statements(date(), year()) :: :ok | any()
   def get_financial_statements(date, year) do
     case get_list(date) do
       issuers when is_list(issuers) ->
@@ -49,7 +52,8 @@ defmodule SaseMango do
     end
   end
 
-  def calculate_and_export() do
+  @spec calculate_and_export() :: :ok
+  def calculate_and_export do
     issuers =
       "issuers.json"
       |> File.read!()

@@ -9,6 +9,14 @@ defmodule SaseMango.Securities.FinancialStatement do
 
   import Ecto.Changeset
 
+  @type attrs :: map()
+  @type changeset :: Ecto.Changeset.t()
+  @type t :: %__MODULE__{
+          semi_annual: boolean() | nil,
+          statement: map() | nil,
+          year: integer() | nil
+        }
+
   schema "financial_statements" do
     belongs_to :issuer, SaseMango.Securities.Issuer
     field :semi_annual, :boolean
@@ -21,6 +29,7 @@ defmodule SaseMango.Securities.FinancialStatement do
   Financial statements changeset for validation.
 
   """
+  @spec changeset(t(), attrs()) :: changeset()
   def changeset(financial_statement, attrs \\ %{}) do
     financial_statement
     |> cast(attrs, [:semi_annual, :statement, :year])

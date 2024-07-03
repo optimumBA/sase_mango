@@ -12,7 +12,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
   alias SaseMangoWeb.SecuritiesLive.TableComponents
   alias SaseMangoWeb.SharedComponents.HeaderComponent
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     if connected?(socket) do
       Endpoint.subscribe("securities")
@@ -21,7 +21,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     {:ok, assign_table_columns(socket)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_params(params, _url, socket) do
     {:noreply,
      socket
@@ -108,7 +108,7 @@ defmodule SaseMangoWeb.SecuritiesLive.Index do
     |> maybe_filter_securities()
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("sort_column", %{"col_name" => name} = _params, socket) do
     %{sort_options: %{sort_by: col_name, sort_order: sort_order}} = socket.assigns
 

@@ -179,7 +179,15 @@
           {Credo.Check.Consistency.UnusedVariableNames, []},
           {Credo.Check.Design.DuplicatedCode, []},
           {Credo.Check.Design.SkipTestWithoutComment, []},
-          {Credo.Check.Readability.AliasAs, []},
+          {Credo.Check.Readability.AliasAs,
+           files: %{
+             excluded: [
+               "lib/sase_mango_web.ex",
+               "test/support/channel_case.ex",
+               "test/support/conn_case.ex",
+               "test/support/data_case.ex"
+             ]
+           }},
           {Credo.Check.Readability.BlockPipe, []},
           {Credo.Check.Readability.ImplTrue, []},
           {Credo.Check.Readability.MultiAlias, []},
@@ -194,8 +202,7 @@
              excluded: [
                "lib/sase_mango_web.ex",
                "lib/sase_mango_web/components/core_components.ex",
-               "lib/sase_mango_web/controllers/error_html.ex",
-               "lib/sase_mango_web/controllers/error_json.ex"
+               "lib/sase_mango_web/telemetry.ex"
              ]
            }},
           {Credo.Check.Readability.StrictModuleLayout,
