@@ -78,47 +78,58 @@ defmodule SaseMango.Securities do
   defp format_company_data(nil), do: nil
 
   defp format_company_data(data) do
-    # For some issuers we get useless map instead of string
+    %{
+      legal_entities: data.symbol_data["LegalEntityTheIssuerHoldsMoreThan10Percent"],
+      management_board:
+        SecuritiesHelper.filter_management_and_supervisory_data(
+          data.symbol_data["ManagementBoard"]
+        ),
+      name: data.name,
+      supervisory_board:
+        SecuritiesHelper.filter_management_and_supervisory_data(
+          data.symbol_data["SupervisoryBoard"]
+        ),
+      symbol: data.symbol,
+      total_number_of_shareholders: data.symbol_data["TotalNumberOfShareholders"],
+      sase_url: "http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{data.symbol}",
+      shares_nominal_price:
+        SecuritiesHelper.parse_shares_and_nominal_price(
+          data.symbol_data["NumberOfSharesNominalPrice"]
+        )
+    }
+    |> maybe_management_shares(data)
+    |> symbol_data(data)
+    |> top_ten_owners(data)
+    |> Map.new()
+  end
+
+  defp symbol_data(acc, data) do
     maybe_audit_committee =
       if(is_binary(data.symbol_data["AuditCommittee"]),
         do: data.symbol_data["AuditCommittee"],
         else: nil
       )
 
-    symbol_data = %{
-      isin: data.info["ISIN"],
-      short_name: data.symbol_data["RegistrationNumber"],
-      company: data.symbol_data["Company"],
-      address: data.symbol_data["Address"],
-      contact: data.symbol_data["Contact"],
-      email: data.symbol_data["Email"],
-      web_page: data.symbol_data["WebPage"],
-      activity: data.symbol_data["Activity"],
-      external_auditor: data.symbol_data["ExternalAuditor"],
-      audit_committee: maybe_audit_committee,
-      number_of_employees: data.symbol_data["NumberOfEmployees"],
-      number_of_bussines_units: data.symbol_data["NumberOfBussinesUnits"]
-    }
+    Map.merge(
+      acc,
+      %{
+        activity: data.symbol_data["Activity"],
+        address: data.symbol_data["Address"],
+        audit_committee: maybe_audit_committee,
+        company: data.symbol_data["Company"],
+        contact: data.symbol_data["Contact"],
+        email: data.symbol_data["Email"],
+        external_auditor: data.symbol_data["ExternalAuditor"],
+        isin: data.info["ISIN"],
+        number_of_bussines_units: data.symbol_data["NumberOfBussinesUnits"],
+        number_of_employees: data.symbol_data["NumberOfEmployees"],
+        short_name: data.symbol_data["RegistrationNumber"],
+        web_page: data.symbol_data["WebPage"]
+      }
+    )
+  end
 
-    supervisory_board =
-      SecuritiesHelper.filter_management_and_supervisory_data(
-        data.symbol_data["SupervisoryBoard"]
-      )
-
-    management_board =
-      SecuritiesHelper.filter_management_and_supervisory_data(data.symbol_data["ManagementBoard"])
-
-    parsed_number_of_shares_nominal_price =
-      SecuritiesHelper.parse_shares_and_nominal_price(
-        data.symbol_data["NumberOfSharesNominalPrice"]
-      )
-
-    securities_and_shareholders_data = %{
-      total_number_of_shareholders: data.symbol_data["TotalNumberOfShareholders"],
-      shares_nominal_price: parsed_number_of_shares_nominal_price,
-      sase_url: "http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{data.symbol}"
-    }
-
+  defp top_ten_owners(acc, data) do
     top_10_owners =
       cond do
         data.top_10_owners && is_list(data.top_10_owners) -> data.top_10_owners
@@ -126,25 +137,16 @@ defmodule SaseMango.Securities do
         true -> []
       end
 
-    maybe_management_shares =
+    Map.merge(acc, %{top_10_owners: top_10_owners})
+  end
+
+  defp maybe_management_shares(acc, data) do
+    management_shares =
       if is_binary(data.symbol_data["ManagementShares"]) do
         data.symbol_data["ManagementShares"]
-      else
-        nil
       end
 
-    legal_entities = data.symbol_data["LegalEntityTheIssuerHoldsMoreThan10Percent"]
-
-    %{}
-    |> Map.merge(%{symbol: data.symbol, name: data.name})
-    |> Map.merge(%{symbol_data: symbol_data})
-    |> Map.merge(%{top_10_owners: top_10_owners})
-    |> Map.merge(%{supervisory_board: supervisory_board})
-    |> Map.merge(%{management_board: management_board})
-    |> Map.merge(%{management_shares: maybe_management_shares})
-    |> Map.merge(%{securities_and_shareholders_data: securities_and_shareholders_data})
-    |> Map.merge(%{legal_entities: legal_entities})
-    |> Map.new()
+    Map.merge(acc, %{management_shares: management_shares})
   end
 
   @doc """

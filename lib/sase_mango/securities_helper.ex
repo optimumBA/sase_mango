@@ -70,37 +70,16 @@ defmodule SaseMango.SecuritiesHelper do
 
     positions = ["predsj", "direktor", "član", "v.d."]
 
-    if rem(Enum.count(board_data_list), 2) == 1 do
+    rem_list =
+      board_data_list
+      |> Enum.count()
+      |> rem(2)
+
+    if rem_list == 1 do
       board_data_list_with_index = Enum.with_index(board_data_list)
 
       board_data_list_with_index
-      |> Stream.map(fn {item, i} ->
-        next_el = Enum.find(board_data_list_with_index, fn {_item, ei} -> ei == i + 1 end)
-
-        is_name? =
-          item
-          |> String.downcase()
-          |> String.contains?(positions)
-
-        is_position? =
-          next_el
-          |> elem(0)
-          |> String.downcase()
-          |> String.contains?(positions)
-
-        has_position? = next_el && is_position?
-
-        cond do
-          !is_name? && has_position? ->
-            {elem(next_el, 0), item}
-
-          !is_name? ->
-            {"", item}
-
-          true ->
-            nil
-        end
-      end)
+      |> process_board_data_list(positions)
       |> Stream.reject(&is_nil/1)
       |> Enum.map(& &1)
     else
@@ -108,6 +87,37 @@ defmodule SaseMango.SecuritiesHelper do
       |> Enum.chunk_every(2)
       |> Enum.map(fn [k, v] -> {v, k} end)
     end
+  end
+
+  defp process_board_data_list(board_data_list_with_index, positions) do
+    Stream.map(board_data_list_with_index, fn {item, i} ->
+      next_el = Enum.find(board_data_list_with_index, fn {_item, ei} -> ei == i + 1 end)
+
+      is_name? =
+        item
+        |> String.downcase()
+        |> String.contains?(positions)
+        |> Kernel.!()
+
+      has_position? =
+        unless is_nil(next_el) do
+          next_el
+          |> elem(0)
+          |> String.downcase()
+          |> String.contains?(positions)
+        end
+
+      cond do
+        is_name? && has_position? ->
+          {elem(next_el, 0), item}
+
+        is_name? ->
+          {"", item}
+
+        true ->
+          nil
+      end
+    end)
   end
 
   @doc """
@@ -156,157 +166,269 @@ defmodule SaseMango.SecuritiesHelper do
     list_type
     |> fetch_financial_statements()
     |> Stream.map(fn %{} = security ->
-      calc_param = get_calculate_param(security, list_type)
-
-      symbol = security.issuer.symbol
-
-      balance_sheet = get_balance_sheet(security.current)
-      {book_value, previous_book_value} = get_book_values(balance_sheet)
-
-      equity_changes = get_equity_changes(security.current)
-      previous_equity_changes = get_equity_changes(security.previous)
-
-      profit_and_loss_account = get_profit_and_loss_account(security.current)
-      {income, previous_income} = get_incomes(profit_and_loss_account)
-      {profit, previous_profit} = get_profits(profit_and_loss_account)
-
-      total_dividends = get_total_dividends(equity_changes)
-      previous_total_dividends = get_total_dividends(previous_equity_changes)
-
-      {nominal_price, total_shares} = get_nominal_price_and_total_shares(security.current, symbol)
-
-      {_nominal_price, previous_total_shares} =
-        get_nominal_price_and_total_shares(security.previous, symbol)
-
-      bvs =
-        if(Decimal.equal?(total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(book_value, total_shares)
-        )
-
-      previous_bvs =
-        if(Decimal.equal?(previous_total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(previous_book_value, previous_total_shares)
-        )
-
-      dividend =
-        if(Decimal.equal?(total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(total_dividends, total_shares)
-        )
-
-      previous_dividend =
-        if(Decimal.equal?(previous_total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(previous_total_dividends, previous_total_shares)
-        )
-
-      price = convert_price_to_decimal(security.issuer.info["AvgPrice"])
-      ask_price = convert_price_to_decimal(security.issuer.info["BestAskPrice"])
-      bid_price = convert_price_to_decimal(security.issuer.info["BestBidPrice"])
-
-      last_trade_date = convert_date_format(security.issuer.info["LastTradeDate"])
-
-      eps =
-        if(Decimal.equal?(total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(profit, total_shares)
-        )
-
-      previous_eps =
-        if(Decimal.equal?(previous_total_shares, 0),
-          do:
-            if(Decimal.equal?(total_shares, 0),
-              do: Decimal.new(0),
-              else: Decimal.div(previous_profit, total_shares)
-            ),
-          else: Decimal.div(previous_profit, previous_total_shares)
-        )
-
-      market_value =
-        if(Decimal.equal?(total_shares, 0),
-          do: Decimal.new(0),
-          else: Decimal.mult(calc_param, total_shares)
-        )
-
-      profit_margin =
-        if(Decimal.equal?(income, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(profit, income)
-        )
-
-      previous_profit_margin =
-        if(Decimal.equal?(previous_income, 0),
-          do: Decimal.new(0),
-          else: Decimal.div(previous_profit, previous_income)
-        )
-
-      %{
-        ask_price: ask_price,
-        ask_volume: security.issuer.info["BestAskVolume"],
-        bid_price: bid_price,
-        bid_volume: security.issuer.info["BestBidVolume"],
-        book_value: book_value,
-        bvs: bvs,
-        dividend: dividend,
-        dividend_roi:
-          if(Decimal.equal?(calc_param, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(dividend, calc_param)
-          ),
-        eps: eps,
-        eps_roi:
-          if(Decimal.equal?(calc_param, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(eps, calc_param)
-          ),
-        last_trade_date: last_trade_date,
-        market_value: market_value,
-        name: security.issuer.info["SymbolDescription"],
-        nominal_price: nominal_price,
-        pb:
-          if(Decimal.equal?(book_value, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(market_value, book_value)
-          ),
-        pe:
-          if(Decimal.equal?(total_shares, 0) || Decimal.equal?(profit, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(calc_param, Decimal.div(profit, total_shares))
-          ),
-        previous_book_value: previous_book_value,
-        previous_bvs: previous_bvs,
-        previous_dividend: previous_dividend,
-        previous_dividend_roi:
-          if(
-            Decimal.equal?(calc_param, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(previous_dividend, calc_param)
-          ),
-        previous_eps: previous_eps,
-        previous_eps_roi:
-          if(Decimal.equal?(calc_param, 0),
-            do: Decimal.new(0),
-            else: Decimal.div(previous_eps, calc_param)
-          ),
-        previous_profit: previous_profit,
-        previous_profit_margin: previous_profit_margin,
-        price: price,
-        profit: profit,
-        profit_margin: profit_margin,
-        segment: security.issuer.info["Segment"],
-        symbol: symbol
-      }
+      build_securities_map(security, list_type)
     end)
     |> maybe_additional_filter(list_type)
+  end
+
+  defp build_securities_map(security, list_type) do
+    calc_param = get_calculate_param(security, list_type)
+    nominal_price = total_shares_and_nominal_price(security).nominal_price
+
+    %{}
+    |> Map.put(:nominal_price, nominal_price)
+    |> security_issuer_info(security)
+    |> book_values_and_bvs(security)
+    |> dividend_and_roi(security, calc_param)
+    |> previous_dividend_and_roi(security, calc_param)
+    |> profits_and_margins(security)
+    |> eps_and_roi(security, calc_param)
+    |> previous_eps_and_roi(security, calc_param)
+    |> market_value(security, calc_param)
+    |> pb(security, calc_param)
+    |> pe(security, calc_param)
+  end
+
+  defp security_issuer_info(acc, security) do
+    data = %{
+      ask_price: convert_price_to_decimal(security.issuer.info["BestAskPrice"]),
+      ask_volume: security.issuer.info["BestAskVolume"],
+      bid_price: convert_price_to_decimal(security.issuer.info["BestBidPrice"]),
+      bid_volume: security.issuer.info["BestBidVolume"],
+      last_trade_date: convert_date_format(security.issuer.info["LastTradeDate"]),
+      name: security.issuer.info["SymbolDescription"],
+      price: convert_price_to_decimal(security.issuer.info["AvgPrice"]),
+      segment: security.issuer.info["Segment"],
+      symbol: security.issuer.symbol
+    }
+
+    Map.merge(acc, data)
+  end
+
+  defp book_values_and_bvs(acc, security) do
+    {book_value, previous_book_value} =
+      security.current
+      |> get_balance_sheet()
+      |> get_book_values()
+
+    %{
+      previous_total_shares: previous_total_shares,
+      total_shares: total_shares
+    } = total_shares_and_nominal_price(security)
+
+    bvs =
+      if(Decimal.equal?(total_shares, 0),
+        do: Decimal.new(0),
+        else: Decimal.div(book_value, total_shares)
+      )
+
+    previous_bvs =
+      if(Decimal.equal?(previous_total_shares, 0),
+        do: Decimal.new(0),
+        else: Decimal.div(previous_book_value, previous_total_shares)
+      )
+
+    Map.merge(acc, %{
+      book_value: book_value,
+      bvs: bvs,
+      previous_book_value: previous_book_value,
+      previous_bvs: previous_bvs
+    })
+  end
+
+  defp dividend_and_roi(acc, security, calc_param) do
+    total_dividends =
+      security.current
+      |> get_equity_changes()
+      |> get_total_dividends()
+
+    total_shares = total_shares_and_nominal_price(security).total_shares
+
+    dividend =
+      if(Decimal.equal?(total_shares, 0),
+        do: Decimal.new(0),
+        else: Decimal.div(total_dividends, total_shares)
+      )
+
+    dividend_roi =
+      if(Decimal.equal?(calc_param, 0),
+        do: Decimal.new(0),
+        else: Decimal.div(dividend, calc_param)
+      )
+
+    Map.merge(acc, %{dividend: dividend, dividend_roi: dividend_roi})
+  end
+
+  defp previous_dividend_and_roi(acc, security, calc_param) do
+    previous_total_dividends =
+      security.previous
+      |> get_equity_changes()
+      |> get_total_dividends()
+
+    previous_total_shares = total_shares_and_nominal_price(security).previous_total_shares
+
+    previous_dividend =
+      if(Decimal.equal?(previous_total_shares, 0),
+        do: Decimal.new(0),
+        else: Decimal.div(previous_total_dividends, previous_total_shares)
+      )
+
+    previous_dividend_roi =
+      if(Decimal.equal?(calc_param, 0),
+        do: Decimal.new(0),
+        else: Decimal.div(previous_dividend, calc_param)
+      )
+
+    Map.merge(acc, %{
+      previous_dividend: previous_dividend,
+      previous_dividend_roi: previous_dividend_roi
+    })
+  end
+
+  defp profits_and_margins(acc, security) do
+    {income, previous_income} = incomes(security)
+    {profit, previous_profit} = profits(security)
+
+    profit_margin =
+      if(Decimal.equal?(income, 0),
+        do: Decimal.new(0),
+        else: Decimal.div(profit, income)
+      )
+
+    previous_profit_margin =
+      if(Decimal.equal?(previous_income, 0),
+        do: Decimal.new(0),
+        else: Decimal.div(previous_profit, previous_income)
+      )
+
+    Map.merge(acc, %{
+      previous_profit_margin: previous_profit_margin,
+      previous_profit: previous_profit,
+      profit_margin: profit_margin,
+      profit: profit
+    })
+  end
+
+  defp eps_and_roi(acc, security, calc_param) do
+    total_shares = total_shares_and_nominal_price(security).total_shares
+    profit = profits_and_margins(%{}, security).profit
+
+    eps =
+      if(Decimal.equal?(total_shares, 0),
+        do: Decimal.new(0),
+        else: Decimal.div(profit, total_shares)
+      )
+
+    eps_roi =
+      if(Decimal.equal?(calc_param, 0),
+        do: Decimal.new(0),
+        else: Decimal.div(eps, calc_param)
+      )
+
+    Map.merge(acc, %{eps: eps, eps_roi: eps_roi})
+  end
+
+  defp previous_eps_and_roi(acc, security, calc_param) do
+    previous_profit = profits_and_margins(acc, security).previous_profit_margin
+
+    %{
+      previous_total_shares: previous_total_shares,
+      total_shares: total_shares
+    } = total_shares_and_nominal_price(security)
+
+    previous_eps =
+      if(Decimal.equal?(previous_total_shares, 0),
+        do:
+          if(Decimal.equal?(total_shares, 0),
+            do: Decimal.new(0),
+            else: Decimal.div(previous_profit, total_shares)
+          ),
+        else: Decimal.div(previous_profit, previous_total_shares)
+      )
+
+    previous_eps_roi =
+      if(Decimal.equal?(calc_param, 0),
+        do: Decimal.new(0),
+        else: Decimal.div(previous_eps, calc_param)
+      )
+
+    Map.merge(acc, %{
+      previous_eps_roi: previous_eps_roi,
+      previous_eps: previous_eps
+    })
+  end
+
+  defp market_value(acc, security, calc_param) do
+    total_shares = total_shares_and_nominal_price(security).total_shares
+
+    market_value =
+      if(Decimal.equal?(total_shares, 0),
+        do: Decimal.new(0),
+        else: Decimal.mult(calc_param, total_shares)
+      )
+
+    Map.merge(acc, %{market_value: market_value})
+  end
+
+  defp pb(acc, security, calc_param) do
+    book_value = book_values_and_bvs(acc, security).book_value
+    market_value = market_value(acc, security, calc_param).market_value
+
+    pb =
+      if(Decimal.equal?(book_value, 0),
+        do: Decimal.new(0),
+        else: Decimal.div(market_value, book_value)
+      )
+
+    Map.merge(acc, %{pb: pb})
+  end
+
+  defp pe(acc, security, calc_param) do
+    total_shares = total_shares_and_nominal_price(security).total_shares
+    profit = profits_and_margins(acc, security).profit
+
+    pe =
+      if(Decimal.equal?(total_shares, 0) || Decimal.equal?(profit, 0),
+        do: Decimal.new(0),
+        else: Decimal.div(calc_param, Decimal.div(profit, total_shares))
+      )
+
+    Map.merge(acc, %{pe: pe})
+  end
+
+  defp total_shares_and_nominal_price(security) do
+    {nominal_price, total_shares} =
+      get_nominal_price_and_total_shares(security.current, security.issuer.symbol)
+
+    {_nominal_price, previous_total_shares} =
+      get_nominal_price_and_total_shares(security.previous, security.issuer.symbol)
+
+    %{
+      nominal_price: nominal_price,
+      previous_total_shares: previous_total_shares,
+      total_shares: total_shares
+    }
+  end
+
+  defp incomes(security) do
+    security.current
+    |> get_profit_and_loss_account()
+    |> get_incomes()
+  end
+
+  defp profits(security) do
+    security.current
+    |> get_profit_and_loss_account()
+    |> get_profits()
   end
 
   defp fetch_financial_statements(list_type) do
     current_financial_statement = current_financial_statement()
     previous_financial_statement = previous_financial_statement()
 
-    from(i in Issuer, as: :issuer)
+    query = from(i in Issuer, as: :issuer)
+
+    query
     |> join(:inner_lateral, [], fs_1 in subquery(current_financial_statement), as: :current_fs)
     |> join(:inner_lateral, [], fs_2 in subquery(previous_financial_statement), as: :previous_fs)
     |> select([issuer: i, current_fs: current_fs, previous_fs: previous_fs], %{
@@ -411,11 +533,8 @@ defmodule SaseMango.SecuritiesHelper do
              row["Description"] ==
                "A) STALNA SREDSTVA I DUGOROČNI PLASMANI (002+008+014+015+020+021+030+033)"
            end),
-         book_value when is_binary(book_value) <- Map.get(row, "Neto"),
-         book_value <- Decimal.new(book_value),
-         previous_book_value when is_binary(previous_book_value) <-
-           Map.get(row, "PreviousYear"),
-         previous_book_value <- Decimal.new(previous_book_value) do
+         {:ok, book_value} <- fetch_row_value(row, "Neto"),
+         {:ok, previous_book_value} <- fetch_row_value(row, "PreviousYear") do
       {book_value, previous_book_value}
     else
       _other ->
@@ -429,8 +548,7 @@ defmodule SaseMango.SecuritiesHelper do
              row["Description"] ==
                "21. Objavljene dividende i drugi oblici raspodjele dobiti i pokriće gubitka"
            end),
-         total_capital when is_binary(total_capital) <- Map.get(row, "TotalCapital"),
-         total_dividends <- Decimal.new(total_capital) do
+         {:ok, total_dividends} <- fetch_row_value(row, "TotalCapital") do
       total_dividends
     else
       _other ->
@@ -443,11 +561,8 @@ defmodule SaseMango.SecuritiesHelper do
            Enum.find(profit_and_loss_account, fn row ->
              row["Description"] == "Poslovni prihodi (202+206+210+211)"
            end),
-         income when is_binary(income) <- Map.get(row, "OngoingYear"),
-         income <- Decimal.new(income),
-         previous_income when is_binary(previous_income) <-
-           Map.get(row, "PreviousYear"),
-         previous_income <- Decimal.new(previous_income) do
+         {:ok, income} <- fetch_row_value(row, "OngoingYear"),
+         {:ok, previous_income} <- fetch_row_value(row, "PreviousYear") do
       {income, previous_income}
     else
       _other ->
@@ -461,11 +576,8 @@ defmodule SaseMango.SecuritiesHelper do
              row["Description"] ==
                "Ukupna neto sveobuhv. dobit/gubitak prema vlasništvu (332 ili 333)"
            end),
-         profit when is_binary(profit) <- Map.get(row, "OngoingYear"),
-         profit <- Decimal.new(profit),
-         previous_profit when is_binary(previous_profit) <-
-           Map.get(row, "PreviousYear"),
-         previous_profit <- Decimal.new(previous_profit) do
+         {:ok, profit} <- fetch_row_value(row, "OngoingYear"),
+         {:ok, previous_profit} <- fetch_row_value(row, "PreviousYear") do
       {profit, previous_profit}
     else
       _other ->
@@ -498,6 +610,13 @@ defmodule SaseMango.SecuritiesHelper do
     else
       _other ->
         {Decimal.new(0), Decimal.new(0)}
+    end
+  end
+
+  defp fetch_row_value(row, key) do
+    case Map.get(row, key) do
+      nil -> {:error, nil}
+      value when is_binary(value) -> {:ok, Decimal.new(value)}
     end
   end
 

@@ -17,13 +17,13 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
     socket =
       socket
       |> assign_results()
-      |> assign_select_list()
       |> assign(:active_tab, :calculator)
       |> assign(:changeset, Calculator.change_input(%Calculator.Input{}))
       |> assign(:issuer_input_cover, false)
       |> assign(:page_title, "Calculator")
       |> assign(:securities, securities_list)
       |> assign(:selected_issuer, %{symbol: nil, name: nil})
+      |> assign_select_list()
 
     if connected?(socket) do
       Endpoint.subscribe("securities")

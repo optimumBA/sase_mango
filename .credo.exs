@@ -179,15 +179,6 @@
           {Credo.Check.Consistency.UnusedVariableNames, []},
           {Credo.Check.Design.DuplicatedCode, []},
           {Credo.Check.Design.SkipTestWithoutComment, []},
-          {Credo.Check.Readability.AliasAs,
-           files: %{
-             excluded: [
-               "lib/sase_mango_web.ex",
-               "test/support/channel_case.ex",
-               "test/support/conn_case.ex",
-               "test/support/data_case.ex"
-             ]
-           }},
           {Credo.Check.Readability.BlockPipe, []},
           {Credo.Check.Readability.ImplTrue, []},
           {Credo.Check.Readability.MultiAlias, []},
@@ -214,7 +205,6 @@
           {Credo.Check.Refactor.FilterReject, []},
           {Credo.Check.Refactor.IoPuts, []},
           {Credo.Check.Refactor.MapMap, []},
-          {Credo.Check.Refactor.ModuleDependencies, []},
           {Credo.Check.Refactor.NegatedIsNil, []},
           {Credo.Check.Refactor.PassAsyncInTestCases, []},
           {Credo.Check.Refactor.PipeChainStart, []},
@@ -233,6 +223,8 @@
           # Controversial and experimental checks (opt-in, just move the check to `:enabled`
           #   and be sure to use `mix credo --strict` to see low priority checks)
           #
+          {Credo.Check.Readability.AliasAs, []},
+          {Credo.Check.Refactor.ModuleDependencies, []},
           {Credo.Check.Warning.LazyLogging, []}
 
           # {Credo.Check.Refactor.MapInto, []},

@@ -31,17 +31,7 @@ defmodule SaseMango.SecuritiesUpdater do
   defp update(date) when is_binary(date) do
     case SaseScraper.get_list(date) do
       {:ok, issuers} ->
-        Enum.each(issuers, fn issuer ->
-          case update_financial_statement(issuer) do
-            {:error, error} ->
-              error
-              |> inspect()
-              |> Logger.error()
-
-            updated_list ->
-              updated_list
-          end
-        end)
+        Enum.each(issuers, &update_financial_statement(&1))
 
         SecuritiesCache.update()
         BargainsCache.update()
@@ -54,19 +44,34 @@ defmodule SaseMango.SecuritiesUpdater do
   defp update_financial_statement(issuer) do
     with {symbol, info} <- Map.pop(issuer, "Symbol"),
          {:ok, company_data} <- SaseScraper.get_company_data(symbol),
-         {:ok, top_10_owners} <- SaseScraper.get_company_owners(String.slice(symbol, 0..3)),
-         issuer_attrs <-
-           get_issuers_attrs(company_data, info, symbol, top_10_owners),
-         {:ok, issuer} <- create_or_update_issuer(symbol, issuer_attrs) do
-      current_year = Map.fetch!(NaiveDateTime.utc_now(), :year)
-
-      for semi_annual <- [true, false], year <- (current_year - 3)..current_year do
-        maybe_create_financial_statement(issuer, semi_annual, year)
-      end
+         {:ok, top_10_owners} <- get_company_owners(symbol),
+         {:ok, issuer} <-
+           get_issuer_attrs_and_create_or_update(company_data, info, symbol, top_10_owners) do
+      update_statement(issuer)
     else
       error ->
-        {:error, error}
+        Logger.error("#{inspect(error)}")
     end
+  end
+
+  defp update_statement(issuer) do
+    current_year = Map.fetch!(NaiveDateTime.utc_now(), :year)
+
+    for semi_annual <- [true, false], year <- (current_year - 3)..current_year do
+      maybe_create_financial_statement(issuer, semi_annual, year)
+    end
+  end
+
+  defp get_issuer_attrs_and_create_or_update(company_data, info, symbol, top_10_owners) do
+    company_data
+    |> get_issuers_attrs(info, symbol, top_10_owners)
+    |> create_or_update_issuer(symbol)
+  end
+
+  defp get_company_owners(symbol) do
+    symbol
+    |> String.slice(0..3)
+    |> SaseScraper.get_company_owners()
   end
 
   defp get_issuers_attrs(company_data, info, symbol, top_10_owners),
@@ -77,7 +82,7 @@ defmodule SaseMango.SecuritiesUpdater do
       top_10_owners: top_10_owners
     }
 
-  defp create_or_update_issuer(symbol, attrs) do
+  defp create_or_update_issuer(attrs, symbol) do
     case Securities.get_issuer(symbol) do
       %Securities.Issuer{} = issuer ->
         Securities.update_issuer(issuer, attrs)

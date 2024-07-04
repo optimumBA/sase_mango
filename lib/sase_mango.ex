@@ -56,81 +56,8 @@ defmodule SaseMango do
   def calculate_and_export do
     issuers =
       "issuers.json"
-      |> File.read!()
-      |> Jason.decode!()
-      |> Stream.filter(&Map.has_key?(&1, "FinancialStatement"))
-      |> Stream.map(fn issuer ->
-        symbol = Map.get(issuer, "Symbol")
-        price = Map.get(issuer, "AvgPrice")
-
-        financial_statement = Map.get(issuer, "FinancialStatement", %{})
-
-        nominal_price_string =
-          financial_statement
-          |> Map.get("GENERALINFO", %{})
-          |> Map.get("NumberOfSharesNominalPrice")
-
-        nominal_price_string = if(nominal_price_string, do: nominal_price_string, else: "")
-
-        {nominal_price, total_shares} =
-          case Regex.named_captures(
-                 ~r/#{symbol}<\/a> \- (?<total_shares>[\d\.]+) \- (?<nominal_price>[\d\.\,]+) KM/,
-                 nominal_price_string
-               ) do
-            nil ->
-              {nil, nil}
-
-            %{"nominal_price" => nominal_price, "total_shares" => total_shares} ->
-              nominal_price =
-                nominal_price
-                |> String.replace(".", "")
-                |> String.replace(",", ".")
-                |> String.to_float()
-
-              total_shares =
-                total_shares
-                |> String.replace(".", "")
-                |> String.to_integer()
-
-              {nominal_price, total_shares}
-          end
-
-        dividends_total =
-          financial_statement
-          |> Map.get("EQUITYCHANGES", [])
-          |> Enum.filter(fn row -> Map.get(row, "Description") == @description_dividends end)
-          |> List.first()
-
-        {dividend, dividend_roi, dividends_total} =
-          case dividends_total do
-            nil ->
-              {0.0, 0.0, 0.0}
-
-            %{"TotalCapital" => dividends_total} ->
-              dividends_total =
-                if(String.length(dividends_total) == 0,
-                  do: 0.0,
-                  else: String.to_float(dividends_total)
-                )
-
-              dividend = if(is_nil(total_shares), do: 0.0, else: dividends_total / total_shares)
-
-              dividend_roi =
-                if(price == 0.0, do: 0.0, else: Float.round(dividend / price * 100.0, 2))
-
-              {dividend, dividend_roi, dividends_total}
-          end
-
-        %{
-          symbol: symbol,
-          total_shares: total_shares,
-          nominal_price: nominal_price,
-          price: price,
-          dividend: dividend,
-          dividend_roi: dividend_roi,
-          dividends_total: dividends_total
-        }
-      end)
+      |> read_and_filter_issuers_file()
+      |> Stream.map(&dividends_and_nomimal_prices_data/1)
       |> Enum.sort_by(& &1.dividend_roi, :desc)
       |> Enum.map(fn issuer ->
         [
@@ -158,17 +85,109 @@ defmodule SaseMango do
     File.write!("issuers.csv", issuers)
   end
 
+  defp read_and_filter_issuers_file(json_file) do
+    json_file
+    |> File.read!()
+    |> Jason.decode!()
+    |> Stream.filter(&Map.has_key?(&1, "FinancialStatement"))
+  end
+
+  defp nominal_price_and_total_shares(issuer) do
+    nominal_price_string =
+      issuer
+      |> Map.get("FinancialStatement", %{})
+      |> Map.get("GENERALINFO", %{})
+      |> Map.get("NumberOfSharesNominalPrice", "")
+
+    case Regex.named_captures(
+           ~r/#{issuer["Symbol"]}<\/a> \- (?<total_shares>[\d\.]+) \- (?<nominal_price>[\d\.\,]+) KM/,
+           nominal_price_string
+         ) do
+      nil ->
+        {nil, nil}
+
+      %{"nominal_price" => nominal_price, "total_shares" => total_shares} ->
+        nominal_price =
+          nominal_price
+          |> String.replace(".", "")
+          |> String.replace(",", ".")
+          |> String.to_float()
+
+        total_shares =
+          total_shares
+          |> String.replace(".", "")
+          |> String.to_integer()
+
+        {nominal_price, total_shares}
+    end
+  end
+
+  defp dividends_roi_and_total(issuer, total_shares) do
+    price = issuer["AvgPrice"]
+
+    case dividends_total(issuer) do
+      nil ->
+        {0.0, 0.0, 0.0}
+
+      %{"TotalCapital" => dividends_total} ->
+        dividends_total =
+          if(String.length(dividends_total) == 0,
+            do: 0.0,
+            else: String.to_float(dividends_total)
+          )
+
+        dividend = if(is_nil(total_shares), do: 0.0, else: dividends_total / total_shares)
+
+        dividend_roi = if(price == 0.0, do: 0.0, else: Float.round(dividend / price * 100.0, 2))
+
+        {dividend, dividend_roi, dividends_total}
+    end
+  end
+
+  defp dividends_total(issuer) do
+    issuer
+    |> Map.get("FinancialStatement", %{})
+    |> Map.get("EQUITYCHANGES", [])
+    |> Enum.filter(fn row -> Map.get(row, "Description") == @description_dividends end)
+    |> List.first()
+  end
+
+  defp dividends_and_nomimal_prices_data(issuer) do
+    {nominal_price, total_shares} = nominal_price_and_total_shares(issuer)
+
+    {dividend, dividend_roi, dividends_total} = dividends_roi_and_total(issuer, total_shares)
+
+    %{
+      dividend_roi: dividend_roi,
+      dividend: dividend,
+      dividends_total: dividends_total,
+      nominal_price: nominal_price,
+      price: Map.get(issuer, "AvgPrice"),
+      symbol: Map.get(issuer, "Symbol"),
+      total_shares: total_shares
+    }
+  end
+
   defp get_details(issuer, year) do
     with symbol when is_binary(symbol) <- Map.get(issuer, "Symbol"),
          {:ok, %Finch.Response{body: body, status: 200}} <-
            SaseMangoClient.get_financial_statement(symbol, year, false),
-         data when is_map(data) <- XmlToMap.naive_map(body),
-         [key] <- Map.keys(data),
-         %{^key => data} <- data do
+         {:ok, data} <- process_xml_data(body) do
       Map.put(issuer, "FinancialStatement", data)
     else
       _response ->
         issuer
+    end
+  end
+
+  defp process_xml_data(body) do
+    with {:ok, data} <- XmlToMap.naive_map(body),
+         [key] <- Map.keys(data),
+         %{^key => data} <- data do
+      {:ok, data}
+    else
+      error ->
+        error
     end
   end
 end
