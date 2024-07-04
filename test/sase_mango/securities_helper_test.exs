@@ -63,10 +63,10 @@ defmodule SaseMango.SecuritiesHelperTest do
       assert shares == "63.457.358"
       assert nominal_price == "10,00 KM"
 
-      data_payload_1 =
+      data_payload_2 =
         "<a href='BSNLR'>BSNLR</a> - 8.596.256 - 10,00 KM | <a href='BSNLZ'>BSNLZ</a> - 441.431 - 10,00 KM |"
 
-      [record_1, record_2] = SecuritiesHelper.parse_shares_and_nominal_price(data_payload_1)
+      [record_1, record_2] = SecuritiesHelper.parse_shares_and_nominal_price(data_payload_2)
 
       {symbol_1, shares_1, nominal_price_1} = record_1
       {symbol_2, shares_2, nominal_price_2} = record_2

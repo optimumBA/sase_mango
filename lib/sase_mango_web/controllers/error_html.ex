@@ -1,4 +1,6 @@
 defmodule SaseMangoWeb.ErrorHTML do
+  @moduledoc false
+
   use SaseMangoWeb, :html
 
   # If you want to customize your error pages,
@@ -13,6 +15,7 @@ defmodule SaseMangoWeb.ErrorHTML do
   # The default is to render a plain text page based on
   # the template name. For example, "404.html" becomes
   # "Not Found".
+  @spec render(any, any) :: <<_::16, _::_*8>>
   def render(template, _assigns) do
     Phoenix.Controller.status_message_from_template(template)
   end

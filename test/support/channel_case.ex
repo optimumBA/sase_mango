@@ -17,6 +17,8 @@ defmodule SaseMangoWeb.ChannelCase do
 
   use ExUnit.CaseTemplate
 
+  alias Ecto.Adapters.SQL.Sandbox, as: SQLSandbox
+
   using do
     quote do
       # Import conveniences for testing with channels
@@ -29,8 +31,8 @@ defmodule SaseMangoWeb.ChannelCase do
   end
 
   setup tags do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(SaseMango.Repo, shared: not tags[:async])
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+    pid = SQLSandbox.start_owner!(SaseMango.Repo, shared: not tags[:async])
+    on_exit(fn -> SQLSandbox.stop_owner(pid) end)
     :ok
   end
 end

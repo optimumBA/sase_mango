@@ -1,10 +1,12 @@
 defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
-  @moduledoc """
-  Component that contains svg icons
-  """
+  @moduledoc false
 
   use SaseMangoWeb, :html
 
+  @type assigns :: map()
+  @type rendered :: Phoenix.LiveView.Rendered.t()
+
+  @spec sort_icon(assigns()) :: rendered()
   def sort_icon(%{col_type: :text, sort_options: options, key: key} = assigns) do
     match_text_icon(assigns, options, key)
   end
@@ -27,6 +29,7 @@ defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
 
   defp match_text_icon(assigns, _options, _key), do: text_sort_asc(assigns)
 
+  @spec arrow_down(assigns()) :: rendered()
   def arrow_down(assigns) do
     ~H"""
     <svg width="15" height="8" viewBox="0 0 15 9" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -35,6 +38,7 @@ defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
     """
   end
 
+  @spec delete_row(assigns()) :: rendered()
   def delete_row(assigns) do
     ~H"""
     <div phx-click="delete_row" phx-value-row_id={@row_id} class="delete-row">
@@ -72,6 +76,7 @@ defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
     """
   end
 
+  @spec icon_back(assigns()) :: rendered()
   def icon_back(assigns) do
     ~H"""
     <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -86,6 +91,7 @@ defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
     """
   end
 
+  @spec issuer_link(assigns()) :: rendered()
   def issuer_link(assigns) do
     ~H"""
     <a
@@ -121,6 +127,7 @@ defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
     """
   end
 
+  @spec number_sort_icon(assigns) :: rendered()
   def number_sort_icon(assigns) do
     ~H"""
     <svg width="10" height="15" viewBox="0 0 13 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -142,6 +149,7 @@ defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
     """
   end
 
+  @spec text_sort_asc(assigns()) :: rendered()
   def text_sort_asc(assigns) do
     ~H"""
     <svg width="14" height="10" viewBox="0 0 19 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -179,6 +187,7 @@ defmodule SaseMangoWeb.SharedComponents.TableIconsComponent do
     """
   end
 
+  @spec text_sort_desc(assigns()) :: rendered()
   def text_sort_desc(assigns) do
     ~H"""
     <svg width="14" height="10" viewBox="0 0 19 15" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -5,13 +5,20 @@ defmodule SaseMangoWeb.SharedComponents.FormComponents do
 
   use SaseMangoWeb, :html
 
+  alias Phoenix.HTML.Form
+
+  @type assigns :: map()
+  @type form :: Form.t()
+  @type rendered :: Phoenix.LiveView.Rendered.t()
+
+  @spec input_wrapper(assigns()) :: rendered()
   def input_wrapper(assigns) do
     assigns =
       assigns
       |> assign_new(:class, fn -> "" end)
       |> assign_new(:error_tag, fn -> false end)
       |> assign_new(:phx_feedback_for, fn ->
-        Phoenix.HTML.Form.input_name(assigns.form, assigns.field)
+        Form.input_name(assigns.form, assigns.field)
       end)
       |> assign_new(:required, fn -> false end)
       |> assign_new(:show_feedback, fn -> false end)
@@ -19,10 +26,10 @@ defmodule SaseMangoWeb.SharedComponents.FormComponents do
     ~H"""
     <div
       class={@class}
-      id={Phoenix.HTML.Form.input_id(@form, @field) <> "_wrapper"}
+      id={Form.input_id(@form, @field) <> "_wrapper"}
       phx-feedback-for={@phx_feedback_for}
     >
-      <%= Phoenix.HTML.Form.label @form, @field, class: "text-sm xl:text-base font-light mb-[0.5rem] #{if(@show_feedback,
+      <%= Form.label @form, @field, class: "text-sm xl:text-base font-light mb-[0.5rem] #{if(@show_feedback,
           do: label_class(@form, @field),
           else: "text-gray-450")}"
       do %>
@@ -38,6 +45,7 @@ defmodule SaseMangoWeb.SharedComponents.FormComponents do
     """
   end
 
+  @spec label_class(form(), atom()) :: String.t()
   def label_class(form, field),
     do:
       if(field_has_error?(form, field),
@@ -50,6 +58,7 @@ defmodule SaseMangoWeb.SharedComponents.FormComponents do
     Keyword.has_key?(form.errors, field)
   end
 
+  @spec submit_button(assigns()) :: rendered()
   def submit_button(%{changeset: %Ecto.Changeset{valid?: valid?}, class: class} = assigns) do
     attrs =
       if valid? do
@@ -61,7 +70,7 @@ defmodule SaseMangoWeb.SharedComponents.FormComponents do
     assigns = assign(assigns, :attrs, attrs)
 
     ~H"""
-    <%= Phoenix.HTML.Form.submit(@text, @attrs) %>
+    <%= Form.submit(@text, @attrs) %>
     """
   end
 end

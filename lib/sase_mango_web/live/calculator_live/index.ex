@@ -5,24 +5,24 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
   alias SaseMango.Calculator
   alias SaseMango.SecuritiesCache
   alias SaseMangoWeb.Endpoint
-  alias SaseMangoWeb.SharedComponents.HeaderComponent
   alias SaseMangoWeb.SharedComponents.FormComponents
+  alias SaseMangoWeb.SharedComponents.HeaderComponent
   alias SaseMangoWeb.SharedComponents.IssuerSelectComponent
   alias SaseMangoWeb.SharedComponents.TableIconsComponent
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     securities_list = Enum.sort_by(SecuritiesCache.get(), & &1.symbol, :desc)
 
     socket =
       socket
-      |> assign(:changeset, Calculator.change_input(%Calculator.Input{}))
       |> assign_results()
-      |> assign(:securities, securities_list)
       |> assign(:active_tab, :calculator)
-      |> assign(:selected_issuer, %{symbol: nil, name: nil})
+      |> assign(:changeset, Calculator.change_input(%Calculator.Input{}))
       |> assign(:issuer_input_cover, false)
       |> assign(:page_title, "Calculator")
+      |> assign(:securities, securities_list)
+      |> assign(:selected_issuer, %{symbol: nil, name: nil})
       |> assign_select_list()
 
     if connected?(socket) do
@@ -32,17 +32,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
     {:ok, calculate(socket)}
   end
 
-  defp assign_results(socket) do
-    results = %{
-      securities: [],
-      total_without_fee: Decimal.new(0),
-      total_with_fee: Decimal.new(0)
-    }
-
-    assign(socket, :results, results)
-  end
-
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("calculate", %{"input" => input_params}, socket) do
     {:noreply,
      socket
@@ -86,7 +76,7 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
     {:noreply, assign(socket, :results, new_results)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info(%Broadcast{event: "securities_update"}, socket) do
     securities = SecuritiesCache.get()
 
@@ -150,7 +140,17 @@ defmodule SaseMangoWeb.CalculatorLive.Index do
      |> assign(:selected_issuer, selected_item)}
   end
 
-  def assign_select_list(socket) do
+  defp assign_results(socket) do
+    results = %{
+      securities: [],
+      total_without_fee: Decimal.new(0),
+      total_with_fee: Decimal.new(0)
+    }
+
+    assign(socket, :results, results)
+  end
+
+  defp assign_select_list(socket) do
     securities = socket.assigns.securities
 
     select_list =

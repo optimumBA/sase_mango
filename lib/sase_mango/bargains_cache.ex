@@ -1,4 +1,6 @@
 defmodule SaseMango.BargainsCache do
+  @moduledoc false
+
   use GenServer
 
   alias SaseMango.Securities
@@ -10,6 +12,7 @@ defmodule SaseMango.BargainsCache do
 
   # Client side API
 
+  @spec start_link(any()) :: {:ok, pid()} | :ignore
   def start_link(_opts) do
     case GenServer.start_link(__MODULE__, :ok, name: __MODULE__) do
       {:ok, pid} ->
@@ -20,11 +23,13 @@ defmodule SaseMango.BargainsCache do
     end
   end
 
-  def get() do
+  @spec get() :: list()
+  def get do
     GenServer.call(__MODULE__, :get)
   end
 
-  def update() do
+  @spec update() :: :ok
+  def update do
     GenServer.cast(__MODULE__, :update)
   end
 
@@ -58,7 +63,8 @@ defmodule SaseMango.BargainsCache do
     state = maybe_move_to_yesterday_list(state)
 
     new_list =
-      Securities.list_securities(:bargains)
+      :bargains
+      |> Securities.list_securities()
       |> Enum.reduce([], fn %{} = security, new_list ->
         new =
           !Enum.find(state.yesterday_bargains, fn %{} = old_security ->
@@ -90,7 +96,7 @@ defmodule SaseMango.BargainsCache do
          :gt <- Date.compare(today_date, date_of_execution) do
       Map.put(state, :yesterday_bargains, state.today_bargains)
     else
-      _ ->
+      _other ->
         state
     end
   end

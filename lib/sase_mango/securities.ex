@@ -6,10 +6,18 @@ defmodule SaseMango.Securities do
 
   import Ecto.Query, warn: false
 
+  alias SaseMango.Repo
   alias SaseMango.Securities.FinancialStatement
   alias SaseMango.Securities.Issuer
   alias SaseMango.SecuritiesHelper
-  alias SaseMango.Repo
+
+  @type attrs :: map()
+  @type changeset :: Ecto.Changeset.t()
+  @type financial_statement :: FinancialStatement.t()
+  @type issuer :: Issuer.t()
+  @type semi_annual :: boolean()
+  @type symbol :: String.t()
+  @type year :: integer()
 
   @doc """
   Returns the list of issuers.
@@ -20,18 +28,39 @@ defmodule SaseMango.Securities do
       [%Issuer{}, ...]
 
   """
-  def list_issuers(), do: Repo.all(Issuer)
+  @spec list_issuers() :: [issuer()]
+  def list_issuers, do: Repo.all(Issuer)
 
   @doc """
   Gets single issuer from db.
   Returns the issuer if exists, nil otherwise.
+
+  ## Examples
+
+      iex> get_issuer("BSNLR")
+      %Issuer{}
+
+      iex> get_issuer("NON-EXISTENT")
+      nil
+
   """
+  @spec get_issuer(symbol) :: issuer() | nil
   def get_issuer(symbol), do: Repo.get_by(Issuer, symbol: symbol)
 
   @doc """
   Gets company data for issuer.
   Returns all relevant company information and facts owned by the Issuer.
+
+   ## Examples
+
+      iex> get_comapny_data("BSNLR")
+      %{symbol: "BSNLR", ...}
+
+      iex> get_comapny_data("NON-EXISTENT")
+      nil
+
   """
+  @spec get_company_data(symbol) :: map() | nil
   def get_company_data(symbol) do
     Issuer
     |> where([is], is.symbol == ^symbol)
@@ -49,47 +78,58 @@ defmodule SaseMango.Securities do
   defp format_company_data(nil), do: nil
 
   defp format_company_data(data) do
-    # For some issuers we get useless map instead of string
+    %{
+      legal_entities: data.symbol_data["LegalEntityTheIssuerHoldsMoreThan10Percent"],
+      management_board:
+        SecuritiesHelper.filter_management_and_supervisory_data(
+          data.symbol_data["ManagementBoard"]
+        ),
+      name: data.name,
+      supervisory_board:
+        SecuritiesHelper.filter_management_and_supervisory_data(
+          data.symbol_data["SupervisoryBoard"]
+        ),
+      symbol: data.symbol,
+      total_number_of_shareholders: data.symbol_data["TotalNumberOfShareholders"],
+      sase_url: "http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{data.symbol}",
+      shares_nominal_price:
+        SecuritiesHelper.parse_shares_and_nominal_price(
+          data.symbol_data["NumberOfSharesNominalPrice"]
+        )
+    }
+    |> maybe_management_shares(data)
+    |> symbol_data(data)
+    |> top_ten_owners(data)
+    |> Map.new()
+  end
+
+  defp symbol_data(acc, data) do
     maybe_audit_committee =
       if(is_binary(data.symbol_data["AuditCommittee"]),
         do: data.symbol_data["AuditCommittee"],
         else: nil
       )
 
-    symbol_data = %{
-      isin: data.info["ISIN"],
-      short_name: data.symbol_data["RegistrationNumber"],
-      company: data.symbol_data["Company"],
-      address: data.symbol_data["Address"],
-      contact: data.symbol_data["Contact"],
-      email: data.symbol_data["Email"],
-      web_page: data.symbol_data["WebPage"],
-      activity: data.symbol_data["Activity"],
-      external_auditor: data.symbol_data["ExternalAuditor"],
-      audit_committee: maybe_audit_committee,
-      number_of_employees: data.symbol_data["NumberOfEmployees"],
-      number_of_bussines_units: data.symbol_data["NumberOfBussinesUnits"]
-    }
+    Map.merge(
+      acc,
+      %{
+        activity: data.symbol_data["Activity"],
+        address: data.symbol_data["Address"],
+        audit_committee: maybe_audit_committee,
+        company: data.symbol_data["Company"],
+        contact: data.symbol_data["Contact"],
+        email: data.symbol_data["Email"],
+        external_auditor: data.symbol_data["ExternalAuditor"],
+        isin: data.info["ISIN"],
+        number_of_bussines_units: data.symbol_data["NumberOfBussinesUnits"],
+        number_of_employees: data.symbol_data["NumberOfEmployees"],
+        short_name: data.symbol_data["RegistrationNumber"],
+        web_page: data.symbol_data["WebPage"]
+      }
+    )
+  end
 
-    supervisory_board =
-      SecuritiesHelper.filter_management_and_supervisory_data(
-        data.symbol_data["SupervisoryBoard"]
-      )
-
-    management_board =
-      SecuritiesHelper.filter_management_and_supervisory_data(data.symbol_data["ManagementBoard"])
-
-    parsed_number_of_shares_nominal_price =
-      SecuritiesHelper.parse_shares_and_nominal_price(
-        data.symbol_data["NumberOfSharesNominalPrice"]
-      )
-
-    securities_and_shareholders_data = %{
-      total_number_of_shareholders: data.symbol_data["TotalNumberOfShareholders"],
-      shares_nominal_price: parsed_number_of_shares_nominal_price,
-      sase_url: "http://www.sase.ba/v1/Tržište/Emitenti/Profil-emitenta/symbol/#{data.symbol}"
-    }
-
+  defp top_ten_owners(acc, data) do
     top_10_owners =
       cond do
         data.top_10_owners && is_list(data.top_10_owners) -> data.top_10_owners
@@ -97,25 +137,16 @@ defmodule SaseMango.Securities do
         true -> []
       end
 
-    maybe_management_shares =
+    Map.merge(acc, %{top_10_owners: top_10_owners})
+  end
+
+  defp maybe_management_shares(acc, data) do
+    management_shares =
       if is_binary(data.symbol_data["ManagementShares"]) do
         data.symbol_data["ManagementShares"]
-      else
-        nil
       end
 
-    legal_entities = data.symbol_data["LegalEntityTheIssuerHoldsMoreThan10Percent"]
-
-    %{}
-    |> Map.merge(%{symbol: data.symbol, name: data.name})
-    |> Map.merge(%{symbol_data: symbol_data})
-    |> Map.merge(%{top_10_owners: top_10_owners})
-    |> Map.merge(%{supervisory_board: supervisory_board})
-    |> Map.merge(%{management_board: management_board})
-    |> Map.merge(%{management_shares: maybe_management_shares})
-    |> Map.merge(%{securities_and_shareholders_data: securities_and_shareholders_data})
-    |> Map.merge(%{legal_entities: legal_entities})
-    |> Map.new()
+    Map.merge(acc, %{management_shares: management_shares})
   end
 
   @doc """
@@ -130,6 +161,7 @@ defmodule SaseMango.Securities do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_issuer(attrs()) :: {:ok, issuer()} | {:error, changeset()}
   def create_issuer(attrs) do
     %Issuer{}
     |> Issuer.changeset(attrs)
@@ -148,6 +180,7 @@ defmodule SaseMango.Securities do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_issuer(issuer(), attrs()) :: {:ok, issuer()} | {:error, changeset()}
   def update_issuer(issuer, attrs) do
     issuer
     |> Issuer.changeset(attrs)
@@ -156,7 +189,17 @@ defmodule SaseMango.Securities do
 
   @doc """
     Gets the financial statement for issuer by semiannual status and year.
+
+     ## Examples
+
+      iex> get_financial_statement(issuer, true, 2023)
+      %FinancialStatement{semi_annual: true, ...}
+
+      iex> get_financial_statement(non_existent_issuer, true, 2023)
+      nil
+
   """
+  @spec get_financial_statement(issuer(), semi_annual(), year()) :: financial_statement() | nil
   def get_financial_statement(%Issuer{} = issuer, semi_annual, year) do
     Repo.get_by(FinancialStatement, issuer_id: issuer.id, semi_annual: semi_annual, year: year)
   end
@@ -164,6 +207,8 @@ defmodule SaseMango.Securities do
   @doc """
   Creates the financial statement for current issuer.
   """
+  @spec create_financial_statement(issuer(), attrs()) ::
+          {:ok, financial_statement()} | {:error, any()}
   def create_financial_statement(issuer, attrs) do
     %FinancialStatement{}
     |> FinancialStatement.changeset(attrs)
@@ -177,12 +222,14 @@ defmodule SaseMango.Securities do
   @doc """
   Helper function that returns market segment for specific security.
   """
+  @spec segment(String.t()) :: String.t()
   def segment("Free market - Subsegment 1"), do: "ST1"
   def segment("Free market - Subsegment 2"), do: "ST2"
   def segment("Free market - Subsegment 3"), do: "ST3"
   def segment("The Official market - The Official market of companies"), do: "Companies"
   def segment("The Official market - The Official market of funds"), do: "Funds"
 
+  @spec list_securities(atom(), map()) :: Enumerable.t()
   def list_securities(type_atom, params \\ %{})
       when type_atom in [:securities, :bargains] do
     SecuritiesHelper.list_securities(type_atom, params)

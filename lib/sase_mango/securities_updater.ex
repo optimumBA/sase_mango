@@ -3,53 +3,75 @@ defmodule SaseMango.SecuritiesUpdater do
   Module responsible for updating issuer and financial statement tables.
   """
 
-  require Logger
-
   alias SaseMango.BargainsCache
   alias SaseMango.SaseScraper
   alias SaseMango.Securities
   alias SaseMango.SecuritiesCache
+
+  require Logger
 
   @doc """
   Updates existing or creates new issuer.
   It also creates financial statement for each issuer if necessary.
   Function takes a date string as argument or creates a current one in the format dd.mm.yyyy".
   """
-  def update() do
-    {year, month, day} = DateTime.now!("Europe/Sarajevo") |> DateTime.to_date() |> Date.to_erl()
+  @spec update() :: :ok | nil
+  def update do
+    {year, month, day} =
+      "Europe/Sarajevo"
+      |> DateTime.now!()
+      |> DateTime.to_date()
+      |> Date.to_erl()
+
     date = "#{day}.#{month}.#{year}"
+
     update(date)
   end
 
-  def update(date) when is_binary(date) do
+  defp update(date) when is_binary(date) do
     case SaseScraper.get_list(date) do
       {:ok, issuers} ->
-        Enum.each(issuers, fn issuer ->
-          with {symbol, info} <- Map.pop(issuer, "Symbol"),
-               {:ok, company_data} <- SaseScraper.get_company_data(symbol),
-               {:ok, top_10_owners} <- SaseScraper.get_company_owners(String.slice(symbol, 0..3)),
-               issuer_attrs <-
-                 get_issuers_attrs(company_data, info, symbol, top_10_owners),
-               {:ok, issuer} <- create_or_update_issuer(symbol, issuer_attrs) do
-            current_year = Map.fetch!(NaiveDateTime.utc_now(), :year)
-
-            for semi_annual <- [true, false], year <- (current_year - 3)..current_year do
-              maybe_create_financial_statement(issuer, semi_annual, year)
-            end
-          else
-            error ->
-              error
-              |> inspect()
-              |> Logger.error()
-          end
-        end)
+        Enum.each(issuers, &update_financial_statement(&1))
 
         SecuritiesCache.update()
         BargainsCache.update()
 
-      _ ->
+      _error ->
         nil
     end
+  end
+
+  defp update_financial_statement(issuer) do
+    with {symbol, info} <- Map.pop(issuer, "Symbol"),
+         {:ok, company_data} <- SaseScraper.get_company_data(symbol),
+         {:ok, top_10_owners} <- get_company_owners(symbol),
+         {:ok, issuer} <-
+           get_issuer_attrs_and_create_or_update(company_data, info, symbol, top_10_owners) do
+      update_statement(issuer)
+    else
+      error ->
+        Logger.error("#{inspect(error)}")
+    end
+  end
+
+  defp update_statement(issuer) do
+    current_year = Map.fetch!(NaiveDateTime.utc_now(), :year)
+
+    for semi_annual <- [true, false], year <- (current_year - 3)..current_year do
+      maybe_create_financial_statement(issuer, semi_annual, year)
+    end
+  end
+
+  defp get_issuer_attrs_and_create_or_update(company_data, info, symbol, top_10_owners) do
+    company_data
+    |> get_issuers_attrs(info, symbol, top_10_owners)
+    |> create_or_update_issuer(symbol)
+  end
+
+  defp get_company_owners(symbol) do
+    symbol
+    |> String.slice(0..3)
+    |> SaseScraper.get_company_owners()
   end
 
   defp get_issuers_attrs(company_data, info, symbol, top_10_owners),
@@ -60,7 +82,7 @@ defmodule SaseMango.SecuritiesUpdater do
       top_10_owners: top_10_owners
     }
 
-  defp create_or_update_issuer(symbol, attrs) do
+  defp create_or_update_issuer(attrs, symbol) do
     case Securities.get_issuer(symbol) do
       %Securities.Issuer{} = issuer ->
         Securities.update_issuer(issuer, attrs)
@@ -77,19 +99,23 @@ defmodule SaseMango.SecuritiesUpdater do
         nil
 
       nil ->
-        with {:ok, statement} <-
-               SaseScraper.get_financial_statement(issuer.symbol, year, semi_annual) do
-          Securities.create_financial_statement(issuer, %{
-            statement: statement,
-            semi_annual: semi_annual,
-            year: year
-          })
-        else
-          error ->
-            error
-            |> inspect()
-            |> Logger.error()
-        end
+        create_financial_statement(issuer, year, semi_annual)
+    end
+  end
+
+  defp create_financial_statement(issuer, year, semi_annual) do
+    case SaseScraper.get_financial_statement(issuer.symbol, year, semi_annual) do
+      {:ok, statement} ->
+        Securities.create_financial_statement(issuer, %{
+          statement: statement,
+          semi_annual: semi_annual,
+          year: year
+        })
+
+      error ->
+        error
+        |> inspect()
+        |> Logger.error()
     end
   end
 end

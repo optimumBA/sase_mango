@@ -1,12 +1,14 @@
 defmodule SaseMangoWeb.SharedComponents.HeaderComponent do
-  @moduledoc """
-  Component that renders page tabs with links
-  """
+  @moduledoc false
 
   use SaseMangoWeb, :html
 
   alias SaseMango.SecuritiesHelper
 
+  @type assigns :: map()
+  @type rendered :: Phoenix.LiveView.Rendered.t()
+
+  @spec header(assigns()) :: rendered()
   def header(assigns) do
     ~H"""
     <div class="mx-12 xl:mx-16 mt-30 mb-0 md:mb-2 py-4">
@@ -45,6 +47,7 @@ defmodule SaseMangoWeb.SharedComponents.HeaderComponent do
     """
   end
 
+  @spec date_icon(assigns) :: rendered()
   def date_icon(assigns) do
     ~H"""
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -12,11 +12,11 @@ defmodule SaseMangoWeb.SharedComponents.IssuerSelectComponent do
   def update(assigns, socket) do
     {:ok,
      socket
-     |> assign(:suggestions, Enum.with_index(assigns.options))
-     |> assign(:suggested_element, nil)
+     |> assign(assigns)
      |> assign(:idx, -1)
-     |> assign(:maxIdx, Enum.count(assigns.options) - 1)
-     |> assign(assigns)}
+     |> assign(:max_idx, Enum.count(assigns.options) - 1)
+     |> assign(:suggested_element, nil)
+     |> assign(:suggestions, Enum.with_index(assigns.options))}
   end
 
   @impl Phoenix.LiveComponent
@@ -25,84 +25,47 @@ defmodule SaseMangoWeb.SharedComponents.IssuerSelectComponent do
 
     search_value = String.downcase(value)
 
-    cond do
-      key in ["Enter", "Tab"] ->
-        if socket.assigns.idx != -1 do
-          {selected_issuer, _idx} =
-            Enum.find(socket.assigns.suggestions, fn {_issuer, idx} ->
-              idx == socket.assigns.idx
-            end)
+    if key in ["Enter", "Tab"] do
+      update_state_or_select_issuer(socket, search_value)
 
-          send(
-            self(),
-            {:select_issuer, %{symbol: selected_issuer.symbol, name: selected_issuer.name}}
-          )
-        else
-          send(self(), {:update_state, search_value})
-        end
+      {:noreply, socket}
+    else
+      filtered_options = filtered_options(options_from_socket, search_value)
 
-        {:noreply, socket}
+      if String.length(value) > 0 do
+        suggested_element = suggested_element(filtered_options, search_value)
 
-      true ->
-        filtered_options =
-          options_from_socket
-          |> Enum.filter(fn option ->
-            String.contains?(String.downcase(option.symbol), search_value) ||
-              String.contains?(String.downcase(option.name), search_value)
-          end)
-          |> Enum.with_index()
+        send(self(), :update_state)
 
-        if String.length(value) > 0 do
-          suggested_element =
-            if length(filtered_options) > 0 do
-              {first_issuer, _idx} = List.first(filtered_options)
-
-              is_suggested_by_symbol? =
-                String.contains?(String.downcase(first_issuer.symbol), search_value)
-
-              case is_suggested_by_symbol? do
-                false -> first_issuer.name
-                true -> first_issuer.symbol
-              end
-            end
-
-          send(self(), :update_state)
-
-          {:noreply,
-           socket
-           |> assign(:suggested_element, suggested_element)
-           |> assign(:maxIdx, Enum.count(filtered_options) - 1)
-           |> assign(:suggestions, filtered_options)}
-        else
-          {:noreply,
-           socket
-           |> assign(:suggested_element, nil)
-           |> assign(:maxIdx, Enum.count(filtered_options) - 1)
-           |> assign(:suggestions, filtered_options)}
-        end
+        {:noreply,
+         socket
+         |> assign(:max_idx, Enum.count(filtered_options) - 1)
+         |> assign(:suggested_element, suggested_element)
+         |> assign(:suggestions, filtered_options)}
+      else
+        {:noreply,
+         socket
+         |> assign(:max_idx, Enum.count(filtered_options) - 1)
+         |> assign(:suggested_element, nil)
+         |> assign(:suggestions, filtered_options)}
+      end
     end
   end
 
   def handle_event("scroll_list", %{"key" => key} = _params, socket) do
     old_idx = socket.assigns.idx
-    maxIdx = socket.assigns.maxIdx
+    max_idx = socket.assigns.max_idx
 
-    newIdx =
+    new_idx =
       case key do
         "ArrowUp" ->
-          if(old_idx <= 0, do: maxIdx, else: old_idx - 1)
+          if(old_idx <= 0, do: max_idx, else: old_idx - 1)
 
         "ArrowDown" ->
-          if(old_idx == maxIdx, do: 0, else: old_idx + 1)
+          if(old_idx == max_idx, do: 0, else: old_idx + 1)
       end
 
-    {:noreply,
-     socket
-     |> assign(:idx, newIdx)}
-  end
-
-  defp hide_issuers_list(js \\ %JS{}) do
-    JS.hide(js, to: "#issuers-list", transition: "fade-out-scale")
+    {:noreply, assign(socket, :idx, new_idx)}
   end
 
   @impl Phoenix.LiveComponent
@@ -185,5 +148,50 @@ defmodule SaseMangoWeb.SharedComponents.IssuerSelectComponent do
       </div>
     </div>
     """
+  end
+
+  defp in_string?(value, search_value) do
+    value
+    |> String.downcase()
+    |> String.contains?(search_value)
+  end
+
+  defp hide_issuers_list(js \\ %JS{}) do
+    JS.hide(js, to: "#issuers-list", transition: "fade-out-scale")
+  end
+
+  defp update_state_or_select_issuer(socket, search_value) do
+    if socket.assigns.idx != -1 do
+      {selected_issuer, _idx} =
+        Enum.find(socket.assigns.suggestions, fn {_issuer, idx} ->
+          idx == socket.assigns.idx
+        end)
+
+      send(
+        self(),
+        {:select_issuer, %{symbol: selected_issuer.symbol, name: selected_issuer.name}}
+      )
+    else
+      send(self(), {:update_state, search_value})
+    end
+  end
+
+  defp filtered_options(options_from_socket, search_value) do
+    options_from_socket
+    |> Enum.filter(fn option ->
+      in_string?(option.symbol, search_value) ||
+        in_string?(option.name, search_value)
+    end)
+    |> Enum.with_index()
+  end
+
+  defp suggested_element(filtered_options, search_value) do
+    if(length(filtered_options) > 0) do
+      {first_issuer, _idx} = List.first(filtered_options)
+
+      is_suggested_by_symbol? = in_string?(first_issuer.symbol, search_value)
+
+      if(is_suggested_by_symbol?, do: first_issuer.name, else: first_issuer.symbol)
+    end
   end
 end

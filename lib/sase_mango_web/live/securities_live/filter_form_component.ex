@@ -4,6 +4,7 @@ defmodule SaseMangoWeb.SecuritiesLive.FilterFormComponent do
   alias SaseMango.HandleTable
   alias SaseMango.HandleTable.SearchFilter
 
+  @impl Phoenix.LiveComponent
   def update(assigns, socket) do
     {:ok,
      socket
@@ -15,6 +16,7 @@ defmodule SaseMangoWeb.SecuritiesLive.FilterFormComponent do
     assign(socket, :changeset, HandleTable.change_table_filter(filter))
   end
 
+  @impl Phoenix.LiveComponent
   def handle_event("validate_filter", %{"filter" => %{"q" => filter_value}}, socket) do
     changeset =
       %SearchFilter{}
@@ -33,6 +35,7 @@ defmodule SaseMangoWeb.SecuritiesLive.FilterFormComponent do
     end
   end
 
+  @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
     <div>
